@@ -81,7 +81,7 @@ var check = function() {
       }
       if(res.values && res.values[1] && res.values[1].length) {
         dom.loaded = true;
-        opts.link = res.values[1][res.values[1].length - 1];
+        opts.link = res.values[1][res.values[0].length - 1];
       }
       console.log(res);
       console.log(opts);
