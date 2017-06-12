@@ -1,0 +1,111 @@
+<style>
+#header {
+  margin: 30vh 30vw 0;
+}
+#label {
+  font-size: 30px;
+  font-family: Arial;
+}
+#header img {
+  width: 120px;
+  border-radius: 5px;
+  float: left;
+  margin-right: 10px;
+}
+#link_holder {
+  padding-top: 30px;
+  clear: left;
+  text-align: center;
+  display: none;
+}
+#link_button {
+  font-size: 20px;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 0 50px 0 0;
+}
+#link {
+  color: #444;
+  text-decoration: none;
+}
+#link_button.ready {
+  color: #444;
+  font-size: 20px;
+  text-decoration: none;
+  background: #fafafa;
+  border: 1px solid #666;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 0 50px 0 0;
+}
+#link_button.ready:hover {
+  color: #444;
+  border-color: #444;
+  cursor: pointer;
+  background: #eee;
+}
+</style>
+<div id='header'>
+  <img src="http://i.imgur.com/ndewC14.png" />
+  AAC in the Cloud Presentation Session
+  <div id='label'>Loading Session Information...</div>
+  <div id='time'></div>
+  <div id='link_holder'>
+    <div id='link_button'>
+      <a id='link'></a>
+    </div>
+  </div>
+</div>
+<script>
+
+var id = "<%= ENV['DOC_ID'] %>";
+var cell = "<%= params['cell'] %>";
+var dom = {};
+['label', 'link', 'link_button', 'link_holder', 'time'].forEach(function(key) {
+  dom[key] = document.getElementById(key);
+});
+var err = function(str) {
+  dom.label.classList.add('error');
+  dom.label.innerHTML = str;
+};
+var check = function() {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200) {
+      res = JSON.parse(this.responseText);
+      var opts = {};
+      if(res.values && res.values[0] && res.values[0].length) {
+        opts.time = res.values[0][0];
+        opts.session = res.values[0][res.values[0].length - 1];
+      }
+      if(res.values && res.values[1] && res.values[1].length) {
+        dom.loaded = true;
+        opts.link = res.values[1][res.values[1].length - 1];
+      }
+      console.log(res);
+      console.log(opts);
+      dom.label.classList.remove('error');
+      dom.label.innerText = opts.session;
+      dom.time.innerText = opts.time;
+      dom.link_holder.style.display = 'block';
+      if(opts.link) {
+        dom.link.href = opts.link;
+        dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Join the Presentation on Google Hangouts";
+        dom.link_button.classList.add('ready');
+        dom.link.target = '_blank';
+      } else {
+        dom.link.innerText = "The Google Hangout will be ready about 10 minutes before the session starts";
+      }
+      setTimeout(check, 15000);
+    } else if(this.readyState == 4) {
+      err('Data not available,<br/>please try reloading');
+      setTimeout(check, 30000);
+    }
+  };
+  var path = "/data/" + id + "/" + cell;
+  xhr.open('GET', path, true);
+  xhr.send();
+};
+check();
+</script>
