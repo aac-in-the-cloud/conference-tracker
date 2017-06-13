@@ -1,17 +1,24 @@
 <style>
 #header {
   margin: 30vh 30vw 0;
+  position: relative;
 }
 #label {
   font-size: 30px;
   font-family: Arial;
 }
-#header img {
+#header img.logo {
   width: 120px;
   border-radius: 5px;
   float: left;
   margin-right: 10px;
   margin-bottom: 5px;
+}
+#header img#spinner {
+  position: absolute;
+  top: 5px;
+  left: -60px;
+  display: none;
 }
 #link_holder {
   padding-top: 30px;
@@ -43,12 +50,15 @@
 #link_button.ready:hover {
   color: #444;
   border-color: #444;
-  cursor: pointer;
   background: #eee;
+}
+#link_button.ready #link {
+  cursor: pointer;
 }
 </style>
 <div id='header'>
-  <img src="http://i.imgur.com/ndewC14.png" />
+  <img class='logo' src="http://i.imgur.com/ndewC14.png" />
+  <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
   AAC in the Cloud Presentation Session
   <div id='label'>Loading Session Information...</div>
   <div id='time'></div>
@@ -63,7 +73,7 @@
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = "<%= params['cell'] %>";
 var dom = {};
-['label', 'link', 'link_button', 'link_holder', 'time'].forEach(function(key) {
+['label', 'link', 'link_button', 'link_holder', 'time', 'spinner'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -71,9 +81,13 @@ var err = function(str) {
   dom.label.innerHTML = str;
 };
 var check = function() {
+  dom.spinner.style.display = 'inline';
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200) {
+      setTimeout(function() {
+        dom.spinner.style.display = 'none';
+      }, 800);
       res = JSON.parse(this.responseText);
       var opts = {};
       if(res.values && res.values[0] && res.values[0].length) {
@@ -100,6 +114,9 @@ var check = function() {
       }
       setTimeout(check, 15000);
     } else if(this.readyState == 4) {
+      setTimeout(function() {
+        dom.spinner.style.display = 'none';
+      }, 800);
       err('Data not available,<br/>please try reloading');
       setTimeout(check, 30000);
     }
