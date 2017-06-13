@@ -106,11 +106,11 @@ var check = function() {
       dom.link_holder.style.display = 'block';
       if(opts.link) {
         dom.link.href = opts.link;
-        dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Join the Presentation on Google Hangouts";
+        dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Click to join the Presentation on Google Hangouts";
         dom.link_button.classList.add('ready');
         dom.link.target = '_blank';
       } else {
-        dom.link.innerText = "The Google Hangout will be ready about 10 minutes before the session starts";
+        dom.link.innerText = "Your Session isn't ready yet. The Google Hangout will load about 10 minutes before the session starts..";
       }
       setTimeout(check, 15000);
     } else if(this.readyState == 4) {
