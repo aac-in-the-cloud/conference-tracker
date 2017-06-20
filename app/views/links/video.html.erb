@@ -1,0 +1,215 @@
+<style>
+body * {
+  box-sizing: border-box;
+}
+body {
+  background: #000;
+}
+#header {
+  margin: 20px auto;
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 20px;
+  min-height: 200px;
+  max-width: 800px;
+  background: #fff;
+}
+#label {
+  font-size: 20px;
+  font-family: Arial;
+}
+#header img.logo {
+  width: 120px;
+  border-radius: 5px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+#header img#spinner {
+  position: absolute;
+  top: 5px;
+  left: -60px;
+  display: none;
+}
+#link_holder {
+  padding-top: 30px;
+  clear: left;
+  text-align: center;
+  display: none;
+}
+#link_button {
+  font-size: 20px;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 0 50px 0 0;
+}
+#link {
+  color: #444;
+  text-decoration: none;
+}
+#link_button.ready {
+  color: #444;
+  font-size: 20px;
+  text-decoration: none;
+  background: #fafafa;
+  border: 1px solid #666;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 0 50px 0 0;
+}
+#link_button.ready:hover {
+  color: #444;
+  border-color: #444;
+  background: #eee;
+}
+#link_button.ready #link {
+  cursor: pointer;
+}
+#video {
+  width: 100%;
+  border: 2px solid #888;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 10px;
+}
+#survey_link {
+  margin-top: 20px;
+}
+</style>
+<div id='header'>
+  <img class='logo' src="http://i.imgur.com/ndewC14.png" />
+  <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
+  AAC in the Cloud Presentation Session
+  <div style='margin-bottom: 10px;'>
+    <a href='/doc/163u0-5jkaCZilMD-bxhtuzfUvUgB6Q1ajpCctZPNGsI'>Back to the Session List</a>
+  </div>
+  <div id='label'>Loading Session Information...</div>
+  <div id='time'></div>
+  <div style='clear: left;'></div>
+  <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
+  <div id='video_holder' style='display: none;'><div id='video'></div></div>
+  <div id='survey_link' style='display: none;'>
+    Once you're done, please <a href="/surveys/<%= params['id'] %>">Fill Out the Attendance Survey</a>
+    to track your attendance for completion hours.
+  </div>
+</div>
+<script src='https://www.youtube.com/iframe_api'></script>
+<script>
+var id = "<%= ENV['DOC_ID'] %>";
+var cell = atob(atob("<%= params['id'] %>"));
+var dom = {};
+['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link'].forEach(function(key) {
+  dom[key] = document.getElementById(key);
+});
+var err = function(str) {
+  dom.label.classList.add('error');
+  dom.label.innerHTML = str;
+};
+var player = {playing_seconds: 0};
+function onYouTubeIframeAPIReady() {
+  player.ready = true;
+  check();
+};
+var check = function() {
+  check.checked = true;
+  dom.spinner.style.display = 'inline';
+  doc_lookup(id, cell, function(res) {
+    setTimeout(function() {
+      dom.spinner.style.display = 'none';
+    }, 800);
+    var opts = {};
+    if(res.values && res.values[0] && res.values[0].length) {
+      opts.time = res.values[0][0];
+      opts.session = res.values[0][res.values[0].length - 1];
+    }
+    if(res.values && res.values[1] && res.values[1].length) {
+      dom.loaded = true;
+      opts.link = res.values[1][res.values[0].length - 1];
+    }
+    if(res.values && res.values[2] && res.values[2].length) {
+      opts.video = res.values[2][res.values[0].length - 1];
+      var match = opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
+      if(match && match[1]) {
+        opts.video_id = match[1];
+      }
+      
+//      https://www.youtube.com/embed/B2mtuhVa0WA?rel=0
+    }
+    console.log(opts);
+    dom.label.classList.remove('error');
+    dom.label.innerText = opts.session;
+    dom.time.innerText = opts.time;
+//opts.video_id = 'Cw_QBtlryIs';
+    if(opts.video_id) {
+      if(player.ready) {
+        dom.video_holder.style.display = 'inline';
+        var bounds = dom.video_holder.getBoundingClientRect();
+        var width = bounds.width - 14;
+        var height = width / 16 * 9;
+        player.obj = new YT.Player('video', {
+          height: height,
+          width: width,
+          videoId: opts.video_id,
+          events: {
+            'onStateChange': function(event) {
+              if(event.data = 1) {
+                player.playing = true;
+              } else {
+                player.playing = false;
+              }
+            }
+          }
+        });      
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+          if(this.readyState == 4 && this.status == 200) {
+            res = JSON.parse(this.responseText);
+            if(res && res.snippet && res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live') {
+              player.live = true;
+            }
+            console.log("video data", res);
+          } else if(this.readyState == 4) {
+          }
+        };
+        var path = "/data/videos/" + opts.video_id;
+        xhr.open('GET', path, true);
+        xhr.send();
+
+      } else {
+        dom.status.innerText = "Video player not initialized";
+      }
+    } else {
+      dom.status.innerText = "Couldn't find a video URL for the session";
+    }
+  }, function() {
+    setTimeout(function() {
+      dom.spinner.style.display = 'none';
+    }, 800);
+    err('Data not available,<br/>please try reloading');
+    setTimeout(check, 30000);
+  });
+  setInterval(function() {
+    if(player.playing && !player.live) {
+      player.playing_seconds++;
+      console.log("playing for", player.playing_seconds);
+    }
+    if(player.obj && !player.live) {
+      // after 20 minutes of playing, go ahead and allow the survey link
+      if(player.playing_seconds > (20 * 60)) {
+        var duration = player.obj && player.obj.getDuration && player.obj.getDuration();
+        var current = player.obj && player.obj.getCurrentTime && player.obj.getCurrentTime();
+        // if more than 80% of the way through, show the survey link
+        if(duration && current && current > (duration * 0.8)) {
+          dom.survey_link.style.display = 'block';
+        }
+      }
+    }
+  }, 1000);
+};
+setTimeout(function() {
+  if(!check.checked) { check(); }
+}, 5000);
+</script>
