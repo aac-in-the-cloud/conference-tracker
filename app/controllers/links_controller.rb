@@ -4,6 +4,7 @@ require 'json'
 
 class LinksController < ApplicationController
   def show
+    response.headers.delete('X-Frame-Options')
   end
   
   def data
@@ -38,6 +39,7 @@ class LinksController < ApplicationController
   end
   
   def video
+    response.headers.delete('X-Frame-Options')
   end
   
   def video_data

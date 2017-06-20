@@ -1,9 +1,10 @@
 class SurveysController < ApplicationController
   def index
-    
+    response.headers.delete('X-Frame-Options')
   end
   
   def show
+    response.headers.delete('X-Frame-Options')
     @doc_id = params['id']
   end
   
@@ -13,5 +14,6 @@ class SurveysController < ApplicationController
   end
   
   def certificate
+    response.headers.delete('X-Frame-Options')
   end
 end
