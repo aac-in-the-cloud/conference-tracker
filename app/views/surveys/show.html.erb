@@ -111,10 +111,13 @@ a {
       <button id='submit' type='submit'>Submit Feedback</button>
     </div>
     <div class='item' id='done' style='display: none;'>
-      Thank you, your feedback has been recorded! When you are done
+      <p>Thank you, your feedback has been recorded! When you are done
       attending or watching sessions, you can 
       <a href='/surveys/certificate'>generate a certificate
-      of attendance</a> for all of your viewed sessions.
+      of attendance</a> for all of your viewed sessions.</p>
+      <p>
+        <a href='/doc/163u0-5jkaCZilMD-bxhtuzfUvUgB6Q1ajpCctZPNGsI' style="border: 1px solid #888; background: #eee; color: #000; text-decoration: none; padding: 10px 20px; display: inline-block; border-radius: 5px;">Back to the Session List</a>
+      </p>
     </div>
   </form>
 </div>
@@ -122,38 +125,32 @@ a {
   var doc_id = "<%= ENV['DOC_ID'] %>";
   var code = "<%= params['id'] %>";
   var cell = "<%= @doc_id %>";
-  var xhr = new XMLHttpRequest();
   var err = function(str) {
     document.getElementById('survey').style.display = 'none';
     document.getElementById('session_name').innerHTML = str;
     document.getElementById('session_time').innterText = '';
   }
-  xhr.onreadystatechange = function() {
-    if(this.readyState == 4 && this.status == 200) {
-      res = JSON.parse(this.responseText);
-      var opts = {};
-      if(res.values && res.values[0] && res.values[0].length) {
-        opts.time = res.values[0][0];
-        opts.session = res.values[0][res.values[0].length - 1];
-      }
-      if(res.values && res.values[1] && res.values[1].length) {
-        opts.link = res.values[1][res.values[0].length - 1];
-      }
-      if(!opts.session) {
-        err("<b>" + cell + "</b> is not a valid survey code");
-      } else {
-        document.getElementById('session_name').innerText = opts.session;
-        document.getElementById('session_time').innerText = opts.time;
-        document.getElementById('survey').style.display = 'block';
-      }
-    } else if(this.readyState == 4) {
-      err('Data not available,<br/>please try reloading');
+  doc_lookup(doc_id, cell, function(res) {
+    var opts = {};
+    if(res.values && res.values[0] && res.values[0].length) {
+      opts.time = res.values[0][0];
+      opts.session = res.values[0][res.values[0].length - 1];
     }
-  };
+    if(res.values && res.values[1] && res.values[1].length) {
+      opts.link = res.values[1][res.values[0].length - 1];
+    }
+    if(!opts.session) {
+      err("<b>" + cell + "</b> is not a valid survey code");
+    } else {
+      document.getElementById('session_name').innerText = opts.session;
+      document.getElementById('session_time').innerText = opts.time;
+      document.getElementById('survey').style.display = 'block';
+    }
+  }, function() {
+    err('Data not available,<br/>please try reloading');
+  });
   err('Loading survey...');
-  var path = "/data/" + doc_id + "/" + cell;
-  xhr.open('GET', path, true);
-  xhr.send();
+
   document.getElementById('survey').addEventListener('submit', function(event) {
     event.preventDefault();
     var rating = 0;
@@ -180,6 +177,8 @@ a {
         res = JSON.parse(this.responseText);
         document.getElementById('done').style.display = 'block';
         status('Feedback Submitted!');
+        document.getElementById('submit').disabled = true;
+        document.getElementById('submit').style.opacity = '0.7';
       } else if(this.readyState == 4) {
         status('Feedback Failed to Submit');
       }

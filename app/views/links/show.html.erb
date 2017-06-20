@@ -82,48 +82,41 @@ var err = function(str) {
 };
 var check = function() {
   dom.spinner.style.display = 'inline';
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if(this.readyState == 4 && this.status == 200) {
-      setTimeout(function() {
-        dom.spinner.style.display = 'none';
-      }, 800);
-      res = JSON.parse(this.responseText);
-      var opts = {};
-      if(res.values && res.values[0] && res.values[0].length) {
-        opts.time = res.values[0][0];
-        opts.session = res.values[0][res.values[0].length - 1];
-      }
-      if(res.values && res.values[1] && res.values[1].length) {
-        dom.loaded = true;
-        opts.link = res.values[1][res.values[0].length - 1];
-      }
-      console.log(res);
-      console.log(opts);
-      dom.label.classList.remove('error');
-      dom.label.innerText = opts.session;
-      dom.time.innerText = opts.time;
-      dom.link_holder.style.display = 'block';
-      if(opts.link) {
-        dom.link.href = opts.link;
-        dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Click to join the Presentation on Google Hangouts";
-        dom.link_button.classList.add('ready');
-        dom.link.target = '_blank';
-      } else {
-        dom.link.innerText = "Your Session isn't ready yet. The Google Hangout will load about 10 minutes before the session starts..";
-      }
-      setTimeout(check, 15000);
-    } else if(this.readyState == 4) {
-      setTimeout(function() {
-        dom.spinner.style.display = 'none';
-      }, 800);
-      err('Data not available,<br/>please try reloading');
-      setTimeout(check, 30000);
+  doc_lookup(id, cell, function(res) {
+    setTimeout(function() {
+      dom.spinner.style.display = 'none';
+    }, 800);
+    var opts = {};
+    if(res.values && res.values[0] && res.values[0].length) {
+      opts.time = res.values[0][0];
+      opts.session = res.values[0][res.values[0].length - 1];
     }
-  };
-  var path = "/data/" + id + "/" + cell;
-  xhr.open('GET', path, true);
-  xhr.send();
+    if(res.values && res.values[1] && res.values[1].length) {
+      dom.loaded = true;
+      opts.link = res.values[1][res.values[0].length - 1];
+    }
+    console.log(res);
+    console.log(opts);
+    dom.label.classList.remove('error');
+    dom.label.innerText = opts.session;
+    dom.time.innerText = opts.time;
+    dom.link_holder.style.display = 'block';
+    if(opts.link) {
+      dom.link.href = opts.link;
+      dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Click to join the Presentation on Google Hangouts";
+      dom.link_button.classList.add('ready');
+      dom.link.target = '_blank';
+    } else {
+      dom.link.innerText = "Your Session isn't ready yet. The Google Hangout will load about 10 minutes before the session starts..";
+    }
+    setTimeout(check, 15000);
+  }, function() {
+    setTimeout(function() {
+      dom.spinner.style.display = 'none';
+    }, 800);
+    err('Data not available,<br/>please try reloading');
+    setTimeout(check, 30000);
+  });
 };
 check();
 </script>

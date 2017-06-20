@@ -4,7 +4,7 @@ class SurveysController < ApplicationController
   end
   
   def show
-    @doc_id = params['id'].sub(/17$/, '')
+    @doc_id = params['id']
   end
   
   def create
