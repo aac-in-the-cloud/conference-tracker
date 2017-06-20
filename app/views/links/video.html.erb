@@ -74,7 +74,7 @@ body {
   padding: 5px;
   margin-top: 10px;
 }
-#survey_link {
+#survey_link, #chat {
   margin-top: 20px;
 }
 </style>
@@ -90,6 +90,9 @@ body {
   <div style='clear: left;'></div>
   <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
   <div id='video_holder' style='display: none;'><div id='video'></div></div>
+  <div id='chat' style='display: none;'>
+    <a href="http://aacconference.com/chat" target="_blank">Join the Chat Room for this session</a> to ask questions and get access to additional resources.
+  </div>
   <div id='survey_link' style='display: none;'>
     Once you're done, please <a href="/surveys/<%= params['id'] %>">Fill Out the Attendance Survey</a>
     to track your attendance for completion hours.
@@ -100,7 +103,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link'].forEach(function(key) {
+['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'chat'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -169,6 +172,7 @@ var check = function() {
             res = JSON.parse(this.responseText);
             if(res && res.snippet && res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live') {
               player.live = true;
+              dom.chat.style.display = 'block';
             }
             console.log("video data", res);
           } else if(this.readyState == 4) {
