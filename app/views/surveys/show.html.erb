@@ -1,0 +1,193 @@
+<style>
+body * {
+  box-sizing: border-box;
+}
+#survey_holder {
+  font-family: Arial;
+  width: 500px;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin: 50px calc(50vw - 250px);
+  text-align: left;
+  padding: 10px; 20px;
+}
+#survey_holder img {
+  width: 120px;
+  border-radius: 5px;
+  float: left;
+  margin: 0 10px 20px 0;
+}
+#survey_holder button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 400px;
+}
+#survey_holder button:focus {
+  background: #ccc;
+}
+form {
+  margin: 20px 0 10px;
+}
+
+#session_name {
+  display: block;
+  font-size: 18px;
+}
+#session_time {
+  display: block;
+  font-size: 12px;
+}
+.item {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+.item input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 30px;
+  width: 350px;
+}
+.item span {
+  display: block;
+  margin-bottom: 5px;
+}
+.radio {
+  margin: 10px 20px 30px;
+}
+.radio label {
+  display: block;
+  margin-bottom: 10px;
+}
+textarea {
+  font-size: 18px;
+  width: 450px;
+  height: 100px;
+  border-radius: 3px;
+  border: 1px solid #888;
+}
+a {
+  color: #337ab7;
+}
+
+</style>
+<div id='survey_holder'>
+  <img src='http://i.imgur.com/ndewC14.png'/>
+  <h1>AAC in the Cloud<br/>Attendance Surveys</h1>
+  <div style='clear: left;'></div>
+  <span id='session_name'></span>
+  <span id='session_time'></span>
+  <form id='survey' style='display: none;'>
+    <p>Thanks for attending the session! Filling out this survey will mark this session as attended by your email address, which can then be used to generate a certificate of attendance for all the sessions you attended or watched.</p>
+    <div class='item'>
+      <span>Email:</span>
+      <input id='email' type='text' />
+    </div>
+    <div class='item'>
+      <span>How would you rate this session:</span>
+      <div class='radio'>
+        <label><input type='radio' class='rating' name='rating' value='5'/> This session was well above average</label>
+        <label><input type='radio' class='rating' name='rating' value='4'/> This session was above average</label>
+        <label><input type='radio' class='rating' name='rating' value='3'/> This session was average</label>
+        <label><input type='radio' class='rating' name='rating' value='2'/> This session was below average</label>
+        <label><input type='radio' class='rating' name='rating' value='1'/> This session was well below average</label>
+      </div>
+    </div>
+    <div class='item'>
+      <span>Any feedback on the session:</span>
+      <textarea id='answer_2'></textarea>
+    </div>
+    <div class='item'>
+      <span>Any feedback on the conference in general:</span>
+      <textarea id='answer_3'></textarea>
+    </div>
+    <div class='item'>
+      <button id='submit' type='submit'>Submit Feedback</button>
+    </div>
+    <div class='item' id='done' style='display: none;'>
+      Thank you, your feedback has been recorded! When you are done
+      attending or watching sessions, you can 
+      <a href='/surveys/certificate'>generate a certificate
+      of attendance</a> for all of your viewed sessions.
+    </div>
+  </form>
+</div>
+<script>
+  var doc_id = "<%= ENV['DOC_ID'] %>";
+  var code = "<%= params['id'] %>";
+  var cell = "<%= @doc_id %>";
+  var xhr = new XMLHttpRequest();
+  var err = function(str) {
+    document.getElementById('survey').style.display = 'none';
+    document.getElementById('session_name').innerHTML = str;
+    document.getElementById('session_time').innterText = '';
+  }
+  xhr.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200) {
+      res = JSON.parse(this.responseText);
+      var opts = {};
+      if(res.values && res.values[0] && res.values[0].length) {
+        opts.time = res.values[0][0];
+        opts.session = res.values[0][res.values[0].length - 1];
+      }
+      if(res.values && res.values[1] && res.values[1].length) {
+        opts.link = res.values[1][res.values[0].length - 1];
+      }
+      if(!opts.session) {
+        err("<b>" + cell + "</b> is not a valid survey code");
+      } else {
+        document.getElementById('session_name').innerText = opts.session;
+        document.getElementById('session_time').innerText = opts.time;
+        document.getElementById('survey').style.display = 'block';
+      }
+    } else if(this.readyState == 4) {
+      err('Data not available,<br/>please try reloading');
+    }
+  };
+  err('Loading survey...');
+  var path = "/data/" + doc_id + "/" + cell;
+  xhr.open('GET', path, true);
+  xhr.send();
+  document.getElementById('survey').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var rating = 0;
+    var list = document.getElementsByClassName('rating');
+    for(var idx = 0; idx < list.length; idx++) {
+      if(list[idx].checked) { rating = list[idx].value; }
+    }
+    params = {
+      code: code,
+      email: document.getElementById('email').value,
+      answer_1: rating,
+      answer_2: document.getElementById('answer_2').value,
+      answer_3: document.getElementById('answer_3').value,
+      authenticity_token: "<%= form_authenticity_token %>"
+    };
+    console.log(params);
+
+    var xhr = new XMLHttpRequest();
+    var status = function(str) {
+      document.getElementById('submit').innerHTML = str;
+    }
+    xhr.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText);
+        document.getElementById('done').style.display = 'block';
+        status('Feedback Submitted!');
+      } else if(this.readyState == 4) {
+        status('Feedback Failed to Submit');
+      }
+    };
+    status('Submitting Feedback...');
+    var path = "/surveys/";
+    xhr.open('POST', path, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(params));
+  });
+</script>

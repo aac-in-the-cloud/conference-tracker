@@ -3,4 +3,8 @@ Rails.application.routes.draw do
   get '/doc/:id' => 'links#proxy_doc'
   get '/links/:cell' => 'links#show'
   get '/data/:doc_id/:cell' => 'links#data'
+  get '/surveys' => 'surveys#index'
+  get '/surveys/certificate' => 'surveys#certificate'
+  get '/surveys/:id' => 'surveys#show'
+  post '/surveys/' => 'surveys#create'
 end

@@ -1,0 +1,61 @@
+<style>
+body * {
+  box-sizing: border-box;
+}
+#code_entry {
+  font-family: Arial;
+  width: 500px;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin: 30vh calc(50vw - 250px);
+  text-align: left;
+  padding: 10px; 20px;
+}
+#code_entry img {
+  width: 120px;
+  border-radius: 5px;
+  float: left;
+  margin: 0 10px 20px 0;
+}
+#code_entry input {
+  border-radius: 3px;
+  border: 1px solid #888;
+  height: 50px;
+  font-size: 40px;
+  width: 150px;
+  margin: 0;
+  vertical-align: middle;
+  padding: 0 5px;
+}
+#code_entry button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 70px;
+}
+#code_entry button:focus {
+  background: #ccc;
+}
+</style>
+<div id='code_entry'>
+  <img src='http://i.imgur.com/ndewC14.png'/>
+  <h1>AAC in the Cloud<br/>Attendance Surveys</h1>
+  <div style='clear: left;'></div>
+  Enter Survey Code:
+    <input type='text' id='code' />
+    <button type='button' id='go' >Go</button>
+</div>
+<script>
+document.getElementById('go').addEventListener('click', function(event) {
+  event.preventDefault();
+  var code = document.getElementById('code').value;
+  if(code) {
+    location.href = '/surveys/' + code.toUpperCase();
+  }
+});
+</script>
