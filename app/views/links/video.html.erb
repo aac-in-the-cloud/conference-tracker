@@ -131,8 +131,8 @@ var check = function() {
       dom.loaded = true;
       opts.link = res.values[1][res.values[0].length - 1];
     }
-    if(res.values && res.values[2] && res.values[2].length) {
-      opts.video = res.values[2][res.values[0].length - 1];
+    if(res.values && res.values[3] && res.values[3].length) {
+      opts.video = res.values[3][res.values[0].length - 1];
       var match = opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
       if(match && match[1]) {
         opts.video_id = match[1];
