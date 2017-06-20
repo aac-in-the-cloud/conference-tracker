@@ -1,4 +1,5 @@
 require 'typhoeus'
+require 'nokogiri'
 
 class LinksController < ApplicationController
   def show
@@ -16,5 +17,16 @@ class LinksController < ApplicationController
     url = "https://sheets.googleapis.com/v4/spreadsheets/#{ENV['DOC_ID']}/values/#{start_col}#{start_row}:#{end_col}#{end_row}?key=#{key}"
     res = Typhoeus.get(url)
     render text: res.body
+  end
+  
+  def proxy_doc
+    response.headers.delete('X-Frame-Options')
+    url = "https://docs.google.com/document/d/#{params['id']}/pub?embedded=true"
+    req = Typhoeus.get(url)
+    doc = Nokogiri(req.body)
+    doc.css('a').each do |a|
+      a['target'] = '_blank'
+    end
+    render text: doc.to_s
   end
 end
