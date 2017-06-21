@@ -156,6 +156,11 @@ var check = function() {
       
 //      https://www.youtube.com/embed/B2mtuhVa0WA?rel=0
     }
+    if(res.values && res.values[2] && res.values[2].length) {
+      if(res.values[2][res.values[0].length - 1]) {
+        player.survey = true;
+      }
+    }
     console.log(opts);
     dom.label.classList.remove('error');
     dom.label.innerText = opts.session;
@@ -217,7 +222,7 @@ var check = function() {
       player.playing_seconds++;
       console.log("playing for", player.playing_seconds);
     }
-    if(player.obj && !player.live) {
+    if(player.obj && !player.live && player.survey) {
       // after 20 minutes of playing, go ahead and allow the survey link
       if(player.playing_seconds > (20 * 60)) {
         var duration = player.obj && player.obj.getDuration && player.obj.getDuration();
