@@ -9,7 +9,7 @@ class LinksController < ApplicationController
   
   def data
     key = ENV['API_KEY']
-    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}/#{params['cell']}") do
+    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}/#{params['cell']}", expires_in: 60.seconds) do
       letter_num = params['cell'].match(/[A-Z]+/)[0].ord
       row_num = params['cell'].match(/\d+/)[0].to_i
       start_row = row_num
