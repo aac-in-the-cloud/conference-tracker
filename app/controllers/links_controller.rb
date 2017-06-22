@@ -18,9 +18,8 @@ class LinksController < ApplicationController
     
     body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}", expires_in: 60.seconds) do
       url = "https://sheets.googleapis.com/v4/spreadsheets/#{ENV['DOC_ID']}/values/A1:D100?key=#{key}"
-#      res = Typhoeus.get(url)
-#      res.body
-      "{}"
+      res = Typhoeus.get(url)
+      res.body
     end
     json = JSON.parse(body)
     res = {values: []}
@@ -34,7 +33,7 @@ class LinksController < ApplicationController
       res[:values] << row
     end
     
-    render text: ers.to_json
+    render text: res.to_json
   end
   
   def proxy_doc
