@@ -10,6 +10,7 @@ class LinksController < ApplicationController
   def data
     key = ENV['API_KEY']
     letter_num = params['cell'].match(/[A-Z]+/)[0].ord
+    col_idx = letter_num - 'A'.ord
     row_num = params['cell'].match(/\d+/)[0].to_i
     start_row = row_num
     end_row = row_num + 3
@@ -30,7 +31,7 @@ class LinksController < ApplicationController
     
     (start_row..end_row).to_a.each do |idx|
       row = json['values'][idx - 1]
-      res[:values] << row
+      res[:values] << row[0..col_idx]
     end
     
     render text: res.to_json
