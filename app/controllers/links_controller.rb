@@ -9,14 +9,14 @@ class LinksController < ApplicationController
   
   def data
     key = ENV['API_KEY']
-    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}/#{params['cell']}", expires_in: 60.seconds) do
+    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}", expires_in: 60.seconds) do
       letter_num = params['cell'].match(/[A-Z]+/)[0].ord
       row_num = params['cell'].match(/\d+/)[0].to_i
       start_row = row_num
       end_row = row_num + 3
       start_col = 'A'
       end_col = letter_num.chr
-      url = "https://sheets.googleapis.com/v4/spreadsheets/#{ENV['DOC_ID']}/values/#{start_col}#{start_row}:#{end_col}#{end_row}?key=#{key}"
+      url = "https://sheets.googleapis.com/v4/spreadsheets/#{ENV['DOC_ID']}/values/A1:D100?key=#{key}"
       res = Typhoeus.get(url)
       res.body
     end
