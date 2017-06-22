@@ -26,12 +26,15 @@ class LinksController < ApplicationController
   def proxy_doc
     response.headers.delete('X-Frame-Options')
     response.headers['Cache-Control'] = 'public'
-    text = Rails.cache.fetch("doc/#{params['id']}", expires_in: 30.minutes) do
+    change_target = params['noblank'] != '1'
+    text = Rails.cache.fetch("doc/#{params['id']}/#{change_target}", expires_in: 30.minutes) do
       url = "https://docs.google.com/document/d/#{params['id']}/pub?embedded=true"
       req = Typhoeus.get(url)
       doc = Nokogiri(req.body)
-      doc.css('a').each do |a|
-        a['target'] = '_blank'
+      if change_target
+        doc.css('a').each do |a|
+          a['target'] = '_blank'
+        end
       end
       doc.to_s
     end
