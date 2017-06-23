@@ -104,10 +104,11 @@ body {
     <div id='video'></div>
   </div>
   <div id='chat' style='display: none;'>
-    <img src="https://lh3.googleusercontent.com/CzlsZP3xUHeX3HAGdZ2rL9mK6_C-6T1-YWeBeM8nB3ilmfPSBHCFx4-UbQr8MnQms3d9=w300" style='width: 60px; vertical-align: middle; float: left; padding-right: 10px;'/>
+    <img src="https://lh3.googleusercontent.com/CzlsZP3xUHeX3HAGdZ2rL9mK6_C-6T1-YWeBeM8nB3ilmfPSBHCFx4-UbQr8MnQms3d9=w300" style='width: 70px; vertical-align: middle; float: left; padding-right: 10px;'/>
     <a href="http://aacconference.com/chat" target="_blank" style='font-size: 22px; text-decoration: none;'>
       Join the Chat Room for this session
-    </a><br/>to ask questions and get access to additional resources.
+    </a><br/>to ask questions and get access to additional resources.<br/>
+    this session will be in the <b id='track'>Track 1</b> chat channel
   </div>
   <div id='survey_link' style='display: none;'>
     Once you're done, please <a href="/surveys/<%= params['id'] %>">Fill Out the Attendance Survey</a>
@@ -119,7 +120,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'chat', 'video_app'].forEach(function(key) {
+['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'chat', 'video_app', 'track'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -194,6 +195,10 @@ var check = function() {
             res = JSON.parse(this.responseText);
             if(res && res.snippet && res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live') {
               player.live = true;
+              var track = 1;
+              if(cell.match(/^C/)) { track = 2; }
+              if(cell.match(/^D/)) { track = 3; }
+              dom.track.innerText = "Track " + track;
               dom.chat.style.display = 'block';
             }
             console.log("video data", res);

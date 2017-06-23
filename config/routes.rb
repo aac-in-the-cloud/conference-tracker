@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get '/data/videos/:id' => 'links#video_data'
   get '/data/:doc_id/:cell' => 'links#data'
   get '/surveys' => 'surveys#index'
+  post '/surveys/certificate' => 'surveys#render_certificate'
   get '/surveys/certificate' => 'surveys#certificate'
   get '/surveys/:id' => 'surveys#show'
   post '/surveys/' => 'surveys#create'
