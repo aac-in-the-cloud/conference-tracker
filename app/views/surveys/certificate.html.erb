@@ -7,7 +7,7 @@ body * {
   width: 500px;
   border: 1px solid #ccc;
   text-align: center;
-  margin: 30vh calc(50vw - 250px);
+  margin: 30px calc(50vw - 250px);
   text-align: left;
   padding: 10px; 20px;
 }
@@ -17,17 +17,22 @@ body * {
   float: left;
   margin: 0 10px 20px 0;
 }
-#code_entry input {
-  border-radius: 3px;
-  border: 1px solid #888;
-  height: 50px;
-  font-size: 40px;
-  width: 150px;
-  margin: 0;
-  vertical-align: middle;
-  padding: 0 5px;
+.item {
+  font-size: 18px;
+  margin-bottom: 20px;
 }
-#code_entry button {
+.item input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 30px;
+  width: 350px;
+}
+.item span {
+  display: block;
+  margin-bottom: 5px;
+}
+.item button {
   height: 50px;
   font-size: 30px;
   background: #eee;
@@ -36,9 +41,9 @@ body * {
   margin: 0;
   vertical-align: middle;
   cursor: pointer;
-  width: 70px;
+  width: 400px;
 }
-#code_entry button:focus {
+.item button:focus {
   background: #ccc;
 }
 </style>
@@ -46,5 +51,21 @@ body * {
   <img src='http://i.imgur.com/ndewC14.png'/>
   <h1>AAC in the Cloud<br/>Attendance Credits</h1>
   <div style='clear: left;'></div>
-  Certificates of attendance will be available soon!
+  <p>Please enter the following information to generate a certificate of attendance based on activity in the last 30 days:
+  </p>
+  <form action='/surveys/certificate' method='POST'>
+    <div class='item'>
+      <span>Your Name:</span>
+      <input id='email' type='text' name='name' placeholder='Full Name'/>
+    </div>
+    <div class='item'>
+      <span>Your Email:</span>
+      <input id='email' type='text' name='email' placeholder='Email from Surveys' />
+    </div>
+    <input type='hidden' value='30' name='days'/>
+    <input type='hidden' name='authenticity_token' value'<%= form_authenticity_token %>'/>
+    <div class='item'>
+      <button id='submit' type='submit'>Generate Certificate</button>
+    </div>
+  </form>
 </div>

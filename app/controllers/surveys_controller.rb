@@ -13,7 +13,7 @@ class SurveysController < ApplicationController
     render json: req.data || {}.to_json
   end
   
-  def certificate
+  def render_certificate
     response.headers.delete('X-Frame-Options')
     days = params['days'].to_i
     start_date = (Date.today - days)
@@ -33,9 +33,12 @@ class SurveysController < ApplicationController
       start_date = results.map(&:updated_at).min
       end_date = results.map(&:updated_at).max
       
-      dates = "#{start_date.strftime('%B %e, %Y')} to #{end_date.strftime('%B %e, %Y')}"
-      if start_date == end_date
-        dates = "#{start_date.strftime('%B %e, %Y')}"
+      dates = "no dates"
+      if start_date && end_date
+        dates = "#{start_date.strftime('%B %e, %Y')} to #{end_date.strftime('%B %e, %Y')}"
+        if start_date == end_date
+          dates = "#{start_date.strftime('%B %e, %Y')}"
+        end
       end
       
       
@@ -107,11 +110,16 @@ class SurveysController < ApplicationController
       pdf.line_width 10
       pdf.rounded_rectangle [30, 160], 110, 110, 10
       pdf.stroke
+      pdf.fill_color 'aaaaaa'
+      pdf.text_box "sponsored by CoughDrop, Inc. 9733 Sharolyn Ln. South Jordan, UT 84009, info@mycoughdrop.com", :at => [0, -10], :width => 530, height: 20, :color => '888888', :align => :center, :overflow => :shrink_to_fit
       pdf.render_file "AACintheCloud-certificate.pdf"
       send_file 'AACintheCloud-certificate.pdf', :disposition => 'inline'
-      
     else
-      response.headers.delete('X-Frame-Options')
+      redirect_to action: 'certificate'
     end
+  end
+  
+  def certificate
+    response.headers.delete('X-Frame-Options')
   end
 end
