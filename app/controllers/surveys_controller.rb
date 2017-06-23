@@ -15,5 +15,100 @@ class SurveysController < ApplicationController
   
   def certificate
     response.headers.delete('X-Frame-Options')
+    days = params['days'].to_i
+    start_date = (Date.today - days)
+    end_date = Date.today
+    if params['name'] && params['email'] && params['days']
+      email_hash = Digest::MD5.hexdigest(params['email'].downcase)
+      results = SurveyResult.where(['updated_at >= ? AND updated_at <= ?', start_date, end_date + 1]).where(:email_hash => email_hash)
+
+      sessions = []
+      hours = 0
+      results.each do |sr|
+        json = SurveyResult.session_data(sr.code)
+        name = json[:session_name] || "Session code: #{sr.code}"
+        sessions.push(name)
+        hours += 1
+      end
+      start_date = results.map(&:updated_at).min
+      end_date = results.map(&:updated_at).max
+      
+      dates = "#{start_date.strftime('%B %e, %Y')} to #{end_date.strftime('%B %e, %Y')}"
+      if start_date == end_date
+        dates = "#{start_date.strftime('%B %e, %Y')}"
+      end
+      
+      
+      pdf = Prawn::Document.new
+      pdf.move_down 30
+      pdf.text "AAC in the Cloud", :align => :center, :size => 20
+      pdf.text "Certificate of Attendance", :align => :center, :size => 35
+      pdf.move_down 30
+      pdf.text "presented to", :align => :center, :size => 15, :color => '888888'
+      pdf.move_down 20
+      pdf.text params['name'], :align => :center, :size => 30
+      pdf.move_up 5
+      pdf.text params['email'], :align => :center, :size => 15
+      pdf.move_down 25
+      pdf.text "for attending the following presentation sessions:", :align => :center, :size => 15, :color => '888888'
+      full_width = 450
+      available_height = 240
+      original_left = 50
+      original_top = 450
+      top = original_top
+      left = original_left
+      width = full_width
+      height = 25
+      columns = 1
+      if sessions.length > 10
+        columns = 2
+        width = full_width / 2
+        left -= 10
+        if sessions.length > 24
+          height = 10
+        end
+      end
+      sessions.each do |str, idx|
+#         str =  "this is some really long text that should get wrapped and truncated and stuff because that's just the way it is sometime, you know? you win some, you lose some, but that's just the way it is."
+        pdf.text_box "- " + str, :at => [left, top], :width => width, :height => height, :size => height * 0.75, :overflow => :shrink_to_fit
+        top -= height
+        if top < (original_top - (available_height))
+          top = original_top
+          left = original_left + (full_width / 2) + 10
+        end
+      end
+ 
+      pdf.move_down 300
+      pdf.text "for a total of", :align => :center, :size => 15, :color => '888888'
+      pdf.text "#{hours.to_f} attendance hours", :align => :center, :size => 20
+      pdf.draw_text dates, :at => [25, 25], :size => 12
+      pdf.line [300, 40], [520, 40]
+      pdf.stroke
+      pdf.draw_text "Melissa DeMoux, conference coordinator", :at => [300, 25], :size => 12
+      pdf.line_width 4
+      pdf.rectangle [0, 720], 540, 720
+      pdf.stroke_color "2caad3"
+      pdf.stroke
+      pdf.line_width 2
+      pdf.rounded_polygon 2, [10, 10], 
+                  [10, 680], [30, 680], [30, 670], [20, 670], [20, 710], [10, 710], 
+                  [10, 700], [50, 700], [50, 690], [40, 690], [40, 710], 
+                  [500, 710], [500, 690], [490, 690], [490, 700], [530, 700], [530, 710],
+                  [520, 710], [520, 670], [510, 670], [510, 680],
+                  [530, 680], 
+                  [530, 10]
+      pdf.stroke
+      pdf.image "./public/md-sig.png", :at => [310, 70], :width => 200, :height => (200 * 55 / 422)
+      pdf.image "./public/logo.png", :at => [35, 155], :width => 100, :height => 100
+      pdf.stroke_color "2caad3"
+      pdf.line_width 10
+      pdf.rounded_rectangle [30, 160], 110, 110, 10
+      pdf.stroke
+      pdf.render_file "AACintheCloud-certificate.pdf"
+      send_file 'AACintheCloud-certificate.pdf', :disposition => 'inline'
+      
+    else
+      response.headers.delete('X-Frame-Options')
+    end
   end
 end

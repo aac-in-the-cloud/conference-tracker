@@ -8,33 +8,10 @@ class LinksController < ApplicationController
   end
   
   def data
-    key = ENV['API_KEY']
-    letter_num = params['cell'].match(/[A-Z]+/)[0].ord
-    col_idx = letter_num - 'A'.ord
-    row_num = params['cell'].match(/\d+/)[0].to_i
-    start_row = row_num
-    end_row = row_num + 3
-    start_col = 'A'
-    end_col = letter_num.chr
+    json = SurveyResult.session_data(params['cell'])
+
     
-    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}", expires_in: 60.seconds) do
-      url = "https://sheets.googleapis.com/v4/spreadsheets/#{ENV['DOC_ID']}/values/A1:D100?key=#{key}"
-      res = Typhoeus.get(url)
-      res.body
-    end
-    json = JSON.parse(body)
-    res = {values: []}
-    if !json['values']
-      render text: body
-      return
-    end
-    
-    (start_row..end_row).to_a.each do |idx|
-      row = json['values'][idx - 1]
-      res[:values] << row[0..col_idx]
-    end
-    
-    render text: res.to_json
+    render text: json.to_json
   end
   
   def proxy_doc

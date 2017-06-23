@@ -4,7 +4,6 @@ var doc_lookup = function(doc_id, cell, success, error) {
   xhr.onreadystatechange = function() {
     if(this.readyState == 4 && this.status == 200) {
       res = JSON.parse(this.responseText);
-      debugger
       success(res);
     } else if(this.readyState == 4) {
       error();
