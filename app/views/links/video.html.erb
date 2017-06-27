@@ -194,7 +194,7 @@ var check = function() {
         xhr.onreadystatechange = function() {
           if(this.readyState == 4 && this.status == 200) {
             res = JSON.parse(this.responseText);
-            if(res && res.snippet && res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live') {
+            if(res && res.snippet && (res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live')) {
               player.live = true;
               var track = 1;
               if(cell.match(/^C/)) { track = 2; }
