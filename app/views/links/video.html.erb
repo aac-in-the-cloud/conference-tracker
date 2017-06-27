@@ -180,9 +180,16 @@ var check = function() {
           videoId: opts.video_id,
           events: {
             'onStateChange': function(event) {
-              if(event.data = 1) {
+              if(event.data == 1) {
                 player.playing = true;
-              } else {
+                player.playing_started = (new Date()).getTime();
+                player.playing_ended = null;
+              } else if(event.data == 2 || event.data == 3) {
+                player.playing_ended = (new Date()).getTime();
+                if(player.playing_started && player.playing_ended) {
+                  player.played_seconds = (player.played_seconds || 0) + ((player.playing_ended - player.playing_started) / 1000);
+                  player.playing_started = null;
+                }
                 player.playing = false;
               }
             }
@@ -225,7 +232,8 @@ var check = function() {
   });
   setInterval(function() {
     if(player.playing && !player.live) {
-      player.playing_seconds++;
+      var now = (new Date()).getTime();
+      player.playing_seconds = (player.played_seconds || 0) + ((now - player.playing_started) / 1000);
       console.log("playing for", player.playing_seconds);
     }
     if(player.obj && !player.live && player.survey) {
@@ -239,7 +247,7 @@ var check = function() {
         }
       }
     }
-  }, 1000);
+  }, 300);
 };
 setTimeout(function() {
   if(!check.checked) { check(); }
