@@ -86,6 +86,7 @@ class SurveysController < ApplicationController
  
       pdf.move_down 300
       pdf.text "for a total of", :align => :center, :size => 15, :color => '888888'
+      pdf.move_down 10
       pdf.text "#{hours.to_f} maintenance hours", :align => :center, :size => 20
       pdf.draw_text dates, :at => [25, 25], :size => 12
       pdf.line [300, 40], [520, 40]
