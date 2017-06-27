@@ -50,6 +50,13 @@ class SurveyResult < ApplicationRecord
       res[:values] << row[0..col_idx] if row
     end
     res[:session_name] = res[:values][0][col_idx] if res[:values][0]
+    if res[:session_name] && res[:session_name].match(/\(\d+\)$/)
+      num = res[:session_name].match(/\((\d+)\)$/)[1].to_i
+      res[:session_name].sub!(/\(\d+\)$/, '')
+      if num && num > 0
+        res[:live_attendees] = num
+      end
+    end
     res
   end
 end
