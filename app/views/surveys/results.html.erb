@@ -82,8 +82,12 @@ a {
   <% if @error %>
     <p>Bad Link</p>
   <% else %>
-    <span id='session_name'></span>
-    <span id='session_time'></span>
+    <% if @doc_id == 'all' %>
+      <span id='session_name'>Review from all sessions</span>
+    <% else %>
+      <span id='session_name'></span>
+      <span id='session_time'></span>
+    <% end %>
     <span id='total'>Total Reviews: <%= @results.length %></span>
     <span id='average'>Average Score: <%= (@results.map{|r| r.json['answer_1'].to_i }.sum.to_f / @results.length.to_f).round(2) %></span>
     <% @results.each do |result| %>
