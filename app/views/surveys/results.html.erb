@@ -89,11 +89,11 @@ a {
     <% @results.each do |result| %>
       <div class='result'>
         <span class='date'><%= result.created_at.strftime('%b %-m, %Y') %></span>
-        <% if @id == 'all' %>
+        <% if @doc_id == 'all' %>
           <%= result.code %>
         <% end %>
         <span class='rating'>Rating: <%= result.json['answer_1'] %></span>
-        <% if @id == 'all' %>
+        <% if @doc_id == 'all' %>
           <%= result.json['answer_3'] %>
         <% else %>
           <%= result.json['answer_2'] %>
