@@ -90,7 +90,7 @@ a {
     <% end %>
     <span id='total'>Total Reviews: <%= @results.length %></span>
     <span id='average'>Average Score: <%= (@results.map{|r| r.json['answer_1'].to_i }.sum.to_f / @results.length.to_f).round(2) %></span>
-    <% @results.each do |result| %>
+    <% @shown_results.each do |result| %>
       <div class='result'>
         <span class='date'><%= result.created_at.strftime('%b %-d, %Y %l:%M%P') %></span>
         <% if @doc_id == 'all' %>
