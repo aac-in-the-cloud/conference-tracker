@@ -24,9 +24,9 @@ class SurveysController < ApplicationController
     @doc_id = id
     @error = true unless params['code'] == Digest::MD5.hexdigest(params['id'])[0, 10]
     if id == 'all'
-      @results = SurveyResult.order('id DESC')
+      @results = SurveyResult.order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
     else
-      @results = SurveyResult.where(code: id).order('id DESC')
+      @results = SurveyResult.where(code: id).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
     end
   end
   
