@@ -33,6 +33,7 @@ class LinksController < ApplicationController
   end
   
   def video
+    @session_id = Base64.decode64(Base64.decode64(params['id'])) + "A17"
     response.headers.delete('X-Frame-Options')
   end
   

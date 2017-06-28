@@ -104,16 +104,21 @@ body {
     <div id='video'></div>
   </div>
   <div id='chat' style='display: none;'>
-    <img src="https://lh3.googleusercontent.com/CzlsZP3xUHeX3HAGdZ2rL9mK6_C-6T1-YWeBeM8nB3ilmfPSBHCFx4-UbQr8MnQms3d9=w300" style='width: 70px; vertical-align: middle; float: left; padding-right: 10px;'/>
+    <img src="https://lh3.googleusercontent.com/CzlsZP3xUHeX3HAGdZ2rL9mK6_C-6T1-YWeBeM8nB3ilmfPSBHCFx4-UbQr8MnQms3d9=w300" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
     <a href="http://aacconference.com/chat" target="_blank" style='font-size: 22px; text-decoration: none;'>
       Join the Chat Room for this session
     </a><br/>to ask questions and get access to additional resources.<br/>
     this session will be in the <b id='track'>Track 1</b> chat channel.<br/>
     Hit "channels" in Slack to see a list of all available channels.
+    <div style='clear: left;'></div>
   </div>
   <div id='survey_link' style='display: none;'>
-    Once you're done, please <a href="/surveys/<%= params['id'] %>">Fill Out the Attendance Survey</a>
-    to track your attendance for completion hours.
+    <img src="http://www.freeiconspng.com/uploads/online-survey-icon-2.jpg" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
+    <a id='survey_anchor' href="/surveys/<%= @session_id %>" style='font-size: 22px; text-decoration: none;'>Fill Out the Attendance Survey</a><br/>
+    Once you're done, please fill out the form to track your attendance for completion hours.<br/>
+    After you are done watching sessions you can <a href="/surveys/certificate" target="_blank">generate a certificate of attendance</a><br/>
+    to use for submitting to certifying groups, or to hang on your wall!
+    <div style='clear: left;'></div>
   </div>
 </div>
 <script src='https://www.youtube.com/iframe_api'></script>
@@ -121,7 +126,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'chat', 'video_app', 'track'].forEach(function(key) {
+['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -136,6 +141,17 @@ function onYouTubeIframeAPIReady() {
 var check = function() {
   check.checked = true;
   dom.spinner.style.display = 'inline';
+  setInterval(function() {
+    if(player && player.live) {
+      dom.spinner.style.display = 'inline';
+      doc_lookup(id, cell, function(res) {
+        setTimeout(function() {
+          dom.spinner.style.display = 'none';
+        }, 800);
+        player.live_attendees = res.live_attendees;
+      });
+    }
+  }, 5000);
   doc_lookup(id, cell, function(res) {
     setTimeout(function() {
       dom.spinner.style.display = 'none';
@@ -244,8 +260,16 @@ var check = function() {
         // if more than 80% of the way through, show the survey link
         if(duration && current && current > (duration * 0.8)) {
           dom.survey_link.style.display = 'block';
+          dom.chat.style.display = 'none';
         }
       }
+    } else if(player.obj && player.live && player.survey && player.live_attendees) {
+      dom.survey_link.style.display = 'block';
+      dom.survey_anchor.setAttribute('target', '_blank');
+      if(!dom.survey_anchor.innerHTML.match(/new tab/)) {
+        dom.survey_anchor.innerHTML = dom.survey_anchor.innerHTML + " (opens in a new tab)";
+      }
+      dom.chat.style.display = 'none';
     }
   }, 300);
 };
