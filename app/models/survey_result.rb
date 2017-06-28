@@ -23,6 +23,10 @@ class SurveyResult < ApplicationRecord
     end
   end
   
+  def json
+    @json ||= JSON.parse(self.data) rescue nil
+  end
+  
   def self.session_data(cell)
     key = ENV['API_KEY']
     letter_num = cell.match(/[A-Z]+/)[0].ord

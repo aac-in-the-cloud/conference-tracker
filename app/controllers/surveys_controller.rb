@@ -13,6 +13,23 @@ class SurveysController < ApplicationController
     render json: req.data || {}.to_json
   end
   
+  def results
+    if params['id'] && params['code'] == 'admincough'
+      id = Base64.encode64(Base64.encode64(params['id']))
+      code = Digest::MD5.hexdigest(id)[0, 10]
+      redirect_to action: 'results', id: id, code: code
+      return
+    end
+    id = Base64.decode64(Base64.decode64(params['id']))
+    @doc_id = id
+    @error = true unless params['code'] == Digest::MD5.hexdigest(params['id'])[0, 10]
+    if id == 'all'
+      @results = SurveyResult.order('id DESC')
+    else
+      @results = SurveyResult.where(code: id).order('id DESC')
+    end
+  end
+  
   def render_certificate
     response.headers.delete('X-Frame-Options')
     days = params['days'].to_i

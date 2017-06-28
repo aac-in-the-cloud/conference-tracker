@@ -1,0 +1,173 @@
+<style>
+body * {
+  box-sizing: border-box;
+}
+#survey_holder {
+  font-family: Arial;
+  width: 500px;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin: 50px calc(50vw - 250px);
+  text-align: left;
+  padding: 10px; 20px;
+}
+#survey_holder img {
+  width: 120px;
+  border-radius: 5px;
+  float: left;
+  margin: 0 10px 20px 0;
+}
+#survey_holder button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 400px;
+}
+#survey_holder button:focus {
+  background: #ccc;
+}
+
+#session_name {
+  display: block;
+  font-size: 18px;
+}
+#session_time {
+  display: block;
+  font-size: 12px;
+}
+.result {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+a {
+  color: #337ab7;
+}
+#total {
+  display: block;
+  margin-top: 5px;
+  color: #888;
+}
+#average {
+  color: #888;
+}
+.result {
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+.result .date {
+  display: block;
+  color: #888;
+  font-size: 12px;
+}
+.result .rating {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+</style>
+<div id='survey_holder'>
+  <img src='http://i.imgur.com/ndewC14.png'/>
+  <%= @id %> <%= @digest %>
+  <h1>AAC in the Cloud<br/>Survey Results</h1>
+  <div style='clear: left;'></div>
+  
+  <% if @error %>
+    <p>Bad Link</p>
+  <% else %>
+    <span id='session_name'></span>
+    <span id='session_time'></span>
+    <span id='total'>Total Reviews: <%= @results.length %></span>
+    <span id='average'>Average Score: <%= (@results.map{|r| r.json['answer_1'].to_i }.sum.to_f / @results.length.to_f).round(2) %></span>
+    <% @results.each do |result| %>
+      <div class='result'>
+        <span class='date'><%= result.created_at.strftime('%b %-m, %Y') %></span>
+        <% if @id == 'all' %>
+          <%= result.code %>
+        <% end %>
+        <span class='rating'>Rating: <%= result.json['answer_1'] %></span>
+        <% if @id == 'all' %>
+          <%= result.json['answer_3'] %>
+        <% else %>
+          <%= result.json['answer_2'] %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+<script>
+  var doc_id = "<%= ENV['DOC_ID'] %>";
+  var cell = "<%= @doc_id %>";
+  var err = function(str) {
+    document.getElementById('survey').style.display = 'none';
+    document.getElementById('session_name').innerHTML = str;
+    document.getElementById('session_time').innterText = '';
+  }
+  doc_lookup(doc_id, cell, function(res) {
+    var opts = {};
+    if(res.values && res.values[0] && res.values[0].length) {
+      opts.time = res.values[0][0];
+      opts.session = res.values[0][res.values[0].length - 1];
+    }
+    if(res.values && res.values[1] && res.values[1].length) {
+      opts.link = res.values[1][res.values[0].length - 1];
+    }
+    if(!opts.session) {
+      err("<b>" + cell + "</b> is not a valid survey code");
+    } else {
+      document.getElementById('session_name').innerText = opts.session;
+      document.getElementById('session_time').innerText = opts.time;
+      document.getElementById('survey').style.display = 'block';
+    }
+  }, function() {
+    err('Data not available,<br/>please try reloading');
+  });
+  err('Loading survey...');
+
+  document.getElementById('survey').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var rating = 0;
+    var list = document.getElementsByClassName('rating');
+    for(var idx = 0; idx < list.length; idx++) {
+      if(list[idx].checked) { rating = list[idx].value; }
+    }
+    params = {
+      code: code,
+      email: document.getElementById('email').value,
+      answer_1: rating,
+      answer_2: document.getElementById('answer_2').value,
+      answer_3: document.getElementById('answer_3').value,
+      authenticity_token: "<%= form_authenticity_token %>"
+    };
+    console.log(params);
+
+    var xhr = new XMLHttpRequest();
+    var status = function(str) {
+      document.getElementById('submit').innerHTML = str;
+    }
+    xhr.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText);
+        document.getElementById('done').style.display = 'block';
+        status('Feedback Submitted!');
+        document.getElementById('submit').disabled = true;
+        document.getElementById('submit').style.opacity = '0.7';
+      } else if(this.readyState == 4) {
+        status('Feedback Failed to Submit');
+      }
+    };
+    status('Submitting Feedback...');
+    var path = "/surveys/";
+    xhr.open('POST', path, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(params));
+  });
+</script>
+
