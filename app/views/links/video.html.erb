@@ -253,7 +253,10 @@ var check = function() {
       player.playing_seconds = (player.played_seconds || 0) + ((now - player.playing_started) / 1000);
       console.log("playing for", player.playing_seconds);
     }
-    if(player.obj && !player.live && player.survey) {
+    if(localStorage.getItem('playthrough_for_' + cell) == 'true') {
+      dom.survey_link.style.display = 'block';
+      dom.chat.style.display = 'none';
+    } else if(player.obj && !player.live && player.survey) {
       // after 20 minutes of playing, go ahead and allow the survey link
       if(player.playing_seconds > (20 * 60)) {
         var duration = player.obj && player.obj.getDuration && player.obj.getDuration();
@@ -272,9 +275,6 @@ var check = function() {
       if(!dom.survey_anchor.innerHTML.match(/new tab/)) {
         dom.survey_anchor.innerHTML = dom.survey_anchor.innerHTML + " (opens in a new tab)";
       }
-      dom.chat.style.display = 'none';
-    } else if(localStorage.getItem('playthrough_for_' + cell) == 'true') {
-      dom.survey_link.style.display = 'block';
       dom.chat.style.display = 'none';
     }
   }, 300);
