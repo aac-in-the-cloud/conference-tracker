@@ -101,6 +101,7 @@ body {
   <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
   <div id='video_holder' style='display: none;'>
     <a id='video_app' href="#" target='_blank'>Open in the YouTube App or a New Browser Tab</a>
+    <br/><span>NOTE: Participation surveys will only be available after you watch the full video <b>on this site, not YouTube</b>.</span>
     <div id='video'></div>
   </div>
   <div id='chat' style='display: none;'>
@@ -261,14 +262,19 @@ var check = function() {
         if(duration && current && current > (duration * 0.8)) {
           dom.survey_link.style.display = 'block';
           dom.chat.style.display = 'none';
+          localStorage.setItem('playthrough_for_' + cell, 'true');
         }
       }
     } else if(player.obj && player.live && player.survey && player.live_attendees) {
       dom.survey_link.style.display = 'block';
       dom.survey_anchor.setAttribute('target', '_blank');
+      localStorage.setItem('playthrough_for_' + cell, 'true');
       if(!dom.survey_anchor.innerHTML.match(/new tab/)) {
         dom.survey_anchor.innerHTML = dom.survey_anchor.innerHTML + " (opens in a new tab)";
       }
+      dom.chat.style.display = 'none';
+    } else if(localStorage.getItem('playthrough_for_' + cell) == 'true') {
+      dom.survey_link.style.display = 'block';
       dom.chat.style.display = 'none';
     }
   }, 300);
