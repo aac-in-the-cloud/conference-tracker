@@ -37,7 +37,7 @@ class SurveyResult < ApplicationRecord
     start_col = 'A'
     end_col = letter_num.chr
     
-    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}", expires_in: 60.seconds) do
+    body = Rails.cache.fetch("cell/#{ENV['DOC_ID']}", expires_in: 30.minutes) do
       url = "https://sheets.googleapis.com/v4/spreadsheets/#{ENV['DOC_ID']}/values/A1:D100?key=#{key}"
       res = Typhoeus.get(url)
       res.body
