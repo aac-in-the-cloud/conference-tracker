@@ -86,7 +86,7 @@ class SurveysController < ApplicationController
         columns = 2
         width = full_width / 2
         left -= 10
-        if sessions.length > 24
+        if sessions.length > 20
           height = 10
         end
       end
