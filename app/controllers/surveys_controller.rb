@@ -92,7 +92,7 @@ class SurveysController < ApplicationController
       end
       sessions.each do |str, idx|
 #         str =  "this is some really long text that should get wrapped and truncated and stuff because that's just the way it is sometime, you know? you win some, you lose some, but that's just the way it is."
-        pdf.text_box "- " + str, :at => [left, top], :width => width, :height => height, :size => height * 0.75, :overflow => :shrink_to_fit
+        pdf.text_box "• " + str, :at => [left, top], :width => width, :height => height, :size => height * 0.75, :overflow => :shrink_to_fit
         top -= height
         if sessions.length <= 6
           top -= 10
