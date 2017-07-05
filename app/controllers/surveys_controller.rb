@@ -26,6 +26,9 @@ class SurveysController < ApplicationController
     if id == 'all'
       @results = SurveyResult.order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
       @shown_results = @results.select{|r| r.json['answer_1'].to_i > 0 && r.json['answer_3'] && r.json['answer_3'].length > 0 }
+      @counts = {}
+      @results.group_by(&:email_hash).each{|hash, list| @counts[list.length] ||= 0; @counts[list.length] += 1 }
+      @counts = @counts.to_a.sort_by(&:first).reverse
     else
       @results = SurveyResult.where(code: id).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
       @shown_results = @results
