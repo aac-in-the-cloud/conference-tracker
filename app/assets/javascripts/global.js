@@ -1,4 +1,5 @@
 var doc_lookup = function(doc_id, cell, success, error) {
+  if(cell == 'all') { return error(); }
   cell = cell.replace(/A17$/, '');
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
