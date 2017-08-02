@@ -38,6 +38,8 @@ class SurveysController < ApplicationController
   def render_certificate
     response.headers.delete('X-Frame-Options')
     days = params['days'].to_i
+    days = 60 if !days || days == 0
+
     start_date = (Date.today - days)
     end_date = Date.today
     if params['name'] && params['email'] && params['days']

@@ -51,7 +51,7 @@ body * {
   <img src='http://i.imgur.com/ndewC14.png'/>
   <h1>AAC in the Cloud<br/>Attendance Credits</h1>
   <div style='clear: left;'></div>
-  <p>AAC in the Cloud attendance certificates are not certified by any organization, but you can submit them for maintenance or activity hours to your various organizations. Please enter the following information to generate a certificate of attendance based on activity in the last 30 days:
+  <p>AAC in the Cloud attendance certificates are not certified by any organization, but you can submit them for maintenance or activity hours to your various organizations. Please enter the following information to generate a certificate of attendance based on activity in the last 60 days:
   </p>
   <form action='/surveys/certificate' method='POST'>
     <div class='item'>
@@ -62,7 +62,11 @@ body * {
       <span>Your Email:</span>
       <input id='email' type='text' name='email' placeholder='Email from Surveys' />
     </div>
-    <input type='hidden' value='30' name='days'/>
+    <div class='item'>
+      <span>Include Sessions Viewed in the Last:</span>
+      <input id='days' type='text' style='width: 150px;' name='days' placeholder='# of Days to Look Back for Survyes' value='60' />
+      <span style='font-size: 30px; display: inline;'>Days</span>
+    </div>
     <input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>' />
     <div class='item'>
       <button id='submit' type='submit'>Generate Certificate</button>
