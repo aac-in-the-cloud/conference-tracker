@@ -8,12 +8,13 @@ class ConferenceSession < ApplicationRecord
     if data['session_name']
       data['survey_link'] ||= "#{@@host}/surveys/#{code}"
     end
+    self.data = data.to_json
     true
   end
 
   def video_link
     return nil unless self.code
-    "/videos/#{Base64.encode64(Base64.encode64(self.code))}"
+    "/videos/#{URI.encode(Base64.encode64(Base64.encode64(self.code)))}"
   end
   
   def survey_link
@@ -37,7 +38,7 @@ class ConferenceSession < ApplicationRecord
         data[attr] = params[attr]
       end
     end
-    self.data = data
+    self.data = data.to_json
     self.save
   end
 
@@ -49,7 +50,7 @@ class ConferenceSession < ApplicationRecord
     data = JSON.parse(self.data) rescue nil
     data ||= {}
     data['resources'] = val
-    self.data = data
+    self.data = data.to_json
     val
   end
 end
