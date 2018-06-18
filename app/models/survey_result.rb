@@ -29,7 +29,9 @@ class SurveyResult < ApplicationRecord
   
   def self.session_data(cell)
     key = ENV['API_KEY']
-    session = ConferenceSession.find_or_create_by(code: cell)
+    code = cell
+    code += "A17" unless code.match(/\w+\d+\w+\d+/)
+    session = ConferenceSession.find_or_create_by(code: code)
     if !session.resources || (session.updated_at < 1.hour.ago && !session.resources['live_attendees'])
       letter_num = cell.match(/[A-Z]+/)[0].ord
       col_idx = letter_num - 'A'.ord
@@ -63,7 +65,7 @@ class SurveyResult < ApplicationRecord
       res[:date] = res[:values][0][0] if res[:values][0][0]
       10.times do |i|
         yr = 2017 + i
-        res[:date] = res[:date].sub(/,/, "#{yr},") if cell.match(/#{yr[2, 2]}$/) && !res[:date].match(/#{yr}/)
+        res[:date] = res[:date].sub(/,/, "#{yr},") if res[:date] && code.match(/#{yr[2, 2]}$/) && !res[:date].match(/#{yr}/)
       end
       res[:timestamp] = Time.parse(res[:date]).iso8601 if res[:date]
       res[:session_name] = res[:values][0][1] if res[:values][0]

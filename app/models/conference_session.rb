@@ -2,7 +2,7 @@ class ConferenceSession < ApplicationRecord
   before_save :generate_defaults
 
   def generate_defaults
-#    self.conference_code ||= self.code.match(/^\w+\d+(\w+\d+)$/)[1] if self.code
+    self.conference_code ||= self.code.match(/^\w+\d+(\w+\d+)$/)[1] if self.code
     data = JSON.parse(self.data) rescue nil
     data ||= {}
     if data['session_name']

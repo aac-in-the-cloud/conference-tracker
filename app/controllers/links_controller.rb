@@ -9,7 +9,6 @@ class LinksController < ApplicationController
   
   def data
     json = SurveyResult.session_data(params['cell'])
-
     
     render text: json.to_json
   end
