@@ -106,6 +106,15 @@ a {
       <span id='session_time'></span>
     <% end %>
     <span id='total'>Total Reviews: <%= @results.length %></span>
+    <% if @data && @data['live_attendees'] %>
+      <div id='live'>Live Attendees: <%= @data['live_attendees'] %></div>
+    <% end %>
+    <div id='views_holder' style='display: none;'>
+      Video Views: <span id='views'></span>
+    </div>
+    <div id='likes_holder' style='display: none;'>
+      Video Likes: <span id='liked'></span>
+    </div>
     <span id='average'>Average Score: <%= (@results.map{|r| r.json['answer_1'].to_i }.sum.to_f / @results.length.to_f).round(2) %> (out of 5.0)</span>
     <% if @doc_id == 'all' %>
       <table id='stats'>
@@ -169,6 +178,32 @@ a {
     err('Data not available,<br/>please try reloading');
   });
   err('Loading survey...');
+
+  var video = "<%= @data['video_link'] %>";
+  var match = video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
+  var video_id = null;
+  if(match && match[1]) {
+    video_id = match[1];
+  }
+  if(video_id) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText);
+        if(res && res.statistics && res.statistics.viewCount) {
+          document.getElementById('views').innerText = res.statistics.viewCount;
+          document.getElementById('views_holder').style.display = 'block';
+          document.getElementById('likes').innerText = res.statistics.likeCount;
+          document.getElementById('likes_holder').style.display = 'block';
+        }
+        console.log("video data", res);
+      } else if(this.readyState == 4) {
+      }
+    };
+    var path = "/data/videos/" + video_id;
+    xhr.open('GET', path, true);
+    xhr.send();
+  }
 
   document.getElementById('survey').addEventListener('submit', function(event) {
     event.preventDefault();

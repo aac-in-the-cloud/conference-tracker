@@ -21,6 +21,8 @@ class SurveysController < ApplicationController
       return
     end
     id = Base64.decode64(Base64.decode64(params['id']))
+    @data = SurveyResult.session_data(id)
+    
     @doc_id = id
     @error = true unless params['code'] == Digest::MD5.hexdigest(params['id'])[0, 10]
     if id == 'all'

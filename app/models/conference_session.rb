@@ -14,7 +14,7 @@ class ConferenceSession < ApplicationRecord
 
   def video_link
     return nil unless self.code
-    "/videos/#{URI.encode(Base64.encode64(Base64.encode64(self.code)))}"
+    "/videos/#{URI.encode(Base64.urlsafe_encode64(Base64.urlsafe_encode64(self.code)))}"
   end
   
   def survey_link
