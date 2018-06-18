@@ -179,44 +179,5 @@ a {
     xhr.open('GET', path, true);
     xhr.send();
   }
-
-  document.getElementById('survey').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var rating = 0;
-    var list = document.getElementsByClassName('rating');
-    for(var idx = 0; idx < list.length; idx++) {
-      if(list[idx].checked) { rating = list[idx].value; }
-    }
-    params = {
-      code: code,
-      email: document.getElementById('email').value,
-      answer_1: rating,
-      answer_2: document.getElementById('answer_2').value,
-      answer_3: document.getElementById('answer_3').value,
-      authenticity_token: "<%= form_authenticity_token %>"
-    };
-    console.log(params);
-
-    var xhr = new XMLHttpRequest();
-    var status = function(str) {
-      document.getElementById('submit').innerHTML = str;
-    }
-    xhr.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200) {
-        res = JSON.parse(this.responseText);
-        document.getElementById('done').style.display = 'block';
-        status('Feedback Submitted!');
-        document.getElementById('submit').disabled = true;
-        document.getElementById('submit').style.opacity = '0.7';
-      } else if(this.readyState == 4) {
-        status('Feedback Failed to Submit');
-      }
-    };
-    status('Submitting Feedback...');
-    var path = "/surveys/";
-    xhr.open('POST', path, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(JSON.stringify(params));
-  });
 </script>
 
