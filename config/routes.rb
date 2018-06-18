@@ -11,4 +11,5 @@ Rails.application.routes.draw do
   get '/surveys/:id' => 'surveys#show'
   post '/surveys/' => 'surveys#create'
   get '/surveys/results/:id/:code' => 'surveys#results'
+  get '/conferences/:id' => 'conferences#show'
 end

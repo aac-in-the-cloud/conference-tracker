@@ -14,11 +14,22 @@ class ConferenceSession < ApplicationRecord
 
   def video_link
     return nil unless self.code
+    data = JSON.parse(self.data) rescue nil
+    return nil if data && data['link_disabled']
     "/videos/#{URI.encode(Base64.urlsafe_encode64(Base64.urlsafe_encode64(self.code)))}"
   end
   
   def survey_link
     "/surveys/#{self.code}"
+  end
+
+  def slack_text
+    data = JSON.parse(self.data) rescue nil
+    data && data['slack_text']
+  end
+
+  def year
+    "20#{self.conference_code.match(/\d+/)}"
   end
 
   def self.set_host(host)
@@ -27,6 +38,11 @@ class ConferenceSession < ApplicationRecord
 
   def self.default_host
     @@host
+  end
+
+  def self.conference_name(code)
+    yr = code.match(/\d+/)[0]
+    return "AAC in the Cloud 20#{yr} Conference"
   end
 
   def process(params)
@@ -43,7 +59,9 @@ class ConferenceSession < ApplicationRecord
   end
 
   def resources
-    JSON.parse(self.data)['resources'] rescue nil
+    res = JSON.parse(self.data)['resources'] rescue nil
+    res = nil if res && !res['session_name']
+    res
   end
 
   def resources=(val)

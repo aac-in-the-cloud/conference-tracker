@@ -65,7 +65,7 @@ class SurveyResult < ApplicationRecord
       res[:date] = res[:values][0][0] if res[:values][0][0]
       10.times do |i|
         yr = (2017 + i).to_s
-        res[:date] = res[:date].sub(/,/, "#{yr},") if res[:date] && code.match(/#{yr[2, 2]}$/) && !res[:date].match(/#{yr}/)
+        res[:date] = res[:date].sub(/,/, " #{yr},") if res[:date] && code.match(/#{yr[2, 2]}$/) && !res[:date].match(/#{yr}/)
       end
       res[:timestamp] = Time.parse(res[:date]).iso8601 if res[:date]
       res[:session_name] = res[:values][0][1] if res[:values][0]
@@ -85,6 +85,7 @@ class SurveyResult < ApplicationRecord
     res = session.resources || {}
     res['survey_link'] = session.survey_link
     res['video_link'] = session.video_link
+    res['year'] = session.year
     res
   end
 end

@@ -16,7 +16,7 @@ class LinksController < ApplicationController
   def proxy_doc
     response.headers.delete('X-Frame-Options')
     response.headers['Cache-Control'] = 'public'
-    change_target = params['noblank'] != '1'
+    change_target = params['no_blank'] != '1'
     text = Rails.cache.fetch("doc/#{params['id']}/#{change_target}", expires_in: 30.minutes) do
       url = "https://docs.google.com/document/d/#{params['id']}/pub?embedded=true"
       req = Typhoeus.get(url)
@@ -34,6 +34,8 @@ class LinksController < ApplicationController
   def video
     @session_id = Base64.decode64(Base64.decode64(params['id']))
     @session_id += "A17" unless @session_id.match(/^\w+\d+\w+\d+$/)
+    @conf_id = @session_id.match(/\w+\d+(\w+\d+)/)[1]
+    @year = "20#{@conf_id.match(/\d+/)[0]}"
     response.headers.delete('X-Frame-Options')
   end
   

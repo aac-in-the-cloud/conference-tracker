@@ -6,6 +6,7 @@ class SurveysController < ApplicationController
   def show
     response.headers.delete('X-Frame-Options')
     @doc_id = params['id']
+    @conf_id = @doc_id.match(/\w+\d+(\w+\d+)/)[1]
   end
   
   def create
