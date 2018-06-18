@@ -82,7 +82,7 @@ class SurveyResult < ApplicationRecord
       session.resources = res
       session.save!
     end
-    res = session.resources
+    res = session.resources || {}
     res['survey_link'] = session.survey_link
     res['video_link'] = session.video_link
     res
