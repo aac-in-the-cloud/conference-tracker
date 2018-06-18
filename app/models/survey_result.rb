@@ -64,7 +64,7 @@ class SurveyResult < ApplicationRecord
       end
       res[:date] = res[:values][0][0] if res[:values][0][0]
       10.times do |i|
-        yr = 2017 + i
+        yr = (2017 + i).to_s
         res[:date] = res[:date].sub(/,/, "#{yr},") if res[:date] && code.match(/#{yr[2, 2]}$/) && !res[:date].match(/#{yr}/)
       end
       res[:timestamp] = Time.parse(res[:date]).iso8601 if res[:date]
