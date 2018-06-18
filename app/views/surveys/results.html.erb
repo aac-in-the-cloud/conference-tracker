@@ -52,7 +52,7 @@ a {
   margin-top: 5px;
   color: #888;
 }
-#average {
+#average, #live, #views_holder, #likes_holder {
   color: #888;
 }
 .result {
@@ -153,31 +153,6 @@ a {
 <script>
   var doc_id = "<%= ENV['DOC_ID'] %>";
   var cell = "<%= @doc_id %>";
-  var err = function(str) {
-    document.getElementById('survey').style.display = 'none';
-    document.getElementById('session_name').innerHTML = str;
-    document.getElementById('session_time').innterText = '';
-  }
-  doc_lookup(doc_id, cell, function(res) {
-    var opts = {};
-    if(res.values && res.values[0] && res.values[0].length) {
-      opts.time = res.values[0][0];
-      opts.session = res.values[0][res.values[0].length - 1];
-    }
-    if(res.values && res.values[1] && res.values[1].length) {
-      opts.link = res.values[1][res.values[0].length - 1];
-    }
-    if(!opts.session) {
-      err("<b>" + cell + "</b> is not a valid survey code");
-    } else {
-      document.getElementById('session_name').innerText = opts.session;
-      document.getElementById('session_time').innerText = opts.time;
-      document.getElementById('survey').style.display = 'block';
-    }
-  }, function() {
-    err('Data not available,<br/>please try reloading');
-  });
-  err('Loading survey...');
 
   var video = "<%= @data['video_link'] %>";
   var match = video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
