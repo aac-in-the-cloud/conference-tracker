@@ -110,10 +110,10 @@ a {
       <div id='live'>Live Attendees: <%= @data['live_attendees'] %></div>
     <% end %>
     <div id='views_holder' style='display: none;'>
-      Video Views: <span id='views'></span>
+      Total Views: <span id='views'></span>
     </div>
     <div id='likes_holder' style='display: none;'>
-      Video Likes: <span id='liked'></span>
+      Video Likes: <span id='likes'></span>
     </div>
     <span id='average'>Average Score: <%= (@results.map{|r| r.json['answer_1'].to_i }.sum.to_f / @results.length.to_f).round(2) %> (out of 5.0)</span>
     <% if @doc_id == 'all' %>
