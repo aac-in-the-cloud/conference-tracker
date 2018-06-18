@@ -154,7 +154,7 @@ a {
   var doc_id = "<%= ENV['DOC_ID'] %>";
   var cell = "<%= @doc_id %>";
 
-  var video = "<%= @data['video_link'] %>";
+  var video = "<%= @data['youtube_link'] %>";
   var match = video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
   var video_id = null;
   if(match && match[1]) {
