@@ -9,6 +9,10 @@ class LinksController < ApplicationController
 
   def show
     response.headers.delete('X-Frame-Options')
+    @session_id = params['cell']
+    @session_id += "A17" unless @session_id.match(/^\w+\d+\w+\d+$/)
+    @conf_id = @session_id.match(/\w+\d+(\w+\d+)/)[1]
+    @year = "20#{@conf_id.match(/\d+/)[0]}"
   end
   
   def data

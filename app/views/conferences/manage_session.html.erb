@@ -1,1 +1,169 @@
-SESSION STUFF!
+<style>
+body * {
+  box-sizing: border-box;
+}
+body {
+  background: #000;
+}
+#header {
+  margin: 20px auto;
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px 20px;
+  min-height: 200px;
+  max-width: 800px;
+  background: #fff;
+}
+#label {
+  font-size: 20px;
+  font-family: Arial;
+}
+#header img.logo {
+  width: 120px;
+  border-radius: 5px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 20px;
+  width: 350px;
+}
+table#session {
+  border-collapse: collapse;
+}
+table#session td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+table#session td:last-child {
+  text-align: left;
+}
+table#session button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 355px;  
+}
+input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 20px;
+  width: 350px;
+}
+table#session {
+  border-collapse: collapse;
+  margin-top: 30px;
+}
+table#session td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+table#session td:last-child {
+  text-align: left;
+}
+table#session button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 355px;  
+}
+</style>
+<div id='header'>
+  <img class='logo' src="/logo-<%= @session.year %>.png" />
+  AAC in the Cloud Presentation Session
+  <div style='margin-bottom: 10px;'>
+    <a href='/conferences/<%= @session.conference_code %>?no_blank=1'>Back to the Session List</a>
+  </div>
+  <div id='label'><a href="<%= @session.video_link %>"><%= @session.resources['session_name'] %></a></div>
+  <div id='time'><%= @session.resources['date'] %></div>
+  <div style='clear: left;'></div>
+
+  <table id='session'>
+    <tbody>
+      <% unless params['simple'] %>
+        <tr>
+          <td>Name:</td>
+          <td><input type='text' id='name'/></td>
+        </tr><tr>
+          <td>Time:</td>
+          <td><input type='text' id='date'/></td>
+        </tr><tr>
+          <td>Desription:</td>
+          <td><input type='text' id='description'/></td>
+        </tr><tr>
+          <td>YouTube Link:</td>
+          <td><input type='text' id='url'/></td>
+        </tr><tr>
+          <td>Live Attendees:</td>
+          <td><input type='text' id='attendees'/></td>
+        </tr>
+      <% end %>
+      <tr>
+        <td>Hangouts Link:</td>
+        <td><input type='text' id='hangout'/></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><button id='update_session'>Update Session</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<script>
+var resources = <%= @session.resources.to_json.html_safe %>;
+if(document.getElementById('name')) {
+  document.getElementById('name').value = resources.session_name || '';
+  document.getElementById('date').value = resources.date || '';
+  document.getElementById('description').value = resources.description || '';
+  document.getElementById('url').value = resources.youtube_link || '';
+  document.getElementById('attendees').value = resources.live_attendees || '';
+}
+document.getElementById('hangout').value = resources.hangouts_link || '';
+document.getElementById('update_session').addEventListener('click', function(event) {
+  event.preventDefault();
+
+  var opts = {
+    code: "<%= @session.code %>",
+    conference_code: "<%= @session.conference_code %>",
+    token: "<%= @token %>",
+    hangout: document.getElementById('hangout').value,
+    authenticity_token: "<%= form_authenticity_token %>"
+  };
+  if(document.getElementById('name')) {
+    opts.name = document.getElementById('name').value;
+    opts.time = document.getElementById('date').value;
+    opts.description = document.getElementById('description').value;
+    opts.url = document.getElementById('url').value;
+    opts.live_attendees = document.getElementById('attendees').value;
+  }
+
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200) {
+      res = JSON.parse(this.responseText);
+      location.reload();
+    } else if(this.readyState == 4) {
+      alert('Session Failed to Submit');
+    }
+  };
+  var path = "/conferences/sessions";
+  xhr.open('POST', path, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify(opts));
+});
+</script>

@@ -58,7 +58,7 @@
 }
 </style>
 <div id='header'>
-  <img class='logo' src="/logo.png" />
+  <img class='logo' src="/logo-<%= @year %>.png" />
   <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
   AAC in the Cloud Presentation Session
   <div id='label'>Loading Session Information...</div>
@@ -88,13 +88,18 @@ var check = function() {
       dom.spinner.style.display = 'none';
     }, 800);
     var opts = {};
+    opts.time = res.date;
+    opts.session = res.session_name;
+    opts.link = res.hangouts_link;
     if(res.values && res.values[0] && res.values[0].length) {
       opts.time = res.values[0][0];
       opts.session = res.values[0][res.values[0].length - 1];
     }
     if(res.values && res.values[1] && res.values[1].length) {
-      dom.loaded = true;
       opts.link = res.values[1][res.values[0].length - 1];
+    }
+    if(opts.link) {
+      dom.loaded = true;
     }
     console.log(res);
     console.log(opts);

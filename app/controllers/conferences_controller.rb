@@ -60,6 +60,7 @@ class ConferencesController < ApplicationController
       render text: "Invalid Session"
       return
     end
+    @token = token;
   end
 
   def add_session
@@ -72,18 +73,46 @@ class ConferencesController < ApplicationController
       render json: {error: 'no conference found'}, status: 400
       return
     end
+    conference_json = JSON.parse(conference.data) rescue nil
+    conference_json ||= {}
+    if conference_json['closed']
+      render json: {error: 'conference closed'}, status: 400
+      return
+    end
     session = ConferenceSession.new
-    data = {
-      date: params['time'],
-      session_name: params['name'],
-      description: params['description'],
-      youtube_link: params['url']
-    }
-    data[:timestamp] = Time.parse(params['time']).iso8601
-    existing = ConferenceSession.where(conference_code: conference.code).select{|s| s.resources && s.resources['timestamp'] == data[:timestamp] }
-    total = ConferenceSession.where(conference_code: conference.code).count
-    session.code = ('A'.ord + existing.length).chr + (total + 1).to_s + conference.code
-    session.conference_code = conference.code
+    if params['code']
+      session = ConferenceSession.find_by(code: params['code'])
+      if !session
+        render json: {error: 'session not found'}, status: 400
+        return
+      elsif session.token != params['token']
+        render json: {error: 'not authorized'}, status: 400
+        return
+      end
+    end
+    data = JSON.parse(session.data) rescue nil
+    data ||= {}
+    data['date'] = params['time'] if !params['time'].blank?
+    data['session_name'] = params['name'] if !params['name'].blank?
+    data['description'] = params['description'] if !params['description'].blank?
+    data['youtube_link'] = params['url'] if !params['url'].blank?
+    data['hangouts_link'] = params['hangout'] if !params['hangout'].blank?
+    data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
+
+    date = data['date']
+    code = conference.code
+    10.times do |i|
+      yr = (2017 + i).to_s
+      date = date.sub(/,/, " #{yr},") if date && code.match(/#{yr[2, 2]}$/) && !date.match(/#{yr}/)
+    end
+    data['timestamp'] = Time.parse(data['date']).iso8601
+
+    if !session.code
+      existing = ConferenceSession.where(conference_code: conference.code).select{|s| s.resources && s.resources['timestamp'] == data[:timestamp] }
+      total = ConferenceSession.where(conference_code: conference.code).count
+      session.code = ('A'.ord + existing.length).chr + (total + 1).to_s + conference.code
+      session.conference_code = conference.code
+    end
     session.resources = data
     session.save
 
