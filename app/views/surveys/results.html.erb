@@ -102,8 +102,8 @@ a {
     <% if @doc_id == 'all' %>
       <span id='session_name'>Conference feedback from all sessions</span>
     <% else %>
-      <span id='session_name'></span>
-      <span id='session_time'></span>
+      <span id='session_name'><%= @data['session_name'] %></span>
+      <span id='session_time'><%= @data['date'] %></span>
     <% end %>
     <span id='total'>Total Reviews: <%= @results.length %></span>
     <% if @data && @data['live_attendees'] %>
