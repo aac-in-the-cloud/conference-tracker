@@ -29,7 +29,7 @@ class ConferenceSession < ApplicationRecord
   end
 
   def manage_link
-    "/conference/sessions/#{self.code}:#{self.token}"
+    "/conferences/sessions/#{self.code}:#{self.token}"
   end
 
   def slack_text
