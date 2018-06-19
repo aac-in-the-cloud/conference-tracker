@@ -165,31 +165,33 @@ table#session button {
   </table>
 <% end %>
 <script>
-document.getElementById('add_session').addEventListener('click', function(event) {
-  event.preventDefault();
-  var opts = {
-    name: document.getElementById('name').value,
-    time: document.getElementById('time').value,
-    url: document.getElementById('url').value,
-    conference_code: "<%= @conference[:code] %>",
-    authenticity_token: "<%= form_authenticity_token %>"
-    };
+if(document.getElementById('add_session')) {
+  document.getElementById('add_session').addEventListener('click', function(event) {
+    event.preventDefault();
+    var opts = {
+      name: document.getElementById('name').value,
+      time: document.getElementById('time').value,
+      url: document.getElementById('url').value,
+      conference_code: "<%= @conference[:code] %>",
+      authenticity_token: "<%= form_authenticity_token %>"
+      };
 
-  var xhr = new XMLHttpRequest();
-  var status = function(str) {
-    document.getElementById('submit').innerHTML = str;
-  }
-  xhr.onreadystatechange = function() {
-    if(this.readyState == 4 && this.status == 200) {
-      res = JSON.parse(this.responseText);
-      location.reload();
-    } else if(this.readyState == 4) {
-      alert('Session Failed to Submit');
+    var xhr = new XMLHttpRequest();
+    var status = function(str) {
+      document.getElementById('submit').innerHTML = str;
     }
-  };
-  var path = "/conferences/sessions";
-  xhr.open('POST', path, true);
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.send(JSON.stringify(opts));
-});
+    xhr.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText);
+        location.reload();
+      } else if(this.readyState == 4) {
+        alert('Session Failed to Submit');
+      }
+    };
+    var path = "/conferences/sessions";
+    xhr.open('POST', path, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(opts));
+  });
+}
 </script>
