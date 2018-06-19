@@ -1,0 +1,15 @@
+<div style='margin: 50px auto; min-height: 100vh; max-width: 500px;'>
+  <h1>Available Conferences</h1>
+  <% @conferences.each do |conf| %>
+    <div style='font-size: 20px; margin-bottom: 10px;'>
+      <a href="/conferences/<%= conf.code %>"><%= conf.name %></a>
+    </div>
+  <% end %>
+</div>
+<div>
+  <% if @authenticated %>
+    <a href="/logout">Logout</a>
+  <% else %>
+    <a href="/login">Login</a>
+  <% end %>
+</div>

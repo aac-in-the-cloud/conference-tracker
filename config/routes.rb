@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  root 'links#root'
   get '/doc/:id' => 'links#proxy_doc'
   get '/links/:cell' => 'links#show'
   get '/videos/:id' => 'links#video'

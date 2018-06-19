@@ -2,12 +2,16 @@ class ConferencesController < ApplicationController
   def show
     response.headers.except! 'X-Frame-Options'
     sessions = ConferenceSession.where(:conference_code => params['id'])
-    if sessions.count == 0
+    conference = Conference.find_by(code: params['id'])
+    if !conference
       render text: "Invalid Conference"
+      return
+    elsif sessions.count == 0
+      render text: "No Sessions"
       return
     end
     @conference = {
-      name: ConferenceSession.conference_name(params['id']),
+      name: conference.name,
       year: "20#{params['id'].match(/\d+/)[0]}",
       tracks: [],
       days: []

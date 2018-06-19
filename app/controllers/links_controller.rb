@@ -3,6 +3,10 @@ require 'nokogiri'
 require 'json'
 
 class LinksController < ApplicationController
+  def root
+    @conferences = Conference.all.order('code')
+  end
+
   def show
     response.headers.delete('X-Frame-Options')
   end
