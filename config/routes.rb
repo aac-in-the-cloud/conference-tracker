@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get '/logout' => 'conferences#logout'
   get '/doc/:id' => 'links#proxy_doc'
   get '/links/:cell' => 'links#show'
+  get '/chat' => 'links#chat'
   get '/videos/:id' => 'links#video'
   get '/data/videos/:id' => 'links#video_data'
   get '/data/:doc_id/:cell' => 'links#data'

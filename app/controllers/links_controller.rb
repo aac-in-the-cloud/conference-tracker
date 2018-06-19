@@ -7,6 +7,10 @@ class LinksController < ApplicationController
     @conferences = Conference.all.order('code')
   end
 
+  def chat
+    redirect_to 'http://aacconference.com/chat'
+  end
+
   def show
     cell, token = params['cell'].split(/:/)
     session = ConferenceSession.find_by_code(cell)
