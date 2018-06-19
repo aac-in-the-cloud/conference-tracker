@@ -94,6 +94,14 @@ table#session button {
   <div style='clear: left;'></div>
   <table id='session'>
     <tbody>
+      <% unless params['simple'] %>
+        <tr>
+          <td></td>
+          <td style='padding-bottom: 20px;'>
+            <a href="?simple=1">Simplified Session Management</a>
+          </td>
+        </tr>
+      <% end %>
       <tr>
         <td></td>
         <td style='padding-bottom: 5px;'>
