@@ -158,27 +158,32 @@ var check = function() {
       dom.spinner.style.display = 'none';
     }, 800);
     var opts = {};
+    opts.time = res.date;
+    opts.session = res.session_name;
+    opts.link = res.hangouts_link;
+    opts.video = res.youtube_link;
     if(res.values && res.values[0] && res.values[0].length) {
       opts.time = res.values[0][0];
       opts.session = res.values[0][res.values[0].length - 1];
     }
     if(res.values && res.values[1] && res.values[1].length) {
-      dom.loaded = true;
       opts.link = res.values[1][res.values[0].length - 1];
     }
+    if(opts.link) { dom.loaded = true; }
     if(res.values && res.values[3] && res.values[3].length) {
       opts.video = res.values[3][res.values[0].length - 1];
-      var match = opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
-      if(match && match[1]) {
-        opts.video_id = match[1];
-      }
-      
-//      https://www.youtube.com/embed/B2mtuhVa0WA?rel=0
     }
+    var match = opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
+    if(match && match[1]) {
+      opts.video_id = match[1];
+    }
+    
     if(res.values && res.values[2] && res.values[2].length) {
       if(res.values[2][res.values[0].length - 1]) {
         player.survey = true;
       }
+    } else if(res.survey_link) {
+      player.survey = true;
     }
     console.log(opts);
     dom.label.classList.remove('error');
