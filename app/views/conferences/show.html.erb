@@ -8,58 +8,87 @@ h1 {
   margin-bottom: 5px;
   font-family: Arial;
 }
-table {
+table#conference {
   border-collapse: collapse;
   width: 100%;
 }
-table td {
+table#conference td {
   border: 1px solid #ccc;
   text-align: center;
   padding: 5px 10px;
 }
-table tr.tracks td {
+table#conference tr.tracks td {
   background: #eee;
   font-weight: bold;
   color: #004;
   font-family: Arial;
 }
-table tbody tr.day { 
+table#conference tbody tr.day { 
   background: #ffc;
 }
-table tbody td.day {
+table#conference tbody td.day {
   font-size: 20px;
   color: rgb(11, 83, 148);
   font-weight: bold;
   padding: 15px 20px;
 }
-table tbody td.column {
+table#conference tbody td.column {
   font-size: 14px;
 }
-table tbody td.column_0 a {
+table#conference tbody td.column_0 a {
   color: rgb(17, 85, 204);
   text-decoration: none;
 }
-table tbody td.column_1 a {
+table#conference tbody td.column_1 a {
   color: rgb(56, 118, 29);
   text-decoration: none;
 }
-table tbody td.column_2 a {
+table#conference tbody td.column_2 a {
   color: rgb(53, 28, 117);
   text-decoration: none;
 }
-table tbody td.column.special {
+table#conference tbody td.column.special {
   padding: 15px 20px;
   font-size: 20px;
   font-family: Arial;
   color: rgb(152, 0, 0);
 }
-table tbody td.column.special a {
+table#conference tbody td.column.special a {
   color: rgb(152, 0, 0);
   text-decoration: none;
 }
-table tbody td a.slack {
+table#conference tbody td a.slack {
   color: #rgb(80, 80, 0);
 }
+input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 20px;
+  width: 350px;
+}
+table#session {
+  border-collapse: collapse;
+}
+table#session td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+table#session td:last-child {
+  text-align: left;
+}
+table#session button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 355px;  
+}
+
 </style>
 <div id='content'>
   <h1><%= @conference[:name] %></h1>
@@ -71,7 +100,7 @@ table tbody td a.slack {
   <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' />
   <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px;' src='/sponsored.png' />
   <div style='clear: left;'></div>
-  <table>
+  <table id='conference'>
     <tbody>
         <% @conference[:days].each_with_index do |day, idx| %>
           <tr class='day'>
@@ -111,3 +140,53 @@ table tbody td a.slack {
     </tbody>
   </table>
 </div>
+<% if @authenticated && !@conference[:closed] %>
+  <h3>Add a Session</h3>
+  <table id='session'>
+    <tbody>
+      <tr>
+        <td>Name:</td>
+        <td><input type="text" id="name"/></td>
+      </tr><tr>
+        <td>Time:</td>
+        <td><input type="text" id="time"/></td>
+      </tr><tr>
+        <td>YouTube URL:</td>
+        <td><input type="text" id="url"/></td>
+      </tr><tr>
+        <td></td>
+        <td><button id="add_session">Add Session</button></td>
+      </tr>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
+<script>
+document.getElementById('add_session').addEventListener('click', function(event) {
+  event.preventDefault();
+  var opts = {
+    name: document.getElementById('name').value,
+    time: document.getElementById('time').value,
+    url: document.getElementById('url').value,
+    conference_code: "<%= @conference[:code] %>",
+    authenticity_token: "<%= form_authenticity_token %>"
+    };
+
+  var xhr = new XMLHttpRequest();
+  var status = function(str) {
+    document.getElementById('submit').innerHTML = str;
+  }
+  xhr.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200) {
+      res = JSON.parse(this.responseText);
+      location.reload();
+    } else if(this.readyState == 4) {
+      alert('Session Failed to Submit');
+    }
+  };
+  var path = "/conferences/sessions";
+  xhr.open('POST', path, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify(opts));
+});
+</script>

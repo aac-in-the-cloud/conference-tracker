@@ -7,9 +7,13 @@ class ConferencesController < ApplicationController
       render text: "Invalid Conference"
       return
     end
+    conference_json = JSON.parse(conference.data) rescue nil
+    conference_json ||= {}
     @conference = {
       name: conference.name,
+      code: conference.code,
       year: "20#{params['id'].match(/\d+/)[0]}",
+      closed: !!conference_json['closed'],
       tracks: [],
       days: []
     }
@@ -47,6 +51,34 @@ class ConferencesController < ApplicationController
     max_tracks.times do |i|
       @conference[:tracks] << "Track #{i + 1}"
     end
+  end
+
+  def add_session
+    if !@authenticated
+      render json: {error: 'not authenticated'}, status: 400
+      return
+    end
+    conference = Conference.find_by(code: params['conference_code'])
+    if !conference
+      render json: {error: 'no conference found'}, status: 400
+      return
+    end
+    session = ConferenceSession.new
+    data = {
+      date: params['time'],
+      session_name: params['name'],
+      description: params['description'],
+      youtube_link: params['url']
+    }
+    data[:timestamp] = Time.parse(params['time']).iso8601
+    existing = ConferenceSession.where(conference_code: conference.code).select{|s| s.resources && s.resources['timestamp'] == data[:timestamp] }
+    total = ConferenceSession.where(conference_code: conference.code).count
+    session.code = ('A'.ord + existing.length).chr + (total + 1).to_s + conference.code
+    session.conference_code = conference.code
+    session.resources = data
+    session.save
+
+    render json: {code: session.code}
   end
 
   def login; end
