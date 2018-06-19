@@ -51,11 +51,14 @@ table#conference tbody td.column.special {
   padding: 15px 20px;
   font-size: 20px;
   font-family: Arial;
-  color: rgb(152, 0, 0);
+  color: #666;
 }
 table#conference tbody td.column.special a {
   color: rgb(152, 0, 0);
   text-decoration: none;
+}
+table#conference tbody td.column.special a.slack {
+  color: #0b5394;
 }
 table#conference tbody td a.slack {
   color: #rgb(80, 80, 0);
@@ -106,7 +109,7 @@ table#session button {
           <tr class='day'>
             <td></td>
             <td class='day' colspan="<%= @conference[:tracks].length %>">
-              Day <%= idx + 1 %>, <%= day[:name] %>
+              Day <%= idx + 1 %> - <%= day[:name] %>
             </td>
           </tr>
           <tr class='tracks'>
