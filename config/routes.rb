@@ -16,4 +16,5 @@ Rails.application.routes.draw do
   get '/surveys/results/:id/:code' => 'surveys#results'
   get '/conferences/:id' => 'conferences#show'
   post '/conferences/sessions' => 'conferences#add_session'
+  get '/conferences/sessions/:id' => 'conference#manage_session'
 end

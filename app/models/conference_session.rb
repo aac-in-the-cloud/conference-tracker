@@ -23,6 +23,15 @@ class ConferenceSession < ApplicationRecord
     "/surveys/#{self.code}"
   end
 
+  def token
+    raise "code required" unless self.code
+    Digest::MD5.hexdigest(Conference.user_token("manage-#{self.code}"))
+  end
+
+  def manage_link
+    "/conference/sessions/#{self.code}:#{self.token}"
+  end
+
   def slack_text
     data = JSON.parse(self.data) rescue nil
     data && data['slack_text']

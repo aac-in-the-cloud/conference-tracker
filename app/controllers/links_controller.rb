@@ -13,7 +13,10 @@ class LinksController < ApplicationController
   
   def data
     json = SurveyResult.session_data(params['cell'])
-    
+    if @authenticated
+      session = ConferenceSession.find_by(code: json['code'])
+      json['manage_link'] = session.manage_link
+    end
     render text: json.to_json
   end
   

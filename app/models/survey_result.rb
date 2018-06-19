@@ -86,6 +86,7 @@ class SurveyResult < ApplicationRecord
     res['survey_link'] = session.survey_link
     res['video_link'] = session.video_link
     res['year'] = session.year
+    res['code'] = session.code
     res
   end
 end

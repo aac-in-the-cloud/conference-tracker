@@ -121,6 +121,9 @@ body {
     to use for submitting to certifying groups, or to hang on your wall!
     <div style='clear: left;'></div>
   </div>
+  <div id='manage_holder' style='display: none; margin-top: 20px;'>
+    <a href='manage_link'>Management Link</a>
+  </div>
 </div>
 <script src='https://www.youtube.com/iframe_api'></script>
 <script>
@@ -162,6 +165,10 @@ var check = function() {
     opts.session = res.session_name;
     opts.link = res.hangouts_link;
     opts.video = res.youtube_link;
+    if(res.manage_link) {
+      document.getElementById('manage_link').setAttribute('href', res.manage_link);
+      document.getElementById('manage_holder').style.display = 'block';
+    }
     if(res.values && res.values[0] && res.values[0].length) {
       opts.time = res.values[0][0];
       opts.session = res.values[0][res.values[0].length - 1];
@@ -177,7 +184,7 @@ var check = function() {
     if(match && match[1]) {
       opts.video_id = match[1];
     }
-    
+
     if(res.values && res.values[2] && res.values[2].length) {
       if(res.values[2][res.values[0].length - 1]) {
         player.survey = true;

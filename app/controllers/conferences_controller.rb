@@ -53,6 +53,15 @@ class ConferencesController < ApplicationController
     end
   end
 
+  def manage_session
+    code, token = params['id'].split(/:/)
+    @session = ConferenceSession.find_by(code: code)
+    if @session.token != token
+      render text: "Invalid Session"
+      return
+    end
+  end
+
   def add_session
     if !@authenticated
       render json: {error: 'not authenticated'}, status: 400
