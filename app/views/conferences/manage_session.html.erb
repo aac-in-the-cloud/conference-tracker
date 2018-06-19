@@ -82,6 +82,11 @@ table#session button {
   cursor: pointer;
   width: 355px;  
 }
+p.helper {
+  font-size: 18px;
+  line-height: 24px;
+  font-family: Arial;
+}
 </style>
 <div id='header'>
   <img class='logo' src="/logo-<%= @session.year %>.png" />
@@ -92,6 +97,18 @@ table#session button {
   <div id='label'><a href="<%= @session.video_link %>"><%= @session.resources['session_name'] %></a></div>
   <div id='time'><%= @session.resources['date'] %></div>
   <div style='clear: left;'></div>
+  <% if params['simple'] %>
+    <p class='helper'>
+      Thanks for being willing to help moderate sessions for
+      the conference! About fifteen minutes before this session
+      is supposed to start (check time zones!) go to 
+      <a href="https://www.youtube.com/my_live_events?filter=scheduled" target="_blank">the conference's YouTube listings</a>
+      and find the event matching this session. Click "Start Hangout on Air".
+      Inside the Hangout, click the "Add People" icon and copy the Hangouts
+      link. Paste it below and click update to share it with the
+      presenter automagically.
+    </p>
+  <% end %>
   <table id='session'>
     <tbody>
       <% unless params['simple'] %>
@@ -141,6 +158,22 @@ table#session button {
       </tr>
     </tbody>
   </table>
+  <% if params['simple'] %>
+    <p class='helper'>
+      Once they're in, make sure they feel comfortable, and give them
+      a heads-up before you click "Start Broadcast" and go live. Once
+      you're live, do a quick intro and let them take it away (you can
+      mute your audio and video feeds so you don't have to sit there
+      smiling blankly the whole time).
+    </p>
+    <p class='helper'>
+        Be sure to keep an eye on the Slack channel for this session 
+        as well, just to make sure there aren't any technical issues
+        and nobody can actually hear or see the feed. If you run into
+        any problems, just message someone on the CoughDrop team on 
+        Slack and we'll help figure it out!
+    </p>
+  <% end %>
 </div>
 <script>
 var resources = <%= @session.resources.to_json.html_safe %>;

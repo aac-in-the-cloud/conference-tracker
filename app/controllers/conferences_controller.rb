@@ -124,6 +124,24 @@ class ConferencesController < ApplicationController
     render json: {code: session.code}
   end
 
+  def links
+    @conference = Conference.find_by(code: params['id'])
+    if !@conference
+      render text: "Invalid Conference"
+      return
+    end
+    verifier = Digest::MD5.hexdigest(Conference.user_token(params['codes']))[0, 10]
+    if params['verifier'] == 'admincough' && @authenticated
+      redirect_to action: 'links', id: params['id'], codes: params['codes'], verifier: verifier
+      return
+    elsif params['verifier'] != verifier
+      render text: "Invalid Verifier"
+      return
+    end
+    codes = params['codes'].split(/,/)
+    @sessions = ConferenceSession.where(code: codes, conference_code: @conference.code).sort_by{|s| [s.resources['timestamp'], s.code] }
+  end
+
   def login; end
 
   def logout

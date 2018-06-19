@@ -1,0 +1,57 @@
+<style>
+#content {
+  max-width: 850px;
+  margin: 30px auto;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-family: Arial;
+}
+table#conference {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 30px;
+}
+table#conference td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 25px 20px;
+  font-size: 20px;
+}
+table#conference tbody td.column {
+  font-size: 18px;
+}
+table#conference tbody td.column_0 a {
+  color: rgb(17, 85, 204);
+  text-decoration: none;
+}
+
+
+</style>
+<div id='content'>
+  <h1><%= @conference.name %></h1>
+  <div style='text-align: center; color: #888;'>
+    Thanks for being willing to help moderate the conference! 
+    Below are the sessions you've been asked to manage. 
+    Around fifteen minutes before each session starts, click the
+    link and follow the instructions to get everything set up!
+  </div>
+  <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference.year %>.png' />
+  <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px;' src='/sponsored.png' />
+  <div style='clear: left;'></div>
+  <table id='conference'>
+    <tbody>
+      <% @sessions.each do |session| %>
+        <tr>
+          <td style='white-space: nowrap;'>
+            <%= session.resources['date'] %>
+          </td>
+          <td class='column column_0'>
+            <a href="<%= session.manage_link %>?simple=1"><%= session.resources['session_name'] %></a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
