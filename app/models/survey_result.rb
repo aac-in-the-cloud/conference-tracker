@@ -32,7 +32,7 @@ class SurveyResult < ApplicationRecord
     code = cell
     code += "A17" unless code.match(/\w+\d+\w+\d+/)
     session = ConferenceSession.find_or_create_by(code: code)
-    if !session.resources || (session.updated_at < 1.hour.ago && !session.resources['live_attendees'])
+    if !session.resources #|| (session.updated_at < 1.hour.ago && !session.resources['live_attendees'])
       letter_num = cell.match(/[A-Z]+/)[0].ord
       col_idx = letter_num - 'A'.ord
       row_num = cell.match(/\d+/)[0].to_i
