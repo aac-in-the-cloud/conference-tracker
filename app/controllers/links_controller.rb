@@ -8,6 +8,13 @@ class LinksController < ApplicationController
   end
 
   def show
+    cell, token = params['cell'].split(/:/)
+    session = ConferenceSession.find_by_code(cell)
+    if session.token[0, 5] != token
+      render text: "Invalid Session"
+      return
+    end
+    params['cell'] = cell
     response.headers.delete('X-Frame-Options')
     @session_id = params['cell']
     @session_id += "A17" unless @session_id.match(/^\w+\d+\w+\d+$/)

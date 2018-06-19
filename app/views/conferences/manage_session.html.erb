@@ -92,9 +92,14 @@ table#session button {
   <div id='label'><a href="<%= @session.video_link %>"><%= @session.resources['session_name'] %></a></div>
   <div id='time'><%= @session.resources['date'] %></div>
   <div style='clear: left;'></div>
-
   <table id='session'>
     <tbody>
+      <tr>
+        <td></td>
+        <td style='padding-bottom: 5px;'>
+          <a href="/links/<%= @session.code %>:<%= @session.token[0, 5] %>">Presenter Waiting Room</a>
+        </td>
+      </tr>
       <% unless params['simple'] %>
         <tr>
           <td>Name:</td>
