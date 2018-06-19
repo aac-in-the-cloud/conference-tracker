@@ -90,8 +90,9 @@ class ConferencesController < ApplicationController
         return
       end
     end
-    data = JSON.parse(session.data) rescue nil
+    data = session.resources
     data ||= {}
+    data.delete('resources')
     data['date'] = params['time'] if !params['time'].blank?
     data['session_name'] = params['name'] if !params['name'].blank?
     data['description'] = params['description'] if !params['description'].blank?

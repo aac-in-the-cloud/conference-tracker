@@ -15,24 +15,27 @@ class SurveysController < ApplicationController
   end
   
   def results
-    if params['id'] && params['code'] == 'admincough'
-      id = Base64.encode64(Base64.encode64(params['id']))
-      code = Digest::MD5.hexdigest(id)[0, 10]
+    if params['id'] && params['code'] == 'admincough' && @authenticated
+      id = Base64.urlsafe_encode64(Base64.urlsafe_encode64(params['id']))
+      code = Digest::MD5.hexdigest(Conference.user_token(id))[0, 10]
       redirect_to action: 'results', id: id, code: code
       return
     end
     id = Base64.decode64(Base64.decode64(params['id']))
-    @data = SurveyResult.session_data(id)
-    
+
     @doc_id = id
-    @error = true unless params['code'] == Digest::MD5.hexdigest(params['id'])[0, 10]
+    @year = "20#{@doc_id.match(/\d+$/)[0]}" rescue nil
+    @year ||= '2017'
+    @error = true unless params['code'] == Digest::MD5.hexdigest(Conference.user_token(params['id']))[0, 10]
     if id == 'all'
+      @data = {}
       @results = SurveyResult.order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
       @shown_results = @results.select{|r| r.json['answer_1'].to_i > 0 && r.json['answer_3'] && r.json['answer_3'].length > 0 }
       @counts = {}
       @results.group_by(&:email_hash).each{|hash, list| @counts[list.length] ||= 0; @counts[list.length] += 1 }
       @counts = @counts.to_a.sort_by(&:first).reverse
     else
+      @data = SurveyResult.session_data(id)
       @results = SurveyResult.where(code: id).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
       @shown_results = @results
     end
