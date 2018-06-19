@@ -1,8 +1,11 @@
-<div style='margin: 50px auto; min-height: 100vh; max-width: 500px;'>
+<div style='margin: 50px auto; min-height: 100vh; max-width: 600px;'>
   <h1>Available Conferences</h1>
   <% @conferences.each do |conf| %>
     <div style='font-size: 20px; margin-bottom: 10px;'>
-      <a href="/conferences/<%= conf.code %>"><%= conf.name %></a>
+      <a href="/conferences/<%= conf.code %>" style='font-size: 30px; text-decoration: none;'>
+        <img src="/logo-<%= conf.year %>.png" style='border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
+        <%= conf.name %>
+      </a>
     </div>
   <% end %>
 </div>
