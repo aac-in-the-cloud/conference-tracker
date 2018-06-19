@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
     if cookies[:auth]
       user, token = cookies[:auth].split(/:/)
       if token == Conference.user_token(user)
-        @authorized = true
+        @authenticated = true
         @user = user
       end
     end

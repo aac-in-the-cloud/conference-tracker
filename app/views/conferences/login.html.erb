@@ -1,0 +1,12 @@
+<div style='text-align: center; width: 500px; height: 300px; margin: calc(50vh - 150px) calc(50vw - 250px);'>
+  <input type='text' id='token'/>
+  <button id='submit'>Login</button>
+</div>
+<script>
+document.getElementById('submit').addEventListener('click', function(event) {
+  event.preventDefault();
+  var token = document.getElementById('token').value;
+  document.cookie = "auth=" + token + ";path=/";
+  location.href = '/';
+});
+</script>

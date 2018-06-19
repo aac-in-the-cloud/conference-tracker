@@ -6,9 +6,6 @@ class ConferencesController < ApplicationController
     if !conference
       render text: "Invalid Conference"
       return
-    elsif sessions.count == 0
-      render text: "No Sessions"
-      return
     end
     @conference = {
       name: conference.name,
@@ -18,7 +15,7 @@ class ConferencesController < ApplicationController
     }
     sessions = sessions.select{|s| s.resources }
     days = sessions.group_by{|s| s.resources['timestamp'][0, 10] }.to_a.sort_by(&:first)
-    max_tracks = sessions.group_by{|s| s.resources['timestamp']}.to_a.map(&:last).map(&:length).max
+    max_tracks = sessions.group_by{|s| s.resources['timestamp']}.to_a.map(&:last).map(&:length).max || 0
 
     days.each do |day, list|
       day = {
@@ -50,5 +47,12 @@ class ConferencesController < ApplicationController
     max_tracks.times do |i|
       @conference[:tracks] << "Track #{i + 1}"
     end
+  end
+
+  def login; end
+
+  def logout
+    cookies.delete :auth
+    redirect_to '/'
   end
 end
