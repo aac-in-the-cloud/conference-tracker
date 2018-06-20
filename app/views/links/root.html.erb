@@ -8,6 +8,11 @@
       </a>
     </div>
   <% end %>
+  <% if @authenticated %>
+    <div style='margin-top: 30px;'>
+      <a href="/surveys/results/all/admincough">Latest Survey Results</a>
+    </div>
+  <% end %>
 </div>
 <div>
   <% if @authenticated %>
