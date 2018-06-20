@@ -68,8 +68,10 @@ class ConferenceSession < ApplicationRecord
   end
 
   def resources
+    return @resources if @resources
     res = JSON.parse(self.data)['resources'] rescue nil
     res = nil if res && !res['session_name']
+    @resources = res if res
     res
   end
 
@@ -77,6 +79,7 @@ class ConferenceSession < ApplicationRecord
     data = JSON.parse(self.data) rescue nil
     data ||= {}
     data['resources'] = val
+    @resources = val
     self.data = data.to_json
     val
   end

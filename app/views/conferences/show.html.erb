@@ -91,6 +91,34 @@ table#session button {
   cursor: pointer;
   width: 355px;  
 }
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+.tooltip .tooltip_text {
+  visibility: hidden;
+  position: absolute; 
+  width: 300px;
+  bottom: 100%;
+  left: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  text-align: left;
+  padding: 10px;
+  z-index: 2;
+  box-shadow: 1px 1px 2px #888;
+}
+.tooltip .tooltip_text.left {
+  left: auto;
+  right: 50px;
+}
+.tooltip:hover .tooltip_text {
+  visibility: visible;
+}
+.tooltip .tooltip_text:hover {
+  visibility: hidden;
+}
 
 </style>
 <div id='content'>
@@ -124,18 +152,23 @@ table#session button {
               <td style='white-space: nowrap;'><%= slot[:name] %></td>
               <% slot[:tracks].each_with_index do |track, idx| %>
                 <td class='<%= slot[:special] ? 'column special' : "column column_#{idx}" %>' colspan='<%= slot[:special] ? @conference[:tracks].length : 1 %>'>
-                  <% if track[:link] %>
-                    <a href="<%= track[:link] %>" target="<%= params['no_blank'] ? '' : '_blank'%>">
+                  <span class='tooltip'>
+                    <% if !track[:description].blank? %>
+                      <div class='tooltip_text <%= idx >= slot[:tracks].length - 1 ? 'left' : '' %>'><%= track[:description] %></div>
+                    <% end %>
+                    <% if track[:link] %>
+                      <a href="<%= track[:link] %>" target="<%= params['no_blank'] ? '' : '_blank'%>">
+                        <%= track[:name] %>
+                      </a>
+                    <% else %>
                       <%= track[:name] %>
-                    </a>
-                  <% else %>
-                    <%= track[:name] %>
-                  <% end %>
-                  <% if track[:slack] %>
-                    <a class='slack' href="/chat">
-                      <%= track[:slack] %>
-                    </a>
-                  <% end %>
+                    <% end %>
+                    <% if track[:slack] %>
+                      <a class='slack' href="/chat">
+                        <%= track[:slack] %>
+                      </a>
+                    <% end %>
+                  </span>
                 </td>
               <% end %>
             </tr>

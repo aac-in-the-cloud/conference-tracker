@@ -40,6 +40,7 @@ class ConferencesController < ApplicationController
           list.sort_by(&:code).each do |session|
             track = {
               name: session.resources['session_name'],
+              description: session.resources['description'],
               link: session.video_link,
               slack: session.slack_text
             }
