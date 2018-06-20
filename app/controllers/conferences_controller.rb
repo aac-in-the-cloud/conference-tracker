@@ -1,4 +1,28 @@
 class ConferencesController < ApplicationController
+  def create
+    if !@authenticated
+      render json: {error: 'Not Authorized'}, status: 400
+      return
+    end
+    conference = Conference.new
+    if params['code']
+      conference = Conference.find_by(code: params['code'])
+      if !conference
+        render json: {error: 'Not Found'}, status: 400
+        return
+      end
+    end
+    data = JSON.parse(conference.data) rescue nil
+    data ||= {}
+    conference.name = params['name'] if !params['name'].blank?
+    data['closed'] = params['closed'] if params['closed'] != nil
+    data['filled'] = params['filled'] if !params['filled'] != nil
+    conference.data = data.to_json
+    conference.save
+    Rails.cache.delete("conference/#{conference.code}")
+    render json: {code: conference.code}
+  end
+
   def show
     response.headers.except! 'X-Frame-Options'
     conference = Conference.find_by(code: params['id'])

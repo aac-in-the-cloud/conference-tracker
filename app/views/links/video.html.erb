@@ -89,7 +89,7 @@ body {
 }
 </style>
 <div id='header'>
-  <img class='logo' src="/logo-<%= @year %>.png" />
+  <img class='logo' src="/logo-<%= @year %>.png" onerror="this.src='/logo.png';" />
   <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
   AAC in the Cloud Presentation Session
   <div style='margin-bottom: 10px;'>

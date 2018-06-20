@@ -129,7 +129,7 @@ table#session button {
     that will be used to <a href="/surveys/certificate" target="_blank">generate a certificate</a> 
     you can report for credits.
   </div>
-  <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' />
+  <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
   <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px;' src='/sponsored.png' />
   <div style='clear: left;'></div>
   <table id='conference'>
@@ -176,6 +176,38 @@ table#session button {
         <% end %>
     </tbody>
   </table>
+  <div id='extras'>
+  <% if @authenticated %>
+    <h3>Conference Settings</h3>
+    <table id='session'>
+      <tbody>
+        <tr>
+          <td>Name:</td>
+          <td><input type="text" id="conference_name" value="<%= @conference[:name] %>" /></td>
+        </tr><tr>
+          <td>Filled:</td>
+          <td style='padding: 15px 0;'>
+            <label>
+              <input type="checkbox" id="conference_filled" <%= 'checked' if @conference[:filled] %> />
+              All sessions have been added for this conference
+            </label>
+          </td>
+        </tr><tr>
+          <td>Closed:</td>
+          <td style='padding: 15px 0;'>
+            <label>
+              <input type="checkbox" id="conference_closed" <%= 'checked' if @conference[:closed] %> />
+              All sessions have been recorded for this conference
+            </label>
+          </td>
+        </tr><tr>
+          <td></td>
+          <td><button id="update_conference">Update Conference</button></td>
+        </tr>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
   <% if @authenticated && !@conference[:filled] %>
     <h3>Add a Session</h3>
     <table id='session'>
@@ -248,6 +280,7 @@ table#session button {
       </tr>
     </table>
   <% end %>
+  </div>
 </div>
 
 <script>
@@ -280,6 +313,35 @@ if(document.getElementById('add_session')) {
     xhr.send(JSON.stringify(opts));
   });
 }
+if (document.getElementById('update_conference')) {
+  document.getElementById('update_conference').addEventListener('click', function(event) {
+    event.preventDefault();
+    var opts = {
+      code: "<%= @conference[:code] %>",
+      name: document.getElementById('conference_name').value,
+      closed: document.getElementById('conference_closed').checked,
+      filled: document.getElementById('conference_filled').checked,
+      authenticity_token: "<%= form_authenticity_token %>"
+    };
+
+    var xhr = new XMLHttpRequest();
+    var status = function(str) {
+      document.getElementById('submit').innerHTML = str;
+    }
+    xhr.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText);
+        location.reload();
+      } else if(this.readyState == 4) {
+        alert('Session Failed to Submit');
+      }
+    };
+    var path = "/conferences";
+    xhr.open('POST', path, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(opts));
+  });
+}
 document.getElementById('build_moderator').addEventListener('click', function(event) {
   event.preventDefault();
   var moderator = document.getElementById('moderator').value;
@@ -296,5 +358,6 @@ if(window.parent != window) {
   document.querySelectorAll('.blanky').forEach(function(a) {
     a.setAttribute('target', '_blank');
   });
+  document.getElementById('extras').style.display = 'none';
 }
 </script>

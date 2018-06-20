@@ -89,7 +89,7 @@ p.helper {
 }
 </style>
 <div id='header'>
-  <img class='logo' src="/logo-<%= @session.year %>.png" />
+  <img class='logo' src="/logo-<%= @session.year %>.png" onerror="this.src='/logo.png';"/>
   AAC in the Cloud Presentation Session
   <div style='margin-bottom: 10px;'>
     <a href='/conferences/<%= @session.conference_code %>?no_blank=1'>Back to the Session List</a>

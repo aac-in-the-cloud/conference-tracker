@@ -91,7 +91,7 @@ a {
 
 </style>
 <div id='survey_holder'>
-  <img src='/logo-<%= @year %>.png'/>
+  <img src='/logo-<%= @year %>.png' onerror="this.src='/logo.png';" />
   <%= @id %> <%= @digest %>
   <h1>AAC in the Cloud<br/>Survey Results</h1>
   <div style='clear: left;'></div>
