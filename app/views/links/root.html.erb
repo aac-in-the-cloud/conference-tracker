@@ -2,7 +2,7 @@
   <h1>Available Conferences</h1>
   <% @conferences.each do |conf| %>
     <div style='font-size: 20px; margin-bottom: 10px;'>
-      <a href="/conferences/<%= conf.code %>" style='font-size: 30px; text-decoration: none;'>
+      <a href="/conferences/<%= conf.code %>?no_blank=1" style='font-size: 30px; text-decoration: none;'>
         <img src="/logo-<%= conf.year %>.png" style='border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
         <%= conf.name %>
       </a>
