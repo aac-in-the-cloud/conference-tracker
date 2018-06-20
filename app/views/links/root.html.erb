@@ -44,12 +44,12 @@ table#session button {
         <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';" style='border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
         <%= conf.name %>
       </a>
-    </div>
-  <% end %>
-  <% if @authenticated %>
-    <div style='margin-top: 30px;'>
-      <a href="/surveys/results/all/admincough">Latest Survey Results</a>
-    </div>
+      <% if @authenticated %>
+        <div style='text-align: right; margin-top: -20px; font-size: 16px;'>
+          <a href="/surveys/results/all:<%= conf.code %>/admincough">Survey Results</a>
+        </div>
+      <% end %>
+      </div>
   <% end %>
   <% if @authenticated %>
     <div id='admin_content' style='display: none;'>

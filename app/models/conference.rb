@@ -4,7 +4,7 @@ class Conference < ApplicationRecord
   def generate_defaults
     if !self.code
       yr = Time.now.year.to_s[2, 2]
-      confs = Conference.where("code LIKE '%#{yr}'").order('code')
+      confs = Conference.where(["code LIKE ?", "%#{yr}"]).order('code')
       letter = 'A'
       if confs.count > 0
         letter = (confs.last.code[0].ord + 1).chr

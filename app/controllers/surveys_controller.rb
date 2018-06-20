@@ -27,9 +27,15 @@ class SurveysController < ApplicationController
     @year = "20#{@doc_id.match(/\d+$/)[0]}" rescue nil
     @year ||= '2017'
     @error = true unless params['code'] == Digest::MD5.hexdigest(Conference.user_token(params['id']))[0, 10]
-    if id == 'all'
+    if id.match(/all/)
+      all, code = id.split(/:/)
+      @conference = Conference.find_by(code: code)
+      if !@conference
+        render text: "Conference not found"
+        return
+      end
       @data = {}
-      @results = SurveyResult.order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
+      @results = SurveyResult.where(["code LIKE ?", "%#{@conference.code}"]).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
       @shown_results = @results.select{|r| r.json['answer_1'].to_i > 0 && r.json['answer_3'] && r.json['answer_3'].length > 0 }
       @counts = {}
       @results.group_by(&:email_hash).each{|hash, list| @counts[list.length] ||= 0; @counts[list.length] += 1 }
