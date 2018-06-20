@@ -1,3 +1,41 @@
+<style>
+input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 20px;
+  width: 350px;
+}
+table#session {
+  border-collapse: collapse;
+}
+table#session td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+table#session td:last-child {
+  text-align: left;
+}
+table#session button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 355px;  
+}
+</style>
+<div style='position: absolute; top: 0; right: 0; padding: 5px;'>
+  <% if @authenticated %>
+    <%= @user %> | <a href="#" id='admin'>Admin</a> | 
+    <a href="/logout">Logout</a>
+  <% else %>
+    <a href="/login">Login</a>
+  <% end %>
+</div>
 <div style='margin: 50px auto; min-height: 100vh; max-width: 600px;'>
   <h1>Available Conferences</h1>
   <% @conferences.each do |conf| %>
@@ -13,11 +51,52 @@
       <a href="/surveys/results/all/admincough">Latest Survey Results</a>
     </div>
   <% end %>
-</div>
-<div>
   <% if @authenticated %>
-    <a href="/logout">Logout</a>
-  <% else %>
-    <a href="/login">Login</a>
+    <div id='admin_content' style='display: none;'>
+      <h3>Add a Conference</h3>
+      <table id='session'>
+        <tbody>
+          <tr>
+            <td>Name:</td>
+            <td><input type="text" id="name"/></td>
+          </tr><tr>
+            <td></td>
+            <td><button id="add_conference">Add Conference</button></td>
+          </tr>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   <% end %>
 </div>
+<script>
+if(document.getElementById('add_conference')) {
+  document.getElementById('add_conference').addEventListener('click', function(event) {
+    event.preventDefault();
+    var opts = {
+      name: document.getElementById('name').value,
+      authenticity_token: "<%= form_authenticity_token %>"
+      };
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText);
+        location.reload();
+      } else if(this.readyState == 4) {
+        alert('Conference Failed to Submit');
+      }
+    };
+    var path = "/conferences";
+    xhr.open('POST', path, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(opts));
+  });
+}
+if(document.getElementById('admin')) {
+  document.getElementById('admin').addEventListener('click', function(event) {
+    event.preventDefault();
+    document.getElementById('admin_content').style.display = 'block';
+  });
+}
+</script>
