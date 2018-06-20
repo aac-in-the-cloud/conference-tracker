@@ -157,7 +157,7 @@ table#session button {
                       <div class='tooltip_text <%= idx >= slot[:tracks].length - 1 ? 'left' : '' %>'><%= track[:description] %></div>
                     <% end %>
                     <% if track[:link] %>
-                      <a href="<%= track[:link] %>" target="<%= params['no_blank'] ? '' : '_blank'%>">
+                      <a href="<%= track[:link] %>" class='blanky'>
                         <%= track[:name] %>
                       </a>
                     <% else %>
@@ -292,4 +292,9 @@ document.getElementById('build_moderator').addEventListener('click', function(ev
   var link = "/conferences/<%= @conference[:code] %>/links/" + codes.join(',') + ":" + moderator + "/admincough";
   location.href = link;
 });
+if(window.parent != window) {
+  document.querySelectorAll('.blanky').forEach(function(a) {
+    a.setAttribute('target', '_blank');
+  });
+}
 </script>
