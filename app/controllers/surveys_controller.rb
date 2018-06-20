@@ -56,7 +56,7 @@ class SurveysController < ApplicationController
       hours = 0
       results.each do |sr|
         json = SurveyResult.session_data(sr.code)
-        name = json[:session_name] || "Session code: #{sr.code}"
+        name = json['session_name'] || "Session code: #{sr.code}"
         sessions.push(name)
         hours += 1
       end

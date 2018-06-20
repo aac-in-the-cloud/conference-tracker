@@ -96,9 +96,10 @@ table#session button {
 <div id='content'>
   <h1><%= @conference[:name] %></h1>
   <div style='text-align: center; color: #888;'>
-    To earn participation credit, you’ll need to watch the videos in the 
-    player linked from these pages, NOT on YouTube, otherwise 
-    you won’t get access to the participation surveys.
+    <b>Looking for CEUs?</b> When you watch the sessions in our conference
+    player you'll see a link at the end to fill out participation surveys
+    that will be used to <a href="/surveys/certificate" target="_blank">generate a certificate</a> 
+    you can report for credits.
   </div>
   <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' />
   <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px;' src='/sponsored.png' />

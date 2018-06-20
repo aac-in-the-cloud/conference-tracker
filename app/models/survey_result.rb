@@ -88,6 +88,6 @@ class SurveyResult < ApplicationRecord
     res['video_link'] = session.video_link
     res['year'] = session.year
     res['code'] = session.code
-    res
+    res.with_indifferent_access
   end
 end
