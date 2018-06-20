@@ -176,28 +176,80 @@ table#session button {
         <% end %>
     </tbody>
   </table>
-</div>
-<% if @authenticated && !@conference[:closed] %>
-  <h3>Add a Session</h3>
-  <table id='session'>
-    <tbody>
+  <% if @authenticated && !@conference[:filled] %>
+    <h3>Add a Session</h3>
+    <table id='session'>
+      <tbody>
+        <tr>
+          <td>Name:</td>
+          <td><input type="text" id="name"/></td>
+        </tr><tr>
+          <td>Time:</td>
+          <td><input type="text" id="time"/></td>
+        </tr><tr>
+          <td>YouTube URL:</td>
+          <td><input type="text" id="url"/></td>
+        </tr><tr>
+          <td></td>
+          <td><button id="add_session">Add Session</button></td>
+        </tr>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+  <% if @authenticated && !@conference[:closed] %>
+    <h3 style='margin-top: 50px;'>Build a Moderator Session List</h3>
+    <table id='session'>
       <tr>
-        <td>Name:</td>
-        <td><input type="text" id="name"/></td>
-      </tr><tr>
-        <td>Time:</td>
-        <td><input type="text" id="time"/></td>
-      </tr><tr>
-        <td>YouTube URL:</td>
-        <td><input type="text" id="url"/></td>
+        <td>Moderator's Name:</td>
+        <td><input type="text" id="moderator"/></td>
+      </tr>
+      <tr>
+        <td style='vertical-align: top; padding-top: 10px;'>Sessions</td>
+        <td>
+          <p>Add a checkbox next to the sessions you'd like this moderator
+          to be in charge of, then click to generate the link.</p>
+
+          <table id='conference'>
+          <tbody>
+              <% @conference[:days].each_with_index do |day, idx| %>
+                <tr class='day'>
+                  <td></td>
+                  <td class='day' colspan="<%= @conference[:tracks].length %>">
+                    Day <%= idx + 1 %> - <%= day[:name] %>
+                  </td>
+                </tr>
+                <tr class='tracks'>
+                  <td>Time</td>
+                  <% @conference[:tracks].each do |track| %>
+                    <td><%= track %></td>
+                  <% end %>
+                </tr>
+                  <% day[:time_slots].each do |slot| %>
+                  <tr>
+                    <td style='white-space: nowrap;'><%= slot[:name] %></td>
+                    <% slot[:tracks].each_with_index do |track, idx| %>
+                      <td class='<%= slot[:special] ? 'column special' : "column column_#{idx}" %>' colspan='<%= slot[:special] ? @conference[:tracks].length : 1 %>'>
+                        <label>
+                          <input class='track' type='checkbox' name='<%= track[:code] %>'>
+                          <%= track[:name] %>
+                        </label>
+                      </td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              <% end %>
+          </tbody>
+        </table>
+        </td>
       </tr><tr>
         <td></td>
-        <td><button id="add_session">Add Session</button></td>
+        <td><button id='build_moderator'>Generate Link</button></td>
       </tr>
-      </tr>
-    </tbody>
-  </table>
-<% end %>
+    </table>
+  <% end %>
+</div>
+
 <script>
 if(document.getElementById('add_session')) {
   document.getElementById('add_session').addEventListener('click', function(event) {
@@ -228,4 +280,16 @@ if(document.getElementById('add_session')) {
     xhr.send(JSON.stringify(opts));
   });
 }
+document.getElementById('build_moderator').addEventListener('click', function(event) {
+  event.preventDefault();
+  var moderator = document.getElementById('moderator').value;
+  var codes = [];
+  document.querySelectorAll('input.track').forEach(function(track) {
+    if(track.checked) {
+      codes.push(track.name);
+    }
+  });
+  var link = "/conferences/<%= @conference[:code] %>/links/" + codes.join(',') + ":" + moderator + "/admincough";
+  location.href = link;
+});
 </script>

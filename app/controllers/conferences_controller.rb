@@ -15,6 +15,7 @@ class ConferencesController < ApplicationController
         code: conference.code,
         year: "20#{params['id'].match(/\d+/)[0]}",
         closed: !!conference_json['closed'],
+        filled: !!(conference_json['closed'] || conference_json['filled']),
         tracks: [],
         days: []
       }
@@ -41,6 +42,7 @@ class ConferencesController < ApplicationController
             track = {
               name: session.resources['session_name'],
               description: session.resources['description'],
+              code: session.code,
               link: session.video_link,
               slack: session.slack_text
             }
@@ -133,13 +135,21 @@ class ConferencesController < ApplicationController
     end
     verifier = Digest::MD5.hexdigest(Conference.user_token(params['codes']))[0, 10]
     if params['verifier'] == 'admincough' && @authenticated
-      redirect_to action: 'links', id: params['id'], codes: params['codes'], verifier: verifier
+      codes, moderator = params['codes'].split(/:/)
+      moderator = Base64.urlsafe_encode64(moderator || '')
+      codes = codes + ":" + moderator
+      verifier = Digest::MD5.hexdigest(Conference.user_token(codes))[0, 10]
+      redirect_to action: 'links', id: params['id'], codes: codes, verifier: verifier
       return
     elsif params['verifier'] != verifier
       render text: "Invalid Verifier"
       return
     end
-    codes = params['codes'].split(/,/)
+    codes, moderator = params['codes'].split(/:/)
+    moderator = Base64.decode64(moderator) rescue nil
+    moderator = "Moderator" if moderator.blank?
+    @moderator = moderator
+    codes = codes.split(/,/)
     @sessions = ConferenceSession.where(code: codes, conference_code: @conference.code).sort_by{|s| [s.resources['timestamp'], s.code] }
   end
 
