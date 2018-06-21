@@ -146,9 +146,13 @@ var err = function(str) {
 };
 var player = {playing_seconds: 0};
 function onYouTubeIframeAPIReady() {
+  console.debug("youtube ready");
   player.ready = true;
   check();
 };
+if(window.YT && window.YT.loaded) {
+  onYouTubeIframeAPIReady();
+}
 var check = function() {
   check.checked = true;
   dom.spinner.style.display = 'inline';
