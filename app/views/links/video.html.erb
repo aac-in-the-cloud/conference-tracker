@@ -177,7 +177,7 @@ var check = function() {
     opts.link = res.hangouts_link;
     opts.video = res.youtube_link;
     opts.description = res.description;
-    if(res.manage_link) {
+    if(res.manage_link && document.getElementById('manage_link')) {
       document.getElementById('manage_link').setAttribute('href', res.manage_link);
       document.getElementById('manage_holder').style.display = 'block';
     }
