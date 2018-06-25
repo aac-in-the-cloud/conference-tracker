@@ -163,10 +163,17 @@ var check = function() {
         setTimeout(function() {
           dom.spinner.style.display = 'none';
         }, 800);
-        player.live_attendees = res.live_attendees;
+        // setting live_attendees is what triggers the survey link for live sessions
+        if(res.live_attendees) {
+          player.live_attendees = res.live_attendees;
+        }
+        // as a fallback, if the video link changes, just reload the page
+        if(player.youtube_url && res.youtube_link && player.youtube_url != res.youtube_link) {
+          location.reload();
+        }
       });
     }
-  }, 45000);
+  }, 30000);
   doc_lookup(id, cell, function(res) {
     setTimeout(function() {
       dom.spinner.style.display = 'none';
@@ -192,6 +199,7 @@ var check = function() {
     if(res.values && res.values[3] && res.values[3].length) {
       opts.video = res.values[3][res.values[0].length - 1];
     }
+    player.youtube_url = opts.video;
     var match = opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
     if(match && match[1]) {
       opts.video_id = match[1];
