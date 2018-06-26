@@ -259,8 +259,13 @@ var check = function() {
             if(res && res.snippet && (res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live')) {
               player.live = true;
               var track = 1;
-              if(cell.match(/^C/)) { track = 2; }
-              if(cell.match(/^D/)) { track = 3; }
+              if(cell.match(/A17$/)) {
+                if(cell.match(/^C/)) { track = 2; }
+                if(cell.match(/^D/)) { track = 3; }
+              } else {
+                if(cell.match(/^B/)) { track = 2; }
+                if(cell.match(/^C/)) { track = 3; }
+              }
               dom.track.innerText = "Track " + track;
               dom.chat.style.display = 'block';
             }
