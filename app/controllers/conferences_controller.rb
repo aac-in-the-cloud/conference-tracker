@@ -150,10 +150,11 @@ class ConferencesController < ApplicationController
     session.resources = data
     if params['link_disabled'] != nil
       json = JSON.parse(session.data)
-      json['link_disabled'] == !!params['link_disabled']
-      session.data = json
+      json['link_disabled'] = !!params['link_disabled']
+      session.data = json.to_json
     end
     session.save
+    Rails.cache.delete("conference/#{session.conference_code}")
 
     render json: {code: session.code}
   end
