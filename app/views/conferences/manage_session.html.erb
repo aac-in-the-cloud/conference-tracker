@@ -127,8 +127,16 @@ p.helper {
           <td>Time:</td>
           <td><input type='text' id='date'/></td>
         </tr><tr>
-          <td>Desription:</td>
+          <td>Description:</td>
           <td><input type='text' id='description'/></td>
+        </tr><tr>
+          <td>Disabled:</td>
+          <td style='padding: 15px 0;'>
+            <label>
+              <input type="checkbox" id="disabled" />
+              This session has been canceled/disabled
+            </label>
+          </td>
         </tr><tr>
           <td>YouTube Link:</td>
           <td><input type='text' id='url'/></td>
@@ -158,8 +166,8 @@ p.helper {
     <p class='helper'>
         Be sure to keep an eye on the Slack channel for this session 
         as well, just to make sure there aren't any technical issues
-        and nobody can actually hear or see the feed. If you run into
-        any problems, just message someone on the CoughDrop team on 
+        or nobody can actually hear or see the feed. If you run into
+        any problems, just message @brian, @melissa_d or @scot on
         Slack and we'll help figure it out!
     </p>
   <% end %>
@@ -175,10 +183,12 @@ p.helper {
 </div>
 <script>
 var resources = <%= @session.resources.to_json.html_safe %>;
+var link_disabled = <%= (JSON.parse(@session.data)['link_disabled'] || false).to_s %>;
 if(document.getElementById('name')) {
   document.getElementById('name').value = resources.session_name || '';
   document.getElementById('date').value = resources.date || '';
   document.getElementById('description').value = resources.description || '';
+  document.getElementById('disabled').checked = link_disabled || false;
   document.getElementById('url').value = resources.youtube_link || '';
   document.getElementById('attendees').value = resources.live_attendees || '';
 }
@@ -199,6 +209,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
     opts.description = document.getElementById('description').value;
     opts.url = document.getElementById('url').value;
     opts.live_attendees = document.getElementById('attendees').value;
+    opts.link_disabled = document.getElementById('disabled').checked;
   }
 
   var xhr = new XMLHttpRequest();

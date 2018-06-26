@@ -164,6 +164,9 @@ table#session button {
                       </a>
                     <% else %>
                       <%= track[:name] %>
+                      <% if @authenticated && track[:manage] %>
+                        (<a href="<%= track[:manage] %>">manage</a>)
+                      <% end %>
                     <% end %>
                     <% if track[:slack] %>
                       <a class='slack' href="/chat">
@@ -344,18 +347,20 @@ if (document.getElementById('update_conference')) {
     xhr.send(JSON.stringify(opts));
   });
 }
-document.getElementById('build_moderator').addEventListener('click', function(event) {
-  event.preventDefault();
-  var moderator = document.getElementById('moderator').value;
-  var codes = [];
-  document.querySelectorAll('input.track').forEach(function(track) {
-    if(track.checked) {
-      codes.push(track.name);
-    }
+if(document.getElementById('build_moderator')) {
+  document.getElementById('build_moderator').addEventListener('click', function(event) {
+    event.preventDefault();
+    var moderator = document.getElementById('moderator').value;
+    var codes = [];
+    document.querySelectorAll('input.track').forEach(function(track) {
+      if(track.checked) {
+        codes.push(track.name);
+      }
+    });
+    var link = "/conferences/<%= @conference[:code] %>/links/" + codes.join(',') + ":" + moderator + "/admincough";
+    location.href = link;
   });
-  var link = "/conferences/<%= @conference[:code] %>/links/" + codes.join(',') + ":" + moderator + "/admincough";
-  location.href = link;
-});
+}
 if(window.parent != window) {
   document.querySelectorAll('.blanky').forEach(function(a) {
     a.setAttribute('target', '_blank');

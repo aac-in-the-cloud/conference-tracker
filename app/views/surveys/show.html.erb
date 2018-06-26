@@ -135,12 +135,14 @@ a {
     opts.time = res.date;
     opts.session = res.session_name;
     opts.link = res.survey_link;
-    if(res.values && res.values[0] && res.values[0].length) {
-      opts.time = res.values[0][0];
-      opts.session = res.values[0][res.values[0].length - 1];
-    }
-    if(res.values && res.values[1] && res.values[1].length) {
-      opts.link = res.values[1][res.values[0].length - 1];
+    if(!res.code) {
+      if(res.values && res.values[0] && res.values[0].length) {
+        opts.time = opts.time || res.values[0][0];
+        opts.session = opts.session || res.values[0][res.values[0].length - 1];
+      }
+      if(res.values && res.values[1] && res.values[1].length) {
+        opts.link = opts.link || res.values[1][res.values[0].length - 1];
+      }
     }
     if(!opts.session) {
       err("<b>" + cell + "</b> is not a valid survey code");

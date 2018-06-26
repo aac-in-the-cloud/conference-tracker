@@ -68,6 +68,7 @@ class ConferencesController < ApplicationController
               description: session.resources['description'],
               code: session.code,
               link: session.video_link,
+              manage: session.manage_link,
               slack: session.slack_text
             }
             slot[:tracks] << track
@@ -128,6 +129,7 @@ class ConferencesController < ApplicationController
     data['session_name'] = params['name'] if !params['name'].blank?
     data['description'] = params['description'] if !params['description'].blank?
     data['youtube_link'] = params['url'] if !params['url'].blank?
+    data['youtube_link'] = nil if params['url'] == ''
     data['hangouts_link'] = params['hangout'] if !params['hangout'].blank?
     data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
 
@@ -146,6 +148,11 @@ class ConferencesController < ApplicationController
       session.conference_code = conference.code
     end
     session.resources = data
+    if params['link_disabled'] != nil
+      json = JSON.parse(session.data)
+      json['link_disabled'] == !!params['link_disabled']
+      session.data = json
+    end
     session.save
 
     render json: {code: session.code}

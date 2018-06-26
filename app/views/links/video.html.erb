@@ -188,19 +188,21 @@ var check = function() {
       document.getElementById('manage_link').setAttribute('href', res.manage_link);
       document.getElementById('manage_holder').style.display = 'block';
     }
-    if(res.values && res.values[0] && res.values[0].length) {
-      opts.time = res.values[0][0];
-      opts.session = res.values[0][res.values[0].length - 1];
-    }
-    if(res.values && res.values[1] && res.values[1].length) {
-      opts.link = res.values[1][res.values[0].length - 1];
+    if(!res.code) {
+      if(res.values && res.values[0] && res.values[0].length) {
+        opts.time = opts.time || res.values[0][0];
+        opts.session = opts.session || res.values[0][res.values[0].length - 1];
+      }
+      if(res.values && res.values[1] && res.values[1].length) {
+        opts.link = opts.link || res.values[1][res.values[0].length - 1];
+      }
+      if(res.values && res.values[3] && res.values[3].length) {
+        opts.video = opts.video || res.values[3][res.values[0].length - 1];
+      }
     }
     if(opts.link) { dom.loaded = true; }
-    if(res.values && res.values[3] && res.values[3].length) {
-      opts.video = res.values[3][res.values[0].length - 1];
-    }
     player.youtube_url = opts.video;
-    var match = opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
+    var match = opts.video && opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
     if(match && match[1]) {
       opts.video_id = match[1];
     }
