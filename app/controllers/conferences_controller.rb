@@ -96,10 +96,6 @@ class ConferencesController < ApplicationController
   end
 
   def add_session
-    if !@authenticated
-      render json: {error: 'not authenticated'}, status: 400
-      return
-    end
     conference = Conference.find_by(code: params['conference_code'])
     if !conference
       render json: {error: 'no conference found'}, status: 400
