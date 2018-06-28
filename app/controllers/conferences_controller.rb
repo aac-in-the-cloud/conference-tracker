@@ -134,7 +134,7 @@ class ConferencesController < ApplicationController
       data['youtube_link'] = params['url'] if !params['url'].blank?
       data['youtube_link'] = nil if params['url'] == ''
       data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
-      data['slides_link'] = params['slides'] if !params['slides'] != nil
+      data['slides_link'] = params['slides']# if params['slides'] != nil
     end
 
     date = data['date']

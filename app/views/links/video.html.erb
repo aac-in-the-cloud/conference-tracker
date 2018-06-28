@@ -100,11 +100,15 @@ body {
   <div style='clear: left;'></div>
   <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
   <div id='description_holder' style='display: none; margin-bottom: 20px;'></div>
+  <div id='slides_holder' style='margin-bottom: 20px;'>
+    <a href="#" id="slides" style='display: none;' target="_blank">Slides or Resources for this Session</a>
+    <span id='no_slides' style='color: #888;'>No Slides Have Been Provided for this Session</span>
+  </div>
   <div style='margin-bottom: 30px;'>
     <b>Looking for CEUs?</b> If you watch this video on this site then
     towards the end you will see a survey link show up. Fill out the
     short survey to track your participation credit, and we'll generate
-    a certificate for your when you're done watching sessions!
+    a certificate for you when you're done watching sessions!
   </div>
   <div id='video_holder' style='display: none;'>
     <div id='video'></div>
@@ -183,6 +187,7 @@ var check = function() {
     opts.session = res.session_name;
     opts.link = res.hangouts_link;
     opts.video = res.youtube_link;
+    opts.slides = res.slides_link;
     opts.description = res.description;
     if(res.manage_link && document.getElementById('manage_link')) {
       document.getElementById('manage_link').setAttribute('href', res.manage_link);
@@ -201,6 +206,14 @@ var check = function() {
       }
     }
     if(opts.link) { dom.loaded = true; }
+    if(opts.slides) {
+      document.getElementById('slides').style.display = 'inline';
+      document.getElementById('no_slides').style.display = 'none';
+      document.getElementById('slides').setAttribute('hread', opts.slides);
+    } else {
+      document.getElementById('slides').style.display = 'none';
+      document.getElementById('no_slides').style.display = 'inline';
+    }
     player.youtube_url = opts.video;
     var match = opts.video && opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
     if(match && match[1]) {

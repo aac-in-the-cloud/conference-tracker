@@ -141,6 +141,9 @@ p.helper {
           <td>YouTube Link:</td>
           <td><input type='text' id='url'/></td>
         </tr><tr>
+          <td>Slides Link:</td>
+          <td><input type='text' id='slides'/></td>
+        </tr><tr>
           <td>Live Attendees:</td>
           <td><input type='text' id='attendees'/></td>
         </tr>
@@ -190,6 +193,7 @@ if(document.getElementById('name')) {
   document.getElementById('description').value = resources.description || '';
   document.getElementById('disabled').checked = link_disabled || false;
   document.getElementById('url').value = resources.youtube_link || '';
+  document.getElementById('slides').value = resources.slides_link || '';
   document.getElementById('attendees').value = resources.live_attendees || '';
 }
 document.getElementById('hangout').value = resources.hangouts_link || '';
@@ -208,6 +212,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
     opts.time = document.getElementById('date').value;
     opts.description = document.getElementById('description').value;
     opts.url = document.getElementById('url').value;
+    opts.slides = document.getElementById('slides').value;
     opts.live_attendees = document.getElementById('attendees').value;
     opts.link_disabled = document.getElementById('disabled').checked;
   }
