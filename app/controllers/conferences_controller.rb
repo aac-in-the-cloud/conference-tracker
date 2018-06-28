@@ -118,7 +118,7 @@ class ConferencesController < ApplicationController
         return
       end
     end
-    if !session.id && !@authorized
+    if !session.id && !@authenticated
       render json: {error: 'not authorized to create new'}, status: 400
       return
     end
@@ -127,14 +127,14 @@ class ConferencesController < ApplicationController
     data.delete('resources')
     data['hangouts_link'] = params['hangout'] if !params['hangout'].blank?
 
-    if @authorized
+    if @authenticated
       data['date'] = params['time'] if !params['time'].blank?
       data['session_name'] = params['name'] if !params['name'].blank?
       data['description'] = params['description'] if !params['description'].blank?
       data['youtube_link'] = params['url'] if !params['url'].blank?
       data['youtube_link'] = nil if params['url'] == ''
       data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
-      data['slides_link'] = params['slides']# if params['slides'] != nil
+      data['slides_link'] = params['slides'] if params['slides'] != nil
     end
 
     date = data['date']
