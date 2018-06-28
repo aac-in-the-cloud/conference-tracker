@@ -118,16 +118,24 @@ class ConferencesController < ApplicationController
         return
       end
     end
+    if !session.id && !@authorized
+      render json: {error: 'not authorized to create new'}, status: 400
+      return
+    end
     data = session.resources
     data ||= {}
     data.delete('resources')
-    data['date'] = params['time'] if !params['time'].blank?
-    data['session_name'] = params['name'] if !params['name'].blank?
-    data['description'] = params['description'] if !params['description'].blank?
-    data['youtube_link'] = params['url'] if !params['url'].blank?
-    data['youtube_link'] = nil if params['url'] == ''
     data['hangouts_link'] = params['hangout'] if !params['hangout'].blank?
-    data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
+
+    if @authorized
+      data['date'] = params['time'] if !params['time'].blank?
+      data['session_name'] = params['name'] if !params['name'].blank?
+      data['description'] = params['description'] if !params['description'].blank?
+      data['youtube_link'] = params['url'] if !params['url'].blank?
+      data['youtube_link'] = nil if params['url'] == ''
+      data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
+      data['slides_link'] = params['slides'] if !params['slides'] != nil
+    end
 
     date = data['date']
     code = conference.code
