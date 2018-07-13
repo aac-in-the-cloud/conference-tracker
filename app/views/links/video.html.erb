@@ -151,6 +151,7 @@ var err = function(str) {
 var player = {playing_seconds: 0};
 function onYouTubeIframeAPIReady() {
   console.debug("youtube ready");
+  player.obj = null;
   player.ready = true;
   check();
 };
@@ -179,6 +180,11 @@ var check = function() {
     }
   }, 30000);
   doc_lookup(id, cell, function(res) {
+    player.playing_started = null;
+    player.playing_ended = null;
+    player.played_seconds = null;
+    player.duration = null;
+
     setTimeout(function() {
       dom.spinner.style.display = 'none';
     }, 800);
@@ -235,34 +241,40 @@ var check = function() {
     dom.label.classList.remove('error');
     dom.label.innerText = opts.session;
     dom.time.innerText = opts.time;
-//opts.video_id = 'Cw_QBtlryIs';
+
     if(opts.video_id) {
       if(player.ready) {
         dom.video_holder.style.display = 'inline';
         var bounds = dom.video_holder.getBoundingClientRect();
         var width = bounds.width - 14;
         var height = width / 16 * 9;
-        player.obj = new YT.Player('video', {
-          height: height,
-          width: width,
-          videoId: opts.video_id,
-          events: {
-            'onStateChange': function(event) {
-              if(event.data == 1) {
-                player.playing = true;
-                player.playing_started = (new Date()).getTime();
-                player.playing_ended = null;
-              } else if(event.data == 2 || event.data == 3) {
-                player.playing_ended = (new Date()).getTime();
-                if(player.playing_started && player.playing_ended) {
-                  player.played_seconds = (player.played_seconds || 0) + ((player.playing_ended - player.playing_started) / 1000);
-                  player.playing_started = null;
+        if(!player.obj) {
+          player.obj = new YT.Player('video', {
+            height: height,
+            width: width,
+            videoId: opts.video_id,
+            events: {
+              'onStateChange': function(event) {
+                if(event.target) { player.obj = event.target; }
+                if(event.data == 1) {
+                  player.playing = true;
+                  player.playing_started = (new Date()).getTime();
+                  player.playing_ended = null;
+                  if(event.target && event.target.getDuration) {
+                    player.duration = event.target.getDuration();
+                  }
+                } else if(event.data == 2 || event.data == 3) {
+                  player.playing_ended = (new Date()).getTime();
+                  if(player.playing_started && player.playing_ended) {
+                    player.played_seconds = (player.played_seconds || 0) + ((player.playing_ended - player.playing_started) / 1000);
+                    player.playing_started = null;
+                  }
+                  player.playing = false;
                 }
-                player.playing = false;
               }
             }
+          });     
           }
-        });     
         dom.video_app.setAttribute('href', opts.video);
 
         var xhr = new XMLHttpRequest();
@@ -306,7 +318,9 @@ var check = function() {
   setInterval(function() {
     if(player.playing && !player.live) {
       var now = (new Date()).getTime();
+      player.playing_started = (player.playing_started || (new Date()).getTime());
       player.playing_seconds = (player.played_seconds || 0) + ((now - player.playing_started) / 1000);
+      
       console.log("playing for", player.playing_seconds);
     }
     if(localStorage.getItem('playthrough_for_' + cell) == 'true') {
@@ -315,8 +329,8 @@ var check = function() {
     } else if(player.obj && !player.live && player.survey) {
       // after 20 minutes of playing, go ahead and allow the survey link
       if(player.playing_seconds > (20 * 60)) {
-        var duration = player.obj && player.obj.getDuration && player.obj.getDuration();
-        var current = player.obj && player.obj.getCurrentTime && player.obj.getCurrentTime();
+        var duration = player.duration || (player.obj && player.obj.getDuration && player.obj.getDuration()) || 0;
+        var current = (player.obj && player.obj.getCurrentTime && player.obj.getCurrentTime()) || (player.playing_seconds + (duration * 0.25));
         // if more than 80% of the way through, show the survey link
         if(duration && current && current > (duration * 0.8)) {
           dom.survey_link.style.display = 'block';
