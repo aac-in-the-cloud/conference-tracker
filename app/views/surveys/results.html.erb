@@ -99,7 +99,7 @@ a {
   <% if @error %>
     <p>Bad Link</p>
   <% else %>
-    <% if @doc_id == 'all' %>
+    <% if @doc_id && @doc_id.match(/^all/) %>
       <span id='session_name'>Conference feedback from all sessions</span>
     <% elsif @conference %>
       <span id='session_name'><%= @conference.name %></span>
@@ -118,7 +118,7 @@ a {
       Video Likes: <span id='likes'></span>
     </div>
     <span id='average'>Average Score: <%= (@results.map{|r| r.json['answer_1'].to_i }.sum.to_f / @results.length.to_f).round(2) %> (out of 5.0)</span>
-    <% if @doc_id == 'all' %>
+    <% if @doc_id && @doc_id.match(/^all/) %>
       <table id='stats'>
         <thead>
           <tr>
@@ -139,11 +139,11 @@ a {
     <% @shown_results.each do |result| %>
       <div class='result'>
         <span class='date'><%= result.created_at.strftime('%b %-d, %Y %l:%M%P') %></span>
-        <% if @doc_id == 'all' %>
+        <% if @doc_id && @doc_id.match(/^all/) %>
           <%= result.code %>
         <% end %>
         <span class='rating'>Rating: <%= result.json['answer_1'] %></span>
-        <% if @doc_id == 'all' %>
+        <% if @doc_id && @doc_id.match(/^all/) %>
           <%= result.json['answer_3'] %>
         <% else %>
           <%= result.json['answer_2'] %>
