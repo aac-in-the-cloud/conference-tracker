@@ -64,7 +64,7 @@ class ConferencesController < ApplicationController
         time_slots.each do |timestamp, list|
           time = 'pre'
           name = 'Group #{timestamp}'
-          if day != 'pre'
+          if timestamp != 'pre'
             time = Time.parse(timestamp)
             name = time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET')
           end
