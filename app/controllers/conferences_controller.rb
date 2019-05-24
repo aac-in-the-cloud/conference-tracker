@@ -45,23 +45,37 @@ class ConferencesController < ApplicationController
       }
       sessions = sessions.select{|s| s.resources }
       days = sessions.group_by{|s| s.resources['timestamp'][0, 10] }.to_a.sort_by(&:first)
-      max_tracks = sessions.group_by{|s| s.resources['timestamp']}.to_a.map(&:last).map(&:length).max || 0
+      max_tracks = sessions.select{|s| s.resources['timestamp'] != 'pre' }.group_by{|s| s.resources['timestamp']}.to_a.map(&:last).map(&:length).max || 0
 
       days.each do |day, list|
         day = {
-          name: Date.parse(day).strftime('%B %e, %Y'),
+          name: day == 'pre' ? 'pre' : Date.parse(day).strftime('%B %e, %Y'),
           time_slots: []
         }
         time_slots = list.group_by{|s| s.resources['timestamp']}.to_a.sort_by(&:first)
+        if day == 'pre'
+          time_slots = {}
+          cnt = 0
+          list.each_slice(max_tracks) do |slice|
+            time_slots[cnt] = slice
+            cnt += 1
+          end
+        end
         time_slots.each do |timestamp, list|
-          time = Time.parse(timestamp)
-          name = time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET')
+          time = 'pre'
+          name = 'Group #{timestamp}'
+          if day != 'pre'
+            time = Time.parse(timestamp)
+            name = time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET')
+          end
           slot = {
             name: name,
             tracks: [],
             special: (max_tracks > 1 && list.length == 1)
           }
-          max_tracks = [max_tracks, list.length].max
+          if day != 'pre'
+            max_tracks = [max_tracks, list.length].max
+          end
           list.sort_by(&:code).each do |session|
             track = {
               name: session.resources['session_name'],
@@ -143,12 +157,16 @@ class ConferencesController < ApplicationController
       yr = (2017 + i).to_s
       date = date.sub(/,/, " #{yr},") if date && code.match(/#{yr[2, 2]}$/) && !date.match(/#{yr}/)
     end
-    data['timestamp'] = Time.parse(data['date']).iso8601
-
+    if data['date'] == 'PRE'
+      data['timestamp'] = 'pre'
+    else
+      data['timestamp'] = Time.parse(data['date']).iso8601
+    end
     if !session.code
-      existing = ConferenceSession.where(conference_code: conference.code).select{|s| s.resources && s.resources['timestamp'] == data[:timestamp] }
+      existing = ConferenceSession.where(conference_code: conference.code).select{|s| s.resources && s.resources['timestamp'] == data['timestamp'] }
+      max = ConferenceSession.where(conference_code: conference.code).map{|c| c.code.match(/^\w(\d+)/)[1].to_i}.max
       total = ConferenceSession.where(conference_code: conference.code).count
-      session.code = ('A'.ord + existing.length).chr + (total + 1).to_s + conference.code
+      session.code = ('A'.ord + existing.length).chr + ([max, total].max + 1).to_s + conference.code
       session.conference_code = conference.code
     end
     session.resources = data
