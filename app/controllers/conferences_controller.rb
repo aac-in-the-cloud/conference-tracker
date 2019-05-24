@@ -24,6 +24,23 @@ class ConferencesController < ApplicationController
     render json: {code: conference.code}
   end
 
+  def search
+    sessions = ConferenceSession.find_by_data(params['q'])
+    sessions = sessions.where(conference_code: params['conference_code']) if params['conference_code']
+    sessions = sessions.limit(25)
+    @conferences = {}
+    Conference.all.each do |conf|
+      conference_json = JSON.parse(conf.data) rescue nil
+      conference_json ||= {}
+      @conferences[conf.code] = {
+        'name' => conf.name,
+        'pre_note' => conference_json['pre_note'],
+        'code' => conf.code
+      }
+    end
+    @sessions = sessions
+  end
+
   def show
     response.headers.except! 'X-Frame-Options'
     conference = Conference.find_by(code: params['id'])
