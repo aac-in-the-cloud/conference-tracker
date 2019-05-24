@@ -25,8 +25,10 @@ class ConferencesController < ApplicationController
   end
 
   def search
-    sessions = ConferenceSession.find_by_data(params['q'])
-    sessions = sessions.where(conference_code: params['conference_code']) if params['conference_code']
+    sessions = ConferenceSession.search_by_data(params['q'])
+    if params['conference_code']
+      sessions = sessions.where(conference_code: params['conference_code']) 
+    end
     sessions = sessions.limit(25)
     @conferences = {}
     Conference.all.each do |conf|
