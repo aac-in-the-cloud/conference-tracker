@@ -19,16 +19,33 @@ input[type='text'] {
 
 </style>
 <div id='content'>
-  <h1>Session Search Results</h1>
+  <h1>Sessions Matching "<%= params['q'] %>"</h1>
   <% if @sessions.count == 0 %>
     <p>No results found</p>
   <% else %>
     <% @sessions.each do |session| %>
-      <% conf = @conferences[session.conference_code] %>
-      <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
-      <%= session.resources['session_name'] %>
-      <div style='white-space: nowrap; color: #888; overflow: hidden;'><%= session.resources['description'] %></div>
-      <div style='clear: left;'></div>
+      <div style='margin-bottom: 10px;'>
+        <% conf = @conferences[session.conference_code] %>
+        <a href="<%= session.video_link %>">
+          <img style='float: left; height: 100px; width: 10px; object-fit: contain; object-position: center; padding-bottom: 5px; padding-right: 10px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
+          <%= session.resources['session_name'] %>
+        </a>
+        <div style='white-space: nowrap; color: #888; overflow: hidden;'>
+          <%= conf[:name] %><br/>
+          <% if !conf[:closed] %>
+            <em><b>
+              <% if session.resources['timestamp'].match(/pre/) %>
+                Pre-Conference Workshop<% if conf[:pre_note] %> - <%= conf[:pre_note] %><% end %>
+              <% else %>
+                <% time = Time.parse(session.resources['timestamp']) %>
+                <%= time.strftime('%B %e, %Y') %><%= time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET') %>
+              <% end %>
+            </b></em>
+          <% end %>
+        </div>
+        <div style='white-space: nowrap; color: #888; overflow: hidden;'><%= session.resources['description'] %></div>
+        <div style='clear: left;'></div>
+      </div>
     <% end %>
   <% end %>
 </div>

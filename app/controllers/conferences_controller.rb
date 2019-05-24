@@ -35,9 +35,11 @@ class ConferencesController < ApplicationController
       conference_json = JSON.parse(conf.data) rescue nil
       conference_json ||= {}
       @conferences[conf.code] = {
-        'name' => conf.name,
-        'pre_note' => conference_json['pre_note'],
-        'code' => conf.code
+        :name => conf.name,
+        :pre_note => conference_json['pre_note'],
+        :code => conf.code,
+        :closed => !!conference_json['closed'],
+        :year => conf.year
       }
     end
     @sessions = sessions
