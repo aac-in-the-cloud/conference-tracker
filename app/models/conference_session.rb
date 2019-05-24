@@ -1,6 +1,6 @@
 class ConferenceSession < ApplicationRecord
   before_save :generate_defaults
-  pg_search_scope :search_by_data, :against => :data
+#  pg_search_scope :search_by_data, :against => :data
 
   def generate_defaults
     self.conference_code ||= self.code.match(/^\w+\d+(\w+\d+)$/)[1] if self.code
