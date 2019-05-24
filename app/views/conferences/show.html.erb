@@ -121,6 +121,23 @@ table#session button {
 .tooltip .tooltip_text:hover {
   visibility: hidden;
 }
+form.search input[type='text'] {
+  border: 1px solid #aaa;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 30px;
+  font-size: 17px;
+  width: 150px;
+  padding-left: 10px;
+}
+form.search button {
+  border: 1px solid #aaa;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 34px;
+  font-size: 17px;
+  color: #aaa;
+}
 
 </style>
 <div id='content'>
@@ -132,7 +149,15 @@ table#session button {
     you can report for credits.
   </div>
   <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
-  <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px;' src='/sponsored.png' />
+  <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px; padding-left: 5px;' src='/sponsored.png' />
+  <form class='search' action='/search' method='GET' style='text-align: right; margin-top: 10px;'>
+    <% if params['no_blank'] == '1' %>
+      <input type='hidden' name='no_blank' value='1'/>
+    <% end %>
+    <input type='text' name='q' value='<%= params['q'] %>' placeholder="search"/>
+    <button type='submit'>Go</button>
+  </form>
+
   <div style='clear: left;'></div>
   <table id='conference'>
     <tbody>

@@ -25,6 +25,7 @@ class ConferencesController < ApplicationController
   end
 
   def search
+    response.headers.except! 'X-Frame-Options'
     sessions = ConferenceSession.search_by_data(params['q'])
     if params['conference_code']
       sessions = sessions.where(conference_code: params['conference_code']) 

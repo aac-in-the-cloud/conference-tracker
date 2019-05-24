@@ -11,27 +11,45 @@ h1 {
 
 input[type='text'] {
   border: 1px solid #888;
+  vertical-align: top;
   border-radius: 3px;
-  height: 50px;
+  height: 40px;
   font-size: 20px;
-  width: 350px;
+  width: 200px;
+  padding-left: 10px;
+}
+form button {
+  border: 1px solid #888;
+  color: #444;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 44px;
+  font-size: 20px;
 }
 
 </style>
 <div id='content'>
-  <h1>Sessions Matching "<%= params['q'] %>"</h1>
+  <h1 style='margin-bottom: 10px;'>Sessions Matching "<%= params['q'] %>"</h1>
+  <form action='/search' method='GET' style='text-align: center; margin-bottom: 20px;'>
+    <% if params['no_blank'] == '1' %>
+      <input type='hidden' name='no_blank' value='1'/>
+    <% end %>
+    <button type='button' onclick="window.history.back();">Back</button>
+    <input type='text' name='q' value='<%= params['q'] %>' placeholder="search"/>
+    <button type='submit'>Go</button>
+  </form>
   <% if @sessions.count == 0 %>
     <p>No results found</p>
   <% else %>
     <% @sessions.each do |session| %>
       <div style='margin-bottom: 10px;'>
         <% conf = @conferences[session.conference_code] %>
-        <a href="<%= session.video_link %>">
+        <a href="<%= session.video_link %><%= "?from_search=1" if params['no_blank'] == '1' %>" style='text-decoration: none;' <% if params['no_blank'] != '1'%>target='_blank'<% end %>>
           <img style='float: left; height: 100px; width: 100px; object-fit: contain; object-position: center; padding-bottom: 5px; padding-right: 10px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
-          <%= session.resources['session_name'] %>
+          <span style='font-size: 20px;'><%= session.resources['session_name'] %></span>
         </a>
-        <div style='white-space: nowrap; color: #888; overflow: hidden;'>
-          <%= conf[:name] %><br/>
+        <div style='white-space: nowrap; overflow: hidden; color: #444;'>
+          <span style='color: #888;'><%= conf[:name] %></span><br/>
           <% if !conf[:closed] %>
             <em><b>
               <% if session.resources['timestamp'].match(/pre/) %>
@@ -43,7 +61,7 @@ input[type='text'] {
             </b></em>
           <% end %>
         </div>
-        <div style='white-space: nowrap; color: #888; overflow: hidden;'><%= session.resources['description'] %></div>
+        <div style='white-space: nowrap; color: #888; overflow: hidden; text-overflow: ellipsis;'><%= session.resources['description'] %></div>
         <div style='clear: left;'></div>
       </div>
     <% end %>
