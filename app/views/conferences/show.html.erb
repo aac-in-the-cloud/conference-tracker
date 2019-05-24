@@ -136,11 +136,17 @@ table#session button {
   <div style='clear: left;'></div>
   <table id='conference'>
     <tbody>
+        <% day_number = 0 %>
         <% @conference[:days].each_with_index do |day, idx| %>
+          <% day_number += 1 unless day[:day_id] == '_pre' %>
           <tr class='day'>
             <td></td>
             <td class='day' colspan="<%= @conference[:tracks].length %>">
-              Day <%= idx + 1 %> - <%= day[:name] %>
+            <% if day[:day_id] == '_pre' %>
+              <%= day[:name] %> - <% if day[:pre_note] %><%= day[:pre_note] %><% end %>
+            <% else %>
+              Day <%= day_number %> - <%= day[:name] %>
+            <% end %>
             </td>
           </tr>
           <tr class='tracks'>
@@ -187,8 +193,11 @@ table#session button {
     <table id='session'>
       <tbody>
         <tr>
-          <td>Name:</td>
+          <td><label for="conference_name">Name:</label></td>
           <td><input type="text" id="conference_name" value="<%= @conference[:name] %>" /></td>
+        </tr><tr>
+          <td><label for="conference_pre_note">Pre-Conf Note:</label></td>
+          <td><input type="text" id="conference_pre_note" value="<%= @conference[:pre_note] %>" placeholder="Watch Anytime After Jan 1" /></td>
         </tr><tr>
           <td>Filled:</td>
           <td style='padding: 15px 0;'>
@@ -249,11 +258,17 @@ table#session button {
 
           <table id='conference'>
           <tbody>
+              <% day_number = 0 %>
               <% @conference[:days].each_with_index do |day, idx| %>
+                <% day_number += 1 unless day[:day_id] == '_pre' %>
                 <tr class='day'>
                   <td></td>
                   <td class='day' colspan="<%= @conference[:tracks].length %>">
-                    Day <%= idx + 1 %> - <%= day[:name] %>
+                    <% if day[:day_id] == '_pre' %>
+                      <%= day[:name] %><% if day[:pre_note] %><%= day[:pre_note] %><% end %>
+                    <% else %>
+                      Day <%= day_number %> - <%= day[:name] %>
+                    <% end %>
                   </td>
                 </tr>
                 <tr class='tracks'>
@@ -324,6 +339,7 @@ if (document.getElementById('update_conference')) {
     var opts = {
       code: "<%= @conference[:code] %>",
       name: document.getElementById('conference_name').value,
+      pre_note: document.getElementById('conference_pre_note').value,
       closed: document.getElementById('conference_closed').checked,
       filled: document.getElementById('conference_filled').checked,
       authenticity_token: "<%= form_authenticity_token %>"

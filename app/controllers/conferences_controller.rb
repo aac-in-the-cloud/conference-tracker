@@ -15,6 +15,7 @@ class ConferencesController < ApplicationController
     data = JSON.parse(conference.data) rescue nil
     data ||= {}
     conference.name = params['name'] if !params['name'].blank?
+    data['pre_note'] = params['pre_note'] if !params['pre_note'].blank?
     data['closed'] = params['closed'] if params['closed'] != nil
     data['filled'] = params['filled'] if !params['filled'] != nil
     conference.data = data.to_json
@@ -44,36 +45,38 @@ class ConferencesController < ApplicationController
         days: []
       }
       sessions = sessions.select{|s| s.resources }
-      days = sessions.group_by{|s| s.resources['timestamp'][0, 10] }.to_a.sort_by(&:first)
+      days = sessions.group_by{|s| s.resources['timestamp'] == 'pre' ? '_pre' : s.resources['timestamp'][0, 10] }.to_a.sort_by(&:first)
       max_tracks = sessions.select{|s| s.resources['timestamp'] != 'pre' }.group_by{|s| s.resources['timestamp']}.to_a.map(&:last).map(&:length).max || 0
-
-      days.each do |day, list|
+      days = days.sort_by{|arr| arr[0] == '_pre' ? '0000-00-00' : arr[0] }
+      days.each do |day_id, list|
         day = {
-          name: day == 'pre' ? 'pre' : Date.parse(day).strftime('%B %e, %Y'),
+          day_id: day_id,
+          name: day_id == '_pre' ? 'Pre-Conference Sessions' : Date.parse(day_id).strftime('%B %e, %Y'),
           time_slots: []
         }
         time_slots = list.group_by{|s| s.resources['timestamp']}.to_a.sort_by(&:first)
-        if day == 'pre'
+        if day_id == '_pre'
+          day[:pre_note] = conference_json['pre_note']
           time_slots = {}
           cnt = 0
           list.each_slice(max_tracks) do |slice|
-            time_slots[cnt] = slice
+            time_slots["pre_#{cnt}"] = slice
             cnt += 1
           end
         end
         time_slots.each do |timestamp, list|
           time = 'pre'
-          name = 'Group #{timestamp}'
-          if timestamp != 'pre'
+          name = ""
+          if !timestamp.match(/pre/)
             time = Time.parse(timestamp)
             name = time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET')
           end
           slot = {
             name: name,
             tracks: [],
-            special: (max_tracks > 1 && list.length == 1)
+            special: (time != 'pre' && max_tracks > 1 && list.length == 1)
           }
-          if day != 'pre'
+          if day_id != '_pre'
             max_tracks = [max_tracks, list.length].max
           end
           list.sort_by(&:code).each do |session|
