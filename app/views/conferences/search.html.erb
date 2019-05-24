@@ -27,7 +27,7 @@ input[type='text'] {
       <div style='margin-bottom: 10px;'>
         <% conf = @conferences[session.conference_code] %>
         <a href="<%= session.video_link %>">
-          <img style='float: left; height: 100px; width: 10px; object-fit: contain; object-position: center; padding-bottom: 5px; padding-right: 10px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
+          <img style='float: left; height: 100px; width: 100px; object-fit: contain; object-position: center; padding-bottom: 5px; padding-right: 10px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
           <%= session.resources['session_name'] %>
         </a>
         <div style='white-space: nowrap; color: #888; overflow: hidden;'>

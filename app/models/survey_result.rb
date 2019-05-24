@@ -84,6 +84,9 @@ class SurveyResult < ApplicationRecord
     #   session.save!
     # end
     res = session.resources || {}
+    if res['date'] == 'PRE'
+      res['date'] = "Pre-Conference Session"
+    end
     res['survey_link'] = session.survey_link
     res['video_link'] = session.video_link
     res['year'] = session.year
