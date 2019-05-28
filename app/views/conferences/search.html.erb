@@ -56,7 +56,7 @@ form button {
                 Pre-Conference Workshop<% if conf[:pre_note] %> - <%= conf[:pre_note] %><% end %>
               <% else %>
                 <% time = Time.parse(session.resources['timestamp']) %>
-                <%= time.strftime('%B %e, %Y') %><%= time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET') %>
+                <%= time.strftime('%B %e, %Y') %>, <%= time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET') %>
               <% end %>
             </b></em>
           <% end %>
