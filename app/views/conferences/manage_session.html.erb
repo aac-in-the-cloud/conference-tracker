@@ -130,6 +130,9 @@ p.helper {
           <td>Description:</td>
           <td><input type='text' id='description'/></td>
         </tr><tr>
+          <td>Credit Hours:</td>
+          <td><input type='text' id='hours' placeholder='1 Hour'/></td>
+        </tr><tr>
           <td>Disabled:</td>
           <td style='padding: 15px 0;'>
             <label>
@@ -191,6 +194,7 @@ if(document.getElementById('name')) {
   document.getElementById('name').value = resources.session_name || '';
   document.getElementById('date').value = resources.date || '';
   document.getElementById('description').value = resources.description || '';
+  document.getElementById('hours').value = resources.hours || '';
   document.getElementById('disabled').checked = link_disabled || false;
   document.getElementById('url').value = resources.youtube_link || '';
   document.getElementById('slides').value = resources.slides_link || '';
@@ -211,6 +215,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
     opts.name = document.getElementById('name').value;
     opts.time = document.getElementById('date').value;
     opts.description = document.getElementById('description').value;
+    opts.hours = parseFloat(document.getElementById('hours').value);
     opts.url = document.getElementById('url').value;
     opts.slides = document.getElementById('slides').value;
     opts.live_attendees = document.getElementById('attendees').value;

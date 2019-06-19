@@ -196,6 +196,7 @@ var check = function() {
     opts.time = res.date;
     opts.session = res.session_name;
     opts.link = res.hangouts_link;
+    player.hours = res.hours;
     opts.video = res.youtube_link;
     opts.slides = res.slides_link;
     opts.description = res.description;
@@ -245,6 +246,9 @@ var check = function() {
     dom.label.classList.remove('error');
     dom.label.innerText = opts.session;
     dom.time.innerText = opts.time;
+    if(res.hours !== 0) {
+      dom.time.innerText = opts.time + ", " + (res.hours || 1.0) + " participation credit" + ((res.hours && res.hours != 1.0) ? "s" : "");
+    }
 
     if(opts.video_id) {
       if(player.ready) {
@@ -331,8 +335,9 @@ var check = function() {
       dom.survey_link.style.display = 'block';
       dom.chat.style.display = 'none';
     } else if(player.obj && !player.live && player.survey) {
-      // after 20 minutes of playing, go ahead and allow the survey link
-      if(player.playing_seconds > (20 * 60)) {
+      // after 33% of playtime, go ahead and allow the survey link
+      var seconds_cutoff = (player.hours || 1.0) * 60 * 60 * 0.33;
+      if(player.playing_seconds > seconds_cutoff) {
         var duration = player.duration || (player.obj && player.obj.getDuration && player.obj.getDuration()) || 0;
         var current = (player.obj && player.obj.getCurrentTime && player.obj.getCurrentTime()) || (player.playing_seconds + (duration * 0.25));
         // if more than 80% of the way through, show the survey link

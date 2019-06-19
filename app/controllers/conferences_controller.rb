@@ -134,7 +134,7 @@ class ConferencesController < ApplicationController
     @token = token;
   end
 
-  def add_session
+  def add_session # or update_session
     conference = Conference.find_by(code: params['conference_code'])
     if !conference
       render json: {error: 'no conference found'}, status: 400
@@ -170,6 +170,7 @@ class ConferencesController < ApplicationController
       data['date'] = params['time'] if !params['time'].blank?
       data['session_name'] = params['name'] if !params['name'].blank?
       data['description'] = params['description'] if !params['description'].blank?
+      data['hours'] = params['hours'].to_f if !params['hours'].blank?
       data['youtube_link'] = params['url'] if !params['url'].blank?
       data['youtube_link'] = nil if params['url'] == ''
       data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0

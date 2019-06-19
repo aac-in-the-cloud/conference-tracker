@@ -61,12 +61,12 @@ class SurveysController < ApplicationController
       results = SurveyResult.where(['updated_at >= ? AND updated_at <= ?', start_date, end_date + 1]).where(:email_hash => email_hash)
 
       sessions = []
-      hours = 0
+      hours = 0.0
       results.each do |sr|
         json = SurveyResult.session_data(sr.code)
         name = json['session_name'] || "Session code: #{sr.code}"
         sessions.push(name)
-        hours += 1
+        hours += (json['hours'] || 1.0).round(1)
       end
       start_date = results.map(&:updated_at).min
       end_date = results.map(&:updated_at).max
