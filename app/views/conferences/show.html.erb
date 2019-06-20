@@ -35,6 +35,28 @@ table#conference tbody td.day {
 table#conference tbody td.column {
   font-size: 14px;
 }
+table#conference tbody td.stats_column {
+  position: relative;
+}
+table#conference tbody td.stats_column .stats {
+  position: absolute;
+  display: none;
+  bottom: 0;
+  right: 0;
+  color: #888;
+  background: #fcfcfc;
+  border-top-left-radius: 5px;
+  border-top: 1px solid #eee;
+  border-left: 1px solid #eee;
+  padding: 5px;
+  box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.5);
+}
+table#conference tbody td.stats_column .stats .live {
+  margin-right: 2px;
+  padding-right: 5px;
+  border-right: 1px solid #ddd;
+}
+
 table#conference tbody td.column_0 a {
   color: rgb(17, 85, 204);
   text-decoration: none;
@@ -184,7 +206,7 @@ form.search button {
             <tr>
               <td style='white-space: nowrap;'><%= slot[:name] %></td>
               <% slot[:tracks].each_with_index do |track, idx| %>
-                <td class='<%= slot[:special] ? 'column special' : "column column_#{idx}" %>' colspan='<%= slot[:special] ? @conference[:tracks].length : 1 %>'>
+                <td class='<%= slot[:special] ? 'column stats_column special' : "column stats_column column_#{idx}" %>' colspan='<%= slot[:special] ? @conference[:tracks].length : 1 %>' id='col_<%= track[:code] %>' rel='<%= track[:code] %>'>
                   <span class='tooltip'>
                     <% if !track[:description].blank? %>
                       <div class='tooltip_text <%= idx >= slot[:tracks].length - 1 ? 'left' : '' %>'><%= track[:description] %></div>
@@ -205,6 +227,10 @@ form.search button {
                       </a>
                     <% end %>
                   </span>
+                  <div class='stats'>
+                    <span class='live'></span>
+                    <span class='views'></span>
+                  </div>
                 </td>
               <% end %>
             </tr>
@@ -408,4 +434,34 @@ if(window.parent != window) {
   });
   document.getElementById('extras').style.display = 'none';
 }
+<% if @authenticated %>
+var columns = document.getElementsByClassName('stats_column');
+var codes = [];
+for(let col of columns) {
+  var code = col.getAttribute('rel');
+  if(code && col.getAttribute('id') == 'col_' + code) {
+    codes.push(code);
+  }
+}
+var next_code = function() {
+  var code = codes.shift();
+  if(!code) { return; }
+  var doc_id = "<%= ENV['DOC_ID'] %>";
+  doc_lookup(doc_id, code, function(res) {
+    var col = document.getElementById('col_' + code);
+    if(col) {
+      var stats = col.getElementsByClassName('stats')[0];
+      if(stats) { stats.style.display = 'block'; }
+      var views = col.getElementsByClassName('views')[0];
+      if(views) { views.innerText = res.views || "--"; }
+      var live = col.getElementsByClassName('live')[0];
+      if(live) { live.innerText = res.live_attendees || "--"; }
+    }
+    setTimeout(next_code, 500);
+  }, function(err) { 
+    setTimeout(next_code, 1000);
+  }, true);
+};
+next_code();
+<% end %>
 </script>
