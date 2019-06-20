@@ -95,7 +95,14 @@ p.helper {
     <a href='/conferences/<%= @session.conference_code %>?no_blank=1'>Back to the Session List</a>
   </div>
   <div id='label'><a href="<%= @session.video_link %>"><%= @session.resources['session_name'] %></a></div>
-  <div id='time'><%= @session.resources['date'] %></div>
+  <% 
+    date = @session.resources['date']
+    time = Time.parse(date) rescue nil
+    if time
+      date = time.min == 0 ? time.strftime('%B %e, %l%P ET') : time.strftime('%B %e, %l:%M%P ET')
+    end
+  %>
+  <div id='time'><%= date %></div>
   <div style='clear: left;'></div>
   <% if params['simple'] %>
     <p class='helper'>

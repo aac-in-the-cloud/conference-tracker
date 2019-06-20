@@ -45,7 +45,14 @@ table#conference tbody td.column_0 a {
       <% @sessions.each do |session| %>
         <tr>
           <td style='white-space: nowrap;'>
-            <%= session.resources['date'] %>
+          <% 
+            date = session.resources['date']
+            time = Time.parse(date) rescue nil
+            if time
+              date = time.min == 0 ? time.strftime('%B %e, %l%P ET') : time.strftime('%B %e, %l:%M%P ET')
+            end
+          %>
+          <%= date %>
           </td>
           <td class='column column_0'>
             <a href="<%= session.manage_link %>?simple=1"><%= session.resources['session_name'] %></a>

@@ -28,6 +28,11 @@ class LinksController < ApplicationController
   
   def data
     json = SurveyResult.session_data(params['cell'])
+    time = Time.parse(json['date']) rescue nil
+    if time
+      json['timestamp'] = time.to_i
+      json['date'] = time.min == 0 ? time.strftime('%b %e, %l%P ET') : time.strftime('%b %e, %l:%M%P ET')
+    end
     if @authenticated
       session = ConferenceSession.find_by(code: json['code'])
       json['manage_link'] = session.manage_link
