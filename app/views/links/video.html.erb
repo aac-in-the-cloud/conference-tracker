@@ -173,7 +173,7 @@ var check = function() {
           dom.spinner.style.display = 'none';
         }, 800);
         // setting live_attendees is what triggers the survey link for live sessions
-        if(res.live_attendees) {
+        if(res.live_attendees != null) {
           player.live_attendees = res.live_attendees;
         }
         // as a fallback, if the video link changes, just reload the page
