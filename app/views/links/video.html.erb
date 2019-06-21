@@ -335,12 +335,16 @@ var check = function() {
       dom.survey_link.style.display = 'block';
       dom.chat.style.display = 'none';
     } else if(player.obj && !player.live && player.survey) {
+      // after the player has been playing for at least 33% of the 
+      // credit hour duration, and the play scrubber is in the last
+      // 20% of the video, then show the survey link.
+
       // after 33% of playtime, go ahead and allow the survey link
       var seconds_cutoff = (player.hours || 1.0) * 60 * 60 * 0.33;
       if(player.playing_seconds > seconds_cutoff) {
         var duration = player.duration || (player.obj && player.obj.getDuration && player.obj.getDuration()) || 0;
         var current = (player.obj && player.obj.getCurrentTime && player.obj.getCurrentTime()) || (player.playing_seconds + (duration * 0.25));
-        // if more than 80% of the way through, show the survey link
+        // if play point is in the last 20% of the video, show the survey link
         if(duration && current && current > (duration * 0.8)) {
           dom.survey_link.style.display = 'block';
           dom.chat.style.display = 'none';
