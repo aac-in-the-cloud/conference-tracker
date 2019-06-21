@@ -13,6 +13,26 @@ class Conference < ApplicationRecord
     end
   end
 
+  def assert_year
+    sessions = ConferenceSession.where(conference_code: self.code)
+    if code.match(/\d+$/)
+      year = '20' + self.code.match(/\d+$/)[0]
+      sessions.each do |session|
+        data = session.resources
+        time = Time.parse(data['date']) rescue nil
+        time = nil if data && data['date'] && data['date'].downcase == 'pre'
+        if time
+          time = time.change(year: year.to_i)
+          data['prior_dates'] ||= []
+          data['prior_dates'] << data['date']
+          data['date'] = time.strftime('%B %e %Y, %l:%M%P')
+          session.resources = data
+          session.save
+        end
+      end
+    end
+  end
+
   def self.user_token(string)
     Digest::MD5.hexdigest(string + "::" + ENV['AUTH_SECRET'])
   end

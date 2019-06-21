@@ -240,6 +240,9 @@ form.search button {
   </table>
   <div id='extras'>
   <% if @authenticated %>
+    <h3>
+      <a href="/surveys/results/all:<%= @conference[:code] %>/admincough">Conference Survey Results</a>
+    </h3>
     <h3>Conference Settings</h3>
     <table id='session'>
       <tbody>
