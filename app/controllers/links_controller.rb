@@ -31,7 +31,7 @@ class LinksController < ApplicationController
     time = Time.parse(json['date']) rescue nil
     if time
       json['timestamp'] = time.to_i
-      json['date'] = time.min == 0 ? time.strftime('%b %e, %l%P ET') : time.strftime('%b %e, %l:%M%P ET')
+      json['date'] = Conference.date_string(time)
     end
     if @authenticated
       session = ConferenceSession.find_by(code: json['code'])

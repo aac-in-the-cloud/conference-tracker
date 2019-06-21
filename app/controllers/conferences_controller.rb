@@ -91,7 +91,7 @@ class ConferencesController < ApplicationController
           name = ""
           if !timestamp.match(/pre/)
             time = Time.parse(timestamp)
-            name = time.min == 0 ? time.strftime('%l %P ET') : time.strftime('%l:%M %P ET')
+            name = Conference.date_string(time, 'short')
           end
           slot = {
             name: name,

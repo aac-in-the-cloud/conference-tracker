@@ -98,9 +98,7 @@ p.helper {
   <% 
     date = @session.resources['date']
     time = Time.parse(date) rescue nil
-    if time
-      date = time.min == 0 ? time.strftime('%B %e, %l%P ET') : time.strftime('%B %e, %l:%M%P ET')
-    end
+    date = Conference.date_string(time) if time
   %>
   <div id='time'><%= date %></div>
   <div style='clear: left;'></div>

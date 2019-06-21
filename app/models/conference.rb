@@ -16,6 +16,29 @@ class Conference < ApplicationRecord
   def self.user_token(string)
     Digest::MD5.hexdigest(string + "::" + ENV['AUTH_SECRET'])
   end
+  
+  def self.date_string(time, length='default', time_zone=nil)
+    cutoff = (Date.today << 3).to_time
+    prior = time < cutoff || time.year < cutoff.year
+    # TODO: time zones
+    if time.min == 0
+      if length == 'short'
+        time.strftime('%l %P ET')
+      elsif prior || length == 'long'
+        time.strftime('%B %e %Y, %l%P ET')
+      else
+        time.strftime('%B %e, %l%P ET')
+      end
+    else
+      if length == 'short'
+        time.strftime('%l:%M %P ET')
+      elsif prior || length == 'long'
+        time.strftime('%B %e %Y, %l:%M%P ET')
+      else
+        time.strftime('%B %e %Y, %l:%M%P ET')
+      end
+    end
+  end
 
   def year
     "20#{self.code.match(/\d+/)}"
