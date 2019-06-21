@@ -84,6 +84,7 @@ class SurveyResult < ApplicationRecord
     #   session.save!
     # end
     res = session.resources || {}
+    res['hours'] ||= 1.0
     if res['date'] == 'PRE'
       res['date'] = "Pre-Conference Session"
     end

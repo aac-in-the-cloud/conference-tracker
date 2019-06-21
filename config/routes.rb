@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get '/surveys' => 'surveys#index'
   post '/surveys/certificate' => 'surveys#render_certificate'
   get '/surveys/certificate' => 'surveys#certificate'
+  post '/surveys/stats' => 'surveys#stats'
   get '/surveys/:id' => 'surveys#show'
   post '/surveys/' => 'surveys#create'
   get '/surveys/results/:id/:code' => 'surveys#results'

@@ -48,6 +48,32 @@ class SurveysController < ApplicationController
       @shown_results = @results
     end
   end
+
+  def stats
+    json = []
+    days = params['days'].to_i
+    days = 60 if !days || days == 0
+
+    start_date = (Date.today - days)
+    end_date = Date.today
+    if params['name'] && params['email'] && params['days']
+      email_hash = Digest::MD5.hexdigest(params['email'].downcase)
+      results = SurveyResult.where(['updated_at >= ? AND updated_at <= ?', start_date, end_date + 1]).where(:email_hash => email_hash)
+
+      hours = 0.0
+      results.each do |sr|
+        hash = SurveyResult.session_data(sr.code)
+        hash['attended'] = sr.updated_at.to_i;
+        hash['score'] = sr.json['answer_1']
+        hash['session_note'] = sr.json['answer_2']
+        hash['conf_note'] = sr.json['answer_3']
+        json << hash
+      end
+      render json: json.sort_by{|h| h['attended'] }
+    else
+      render json: {error: 'no data'}
+    end
+  end
   
   def render_certificate
     response.headers.delete('X-Frame-Options')

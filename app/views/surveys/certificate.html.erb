@@ -41,10 +41,29 @@ body * {
   margin: 0;
   vertical-align: middle;
   cursor: pointer;
-  width: 400px;
+  width: 100%;
 }
 .item button:focus {
   background: #ccc;
+}
+#attendance .session {
+  margin: 10px 5px;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+#attendance .session .name {
+  display: block;
+}
+#attendance .session .notes {
+  color: #444;
+  margin-top: 5px;
+}
+#attendance .session .session_note {
+  color: #aaa;
+  font-style: italic;
+  font-size: 12px;
+  margin-top: 10px;
 }
 </style>
 <div id='code_entry'>
@@ -56,7 +75,7 @@ body * {
   <form action='/surveys/certificate' method='POST'>
     <div class='item'>
       <span>Your Name:</span>
-      <input id='email' type='text' name='name' placeholder='Full Name'/>
+      <input id='name' type='text' name='name' placeholder='Full Name'/>
     </div>
     <div class='item'>
       <span>Your Email:</span>
@@ -67,9 +86,75 @@ body * {
       <input id='days' type='text' style='width: 150px;' name='days' placeholder='# of Days to Look Back for Survyes' value='60' />
       <span style='font-size: 30px; display: inline;'>days</span>
     </div>
-    <input type='hidden' name='authenticity_token' value='<%= form_authenticity_token %>' />
+    <input type='hidden' id='a_token' name='authenticity_token' value='<%= form_authenticity_token %>' />
     <div class='item'>
-      <button id='submit' type='submit'>Generate Certificate</button>
+      <button id='submit' type='submit' style='height: 70px; margin-bottom: 3px;'>Generate Certificate</button>
+      <button id='show' type='button'>Show Attendance Details</button>
+    </div>
+    <div id='attendance' style='display: none;'>
+      <h3>Attendance Details for <span id='attendance_email'>User</span></h3>
+      <div id='session' class='session' style='display: none;'>
+        <a class='name'></a>
+        <div class='notes'>
+          <span class='hours'></span>,
+          attended <span class='attended'></span>
+          (rated <span class='score'></span>/5)
+        </div>
+        <div class='session_note' style='display: none;'></div>
+      </div>
     </div>
   </form>
 </div>
+<script>
+document.getElementById('show').addEventListener('click', function(event) {
+  event.preventDefault();
+  var sessions = document.getElementsByClassName('session');
+  for(let session of sessions) {
+    if(session.getAttribute('id') != 'session') {
+      session.parentNode.removeChild(session);
+    }
+  }
+  var opts = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    days: document.getElementById('days').value,
+    authenticity_token: document.getElementById('a_token').value
+  };
+  // get attendance details instead of generating certificate
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if(this.readyState == 4 && this.status == 200) {
+      res = JSON.parse(this.responseText);
+      document.getElementById('attendance_email').innerText = opts.email;
+      console.log("stats results", res);
+      var session_template = document.getElementById('session');
+      for(let session of res) {
+        var elem = session_template.cloneNode(true);
+        elem.style.display = 'block';
+        elem.removeAttribute('id');
+        var date = new Date(session.attended * 1000);
+        var date_string = date.toDateString();
+
+        elem.getElementsByClassName('name')[0].innerText = session.session_name;
+        elem.getElementsByClassName('name')[0].setAttribute('href', session.vide_link);
+        var hours = (session.hours || 1.0) + (session.hours == 1.0 ? ' credit' : 'credits');
+        elem.getElementsByClassName('hours')[0].innerText = hours;
+        elem.getElementsByClassName('attended')[0].innerText = date_string;
+        elem.getElementsByClassName('score')[0].innerText = session.score;
+        if(session.session_note) {
+          elem.getElementsByClassName('session_note')[0].innerText = session.session_note;
+          elem.getElementsByClassName('session_note')[0].style.display = 'block';
+        }
+        document.getElementById('attendance').appendChild(elem);
+      }
+      document.getElementById('attendance').style.display = 'block';
+    } else if(this.readyState == 4) {
+      alert('Session Failed to Submit');
+    }
+  };
+  var path = "/surveys/stats";
+  xhr.open('POST', path, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(JSON.stringify(opts));
+});
+</script>
