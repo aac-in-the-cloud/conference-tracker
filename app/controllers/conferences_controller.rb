@@ -60,6 +60,8 @@ class ConferencesController < ApplicationController
       conference = {
         name: conference.name,
         code: conference.code,
+        created: conference.created_at.iso8601,
+        updated: conference.updated_at.iso8601,
         year: "20#{params['id'].match(/\d+/)[0]}",
         closed: !!conference_json['closed'],
         filled: !!(conference_json['closed'] || conference_json['filled']),
@@ -144,7 +146,17 @@ class ConferencesController < ApplicationController
       end
       conference
     end
+    # <!-- expects @meta_record.(title, summary, large_image, image, link, created, updated) -->
+    # <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
     @conference = @conference.with_indifferent_access
+    @meta_record = OpenStruct.new({
+      title: @conference[:name],
+      summary: "Here you'll find a listing of all sessions for the #{@conference[:name]}!",
+      image: "#{request.protocol}#{request.host_with_port}/logo-#{@conference[:year]}.png",
+      link: request.original_url,
+      created: @conference[:created],
+      updated: @conference[:updated]
+    })
   end
 
   def manage_session
