@@ -79,6 +79,31 @@ class LinksController < ApplicationController
     @session_id += "A17" unless @session_id.match(/^\w+\d+\w+\d+$/)
     @conf_id = @session_id.match(/\w+\d+(\w+\d+)/)[1]
     @year = "20#{@conf_id.match(/\d+/)[0]}"
+    session = ConferenceSession.find_by(code: @session_id)
+    if session && session.resources
+      conf = Conference.find_by(code: session.conference_code)
+      name = session.resources['session_name']
+      name = "#{conf.name} - #{name}" if conf
+      image = "https://presenters.aacconference.com/logo-2017.png"
+      image = "#{request.protocol}#{request.host_with_port}/logo-#{conf.year}.png" if conf
+      if session.resources['youtube_link']
+        video_id = ((session.resources['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
+        if video_id
+          data = video_data_for(video_id)
+          if data['statistics'] && data['statistics']['viewCount'].to_i > 0
+            image = "https://img.youtube.com/vi/#{video_id}/0.jpg"
+          end
+        end
+      end
+      @meta_record = OpenStruct.new({
+        title: session.resources['session_name'],
+        summary: session.resources['description'],
+        image: image,
+        link: request.original_url,
+        created: session.created_at.iso8601,
+        updated: session.updated_at.iso8601
+      })
+    end
     response.headers.delete('X-Frame-Options')
   end
 
