@@ -88,7 +88,7 @@ class LinksController < ApplicationController
       req = Typhoeus.get(url)
       json = JSON.parse(req.body)
       res = json['items'][0]
-      hash = Rails.cache.fetch("video/#{video_id}", expires_in: 6.hours) { res }
+      hash = Rails.cache.fetch("video/#{video_id}", expires_in: 12.hours) { res }
     end
     hash
   end
