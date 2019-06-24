@@ -140,7 +140,7 @@ a {
       <div class='result'>
         <span class='date'><%= result.created_at.strftime('%b %-d, %Y %l:%M%P') %></span>
         <% if @doc_id && @doc_id.match(/^all/) %>
-          <%= result.code %>
+          <%= (result.json || {})['session_name'] || result.code %>
         <% end %>
         <span class='rating'>Rating: <%= result.json['answer_1'] %></span>
         <% if @doc_id && @doc_id.match(/^all/) %>

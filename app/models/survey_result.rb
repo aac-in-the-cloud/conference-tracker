@@ -9,6 +9,8 @@ class SurveyResult < ApplicationRecord
         email: params['email'],
         code: params['code'],
       }
+      session = ConferenceSession.find_by(code: record.code)
+      json['session_name'] = session.resources['session_name'] if session
       10.times do |idx|
         key = "answer_#{idx}"
         if params[key]
