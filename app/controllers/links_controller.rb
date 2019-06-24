@@ -44,6 +44,7 @@ class LinksController < ApplicationController
         if video_id
           hash = video_data_for(video_id)
           json['video_id'] = video_id
+          json['cached_video_data'] = !!hash['cached']
           json['views'] = hash && hash['statistics'] && hash['statistics']['viewCount'].to_i
           json['likes'] = hash && hash['statistics'] && hash['statistics']['likeCount'].to_i
         end
@@ -84,7 +85,9 @@ class LinksController < ApplicationController
       url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%20&key=#{key}"
       req = Typhoeus.get(url)
       json = JSON.parse(req.body)
-      json['items'][0]
+      res = json['items'][0]
+      res['cached'] = true
+      res
     end
     hash
   end
