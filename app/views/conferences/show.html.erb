@@ -287,6 +287,9 @@ form.search button {
           <td>Time:</td>
           <td><input type="text" id="time" placeholder="Jan 1, 12:00pm (or PRE)"/></td>
         </tr><tr>
+          <td>Track:</td>
+          <td><input type='text' id='track' placeholder='blank for default'/></td>
+        </tr><tr>
           <td>YouTube URL:</td>
           <td><input type="text" id="url"/></td>
         </tr><tr>
@@ -364,6 +367,7 @@ if(document.getElementById('add_session')) {
     var opts = {
       name: document.getElementById('name').value,
       time: document.getElementById('time').value,
+      track: document.getElementById('track').value,
       url: document.getElementById('url').value,
       conference_code: "<%= @conference[:code] %>",
       authenticity_token: "<%= form_authenticity_token %>"

@@ -196,6 +196,7 @@ var check = function() {
     opts.time = res.date;
     opts.session = res.session_name;
     opts.link = res.hangouts_link;
+    opts.track = res.track;
     player.hours = res.hours;
     opts.video = res.youtube_link;
     opts.slides = res.slides_link;
@@ -291,7 +292,7 @@ var check = function() {
             res = JSON.parse(this.responseText);
             if(res && res.snippet && (res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live')) {
               player.live = true;
-              var track = 1;
+              var track = opts.track;
               if(cell.match(/A17$/)) {
                 if(cell.match(/^C/)) { track = 2; }
                 if(cell.match(/^D/)) { track = 3; }
@@ -299,7 +300,9 @@ var check = function() {
                 if(cell.match(/^B/)) { track = 2; }
                 if(cell.match(/^C/)) { track = 3; }
               }
-              dom.track.innerText = "Track " + track;
+              track = (track || 1).toString();
+              if(track.length <= 2) { track = "Track " + track; }
+              dom.track.innerText = track;
               dom.chat.style.display = 'block';
             }
             console.log("video data", res);

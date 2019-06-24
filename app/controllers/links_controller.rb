@@ -80,7 +80,7 @@ class LinksController < ApplicationController
 
   def video_data_for(video_id)
     key = ENV['API_KEY']
-    hash = Rails.cache.fetch("video/#{video_id}", expires_in: 30.minutes) do
+    hash = Rails.cache.fetch("video/#{video_id}", expires_in: 6.hours) do
       url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%20&key=#{key}"
       req = Typhoeus.get(url)
       json = JSON.parse(req.body)

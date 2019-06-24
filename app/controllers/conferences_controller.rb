@@ -66,9 +66,23 @@ class ConferencesController < ApplicationController
         tracks: [],
         days: []
       }
+      all_tracks = []
       sessions = sessions.select{|s| s.resources }
+      sessions.each do |session|
+        if session.resources['track'] && !all_tracks.include?(session.resources['track'])
+          all_tracks.push(session.resources['track'])
+        end
+      end
       days = sessions.group_by{|s| s.resources['timestamp'] == 'pre' ? '_pre' : s.resources['timestamp'][0, 10] }.to_a.sort_by(&:first)
       max_tracks = sessions.select{|s| s.resources['timestamp'] != 'pre' }.group_by{|s| s.resources['timestamp']}.to_a.map(&:last).map(&:length).max || 0
+      while max_tracks > all_tracks.length
+        i = 1
+        while all_tracks.include?(i.to_s)
+          i += 1
+        end
+        all_tracks.push(i.to_s)
+      end
+      all_tracks.sort!
       days = days.sort_by{|arr| arr[0] == '_pre' ? '0000-00-00' : arr[0] }
       days.each do |day_id, list|
         day = {
@@ -98,26 +112,35 @@ class ConferencesController < ApplicationController
             tracks: [],
             special: (time != 'pre' && max_tracks > 1 && list.length == 1)
           }
-          if day_id != '_pre'
-            max_tracks = [max_tracks, list.length].max
-          end
-          list.sort_by(&:code).each do |session|
-            track = {
-              name: session.resources['session_name'],
-              description: session.resources['description'],
-              code: session.code,
-              link: session.video_link,
-              manage: session.manage_link,
-              slack: session.slack_text
-            }
-            slot[:tracks] << track
+          # if day_id != '_pre'
+          #   max_tracks = [max_tracks, list.length].max
+          # end
+          tracks_left = list.sort_by(&:code)
+          all_tracks.each do |track_str|
+            session = tracks_left.detect{|s| s.resources['track'] == track_str }
+            session ||= tracks_left.detect{|s| !s.resources['track'] }
+            session ||= tracks_left[0]
+            if session
+              tracks_left -= [session]
+              track = {
+                name: session.resources['session_name'],
+                description: session.resources['description'],
+                code: session.code,
+                link: session.video_link,
+                manage: session.manage_link,
+                slack: session.slack_text
+              }
+              slot[:tracks] << track
+            end
           end
           day[:time_slots] << slot
         end
         conference[:days] << day
       end
-      max_tracks.times do |i|
-        conference[:tracks] << "Track #{i + 1}"
+      all_tracks.each do |track|
+        name = track
+        name = "Track #{track}" if track.to_s.length <= 2
+        conference[:tracks] << name
       end
       conference
     end
@@ -171,6 +194,7 @@ class ConferencesController < ApplicationController
       data['session_name'] = params['name'] if !params['name'].blank?
       data['description'] = params['description'] if !params['description'].blank?
       data['hours'] = params['hours'].to_f if !params['hours'].blank?
+      data['track'] = params['track'] if !params['track'].blank?
       data['youtube_link'] = params['url'] if !params['url'].blank?
       data['youtube_link'] = nil if params['url'] == ''
       data['live_attendees'] = params['live_attendees'].to_i if (params['live_attendees'] || '').to_i > 0
