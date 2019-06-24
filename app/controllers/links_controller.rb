@@ -38,8 +38,11 @@ class LinksController < ApplicationController
       conference = Conference.find_by(code: session.conference_code)
       json['manage_link'] = session.manage_link
       if params['stats']
-        results = SurveyResult.where(["code LIKE ?", "%#{conference.code}"]).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
-        json['average_score'] = (results.map{|r| r.json['answer_1'].to_i }.sum.to_f / results.length.to_f).round(2)
+        json['average_score'] = session.resources['average_score']
+        if !json['average_score']
+          results = SurveyResult.where(code: session.code) #["code LIKE ?", "%#{conference.code}"]).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
+          json['average_score'] = (results.map{|r| r.json['answer_1'].to_i }.sum.to_f / results.length.to_f).round(2)
+        end
         video_id = ((json['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
         if video_id
           hash = video_data_for(video_id)

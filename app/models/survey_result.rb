@@ -1,4 +1,12 @@
 class SurveyResult < ApplicationRecord
+  after_save :update_session_stats
+
+  def update_session_stats
+    session = ConferenceSession.find_by(code: self.code)
+    session.update_stats if session
+    true
+  end
+
   def self.process(params)
     if params['email'] && params['code']
       hash = Digest::MD5.hexdigest(params['email'].downcase)

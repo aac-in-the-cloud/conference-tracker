@@ -51,6 +51,11 @@ table#conference tbody td.stats_column .stats {
   padding: 5px;
   box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.5);
 }
+table#conference tbody td.stats_column .stats .avg {
+  margin-right: 2px;
+  padding-right: 5px;
+  border-right: 1px solid #ddd;
+}
 table#conference tbody td.stats_column .stats .live {
   margin-right: 2px;
   padding-right: 5px;
@@ -228,6 +233,7 @@ form.search button {
                     <% end %>
                   </span>
                   <div class='stats'>
+                    <span class='avg'></span>
                     <span class='live'></span>
                     <span class='views'></span>
                   </div>
@@ -463,6 +469,8 @@ var next_code = function() {
       if(views) { views.innerText = res.views || "--"; }
       var live = col.getElementsByClassName('live')[0];
       if(live) { live.innerText = res.live_attendees || "--"; }
+      var avg = col.getElementsByClassName('avg')[0];
+      if(avg) { avg.innerText = res.average_score || "--"; }
     }
     setTimeout(next_code, res.cached_video_data ? 50 : 1000);
   }, function(err) { 
