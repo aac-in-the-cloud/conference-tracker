@@ -73,7 +73,7 @@ class ConferenceSession < ApplicationRecord
   def update_stats
     data = JSON.parse(self.data) rescue nil
     data ||= {}
-    surveys = SurveyResult.where(code: self.code).select{|r| r.json['answer_1'].to_i > 0 }
+    surveys = SurveyResult.where(code: self.code).select{|r| r.json && r.json['answer_1'].to_i > 0 }
     cnt = surveys.length
     avg = (surveys.map{|s| s.json['answer_1'].to_i }.sum.to_f / cnt.to_f).round(2)
     data['average_score'] = avg
