@@ -151,7 +151,10 @@ p.helper {
           </td>
         </tr><tr>
           <td>YouTube Link:</td>
-          <td><input type='text' id='url'/></td>
+          <td>
+            <input type='text' id='url'/><br/>
+            <a href="#" id='youtube_url' target="_blank" style='display: none;'>Video Analytics</a>
+          </td>
         </tr><tr>
           <td>Slides Link:</td>
           <td><input type='text' id='slides'/></td>
@@ -219,6 +222,16 @@ if(document.getElementById('name')) {
   document.getElementById('track').value = resources.track || '';
   document.getElementById('disabled').checked = link_disabled || false;
   document.getElementById('url').value = resources.youtube_link || '';
+  var analytics = null;
+  var match = resources.youtube_link && resources.youtube_link.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
+  if(match && match[1]) {
+    var video_id = match[1];
+    analytics = "https://www.youtube.com/live_event_analytics?v=" + video_id;
+  }
+  if(analytics) {
+    document.getElementById('youtube_url').setAttribute('href', analytics);
+    document.getElementById('youtube_url').style.display = 'inline';  
+  }
   document.getElementById('slides').value = resources.slides_link || '';
   document.getElementById('attendees').value = resources.live_attendees || '';
 }
