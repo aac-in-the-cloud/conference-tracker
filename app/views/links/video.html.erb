@@ -294,11 +294,11 @@ var check = function() {
               player.live = true;
               var track = opts.track;
               if(cell.match(/A17$/)) {
-                if(cell.match(/^C/)) { track = 2; }
-                if(cell.match(/^D/)) { track = 3; }
+                if(cell.match(/^C/)) { track = track || 2; }
+                if(cell.match(/^D/)) { track = track || 3; }
               } else {
-                if(cell.match(/^B/)) { track = 2; }
-                if(cell.match(/^C/)) { track = 3; }
+                if(cell.match(/^B/)) { track = track || 2; }
+                if(cell.match(/^C/)) { track = track || 3; }
               }
               track = (track || 1).toString();
               if(track.length <= 2) { track = "Track " + track; }

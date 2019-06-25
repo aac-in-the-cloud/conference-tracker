@@ -179,7 +179,19 @@ p.helper {
       smiling blankly the whole time).
     </p>
     <p class='helper'>
-        Be sure to keep an eye on the Slack channel for this session 
+        <% track = @session.resources['track'] 
+          if @session.code.match(/A17$/)
+            track ||= '2' if @session.code.match(/^C/)
+            track ||= '3' if @session.code.match(/^D/)
+          else
+            track ||= '2' if @session.code.match(/^B/)
+            track ||= '3' if @session.code.match(/^C/)
+          end
+          track ||= '1'
+          track = "Track #{track}" if track.length <= 2
+        %>
+        Be sure to keep an eye on <a href="/chat" target="_blank">the Slack channel</a> for this session 
+        (<b><%= track %></b>)
         as well, just to make sure there aren't any technical issues
         or nobody can actually hear or see the feed. If you run into
         any problems, just message @brian, @melissa_d or @scot on
