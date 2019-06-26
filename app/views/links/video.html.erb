@@ -180,6 +180,12 @@ var check = function() {
         if(player.youtube_url && res.youtube_link && player.youtube_url != res.youtube_link) {
           location.reload();
         }
+        // auto-update if the slides get added later
+        if(res.slides_link) {
+          document.getElementById('slides').style.display = 'inline';
+          document.getElementById('no_slides').style.display = 'none';
+          document.getElementById('slides').setAttribute('href', res.slides_link);
+        }
       });
     }
   }, 30000);
