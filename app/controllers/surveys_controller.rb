@@ -56,7 +56,7 @@ class SurveysController < ApplicationController
 
     start_date = (Date.today - days)
     end_date = Date.today
-    if params['name'] && params['email'] && params['days']
+    if params['name'] && !params['email'].blank? && params['days']
       email_hash = Digest::MD5.hexdigest(params['email'].downcase)
       results = SurveyResult.where(['updated_at >= ? AND updated_at <= ?', start_date, end_date + 1]).where(:email_hash => email_hash)
 
@@ -82,7 +82,7 @@ class SurveysController < ApplicationController
 
     start_date = (Date.today - days)
     end_date = Date.today
-    if params['name'] && params['email'] && params['days']
+    if params['name'] && !params['email'].blank? && params['days']
       email_hash = Digest::MD5.hexdigest(params['email'].downcase)
       results = SurveyResult.where(['updated_at >= ? AND updated_at <= ?', start_date, end_date + 1]).where(:email_hash => email_hash)
 

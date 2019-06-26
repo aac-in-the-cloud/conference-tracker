@@ -120,6 +120,7 @@ document.getElementById('show').addEventListener('click', function(event) {
     days: document.getElementById('days').value,
     authenticity_token: document.getElementById('a_token').value
   };
+  if(!opts.email || opts.email.length < 5) { return; }
   // get attendance details instead of generating certificate
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {

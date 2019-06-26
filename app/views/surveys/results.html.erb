@@ -139,10 +139,12 @@ a {
     <% @shown_results.each do |result| %>
       <div class='result'>
         <span class='date'><%= result.created_at.strftime('%b %-d, %Y %l:%M%P') %></span>
-        <% if @doc_id && @doc_id.match(/^all/) %>
-          <%= (result.json || {})['session_name'] || result.code %>
-        <% end %>
-        <span class='rating'>Rating: <%= result.json['answer_1'] %></span>
+        <div style='margin-left: 15px; margin-bottom: 15px;'>
+          <% if @doc_id && @doc_id.match(/^all/) %>
+            <span style='color: #444; font-size: 14px; font-style: italic;'><%= (result.json || {})['session_name'] || result.code %></span>
+          <% end %>
+          <span class='rating'>Rating: <%= result.json['answer_1'] %></span>
+        </div>
         <% if @doc_id && @doc_id.match(/^all/) %>
           <%= result.json['answer_3'] %>
         <% else %>
