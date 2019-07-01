@@ -138,7 +138,7 @@ document.getElementById('show').addEventListener('click', function(event) {
 
         elem.getElementsByClassName('name')[0].innerText = session.session_name;
         elem.getElementsByClassName('name')[0].setAttribute('href', session.vide_link);
-        var hours = (session.hours || 1.0) + (session.hours == 1.0 ? ' credit' : 'credits');
+        var hours = (session.hours || 1.0) + (session.hours == 1.0 ? ' credit' : ' credits');
         elem.getElementsByClassName('hours')[0].innerText = hours;
         elem.getElementsByClassName('attended')[0].innerText = date_string;
         elem.getElementsByClassName('score')[0].innerText = session.score;

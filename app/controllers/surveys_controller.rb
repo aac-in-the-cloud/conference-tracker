@@ -92,7 +92,7 @@ class SurveysController < ApplicationController
         json = SurveyResult.session_data(sr.code)
         name = json['session_name'] || "Session code: #{sr.code}"
         sessions.push(name)
-        hours += (json['hours'] || 1.0).round(1)
+        hours += (json['hours'] || 1.0).round(2)
       end
       start_date = results.map(&:updated_at).min
       end_date = results.map(&:updated_at).max
@@ -151,7 +151,7 @@ class SurveysController < ApplicationController
       pdf.move_down 300
       pdf.text "for a total of", :align => :center, :size => 15, :color => '888888'
       pdf.move_down 10
-      pdf.text "#{hours.to_f} maintenance hours", :align => :center, :size => 20
+      pdf.text "#{hours.to_f.round(2)} maintenance hours", :align => :center, :size => 20
       pdf.draw_text dates, :at => [25, 25], :size => 12
       pdf.line [300, 40], [520, 40]
       pdf.stroke
