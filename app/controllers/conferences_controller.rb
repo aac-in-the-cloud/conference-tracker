@@ -65,6 +65,8 @@ class ConferencesController < ApplicationController
         created: conference.created_at.iso8601,
         updated: conference.updated_at.iso8601,
         year: "20#{params['id'].match(/\d+/)[0]}",
+        theme: conference_json['theme'],
+        pre_note: conference_json['pre_note'],
         closed: !!conference_json['closed'],
         filled: !!(conference_json['closed'] || conference_json['filled']),
         tracks: [],
