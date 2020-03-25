@@ -15,6 +15,7 @@ class ConferencesController < ApplicationController
     data = JSON.parse(conference.data) rescue nil
     data ||= {}
     conference.name = params['name'] if !params['name'].blank?
+    data['theme'] = params['theme'] if !params['theme'].blank?
     data['pre_note'] = params['pre_note'] if !params['pre_note'].blank?
     data['closed'] = params['closed'] if params['closed'] != nil
     data['filled'] = params['filled'] if !params['filled'] != nil
@@ -37,6 +38,7 @@ class ConferencesController < ApplicationController
       conference_json ||= {}
       @conferences[conf.code] = {
         :name => conf.name,
+        :theme => conference_json['theme'],
         :pre_note => conference_json['pre_note'],
         :code => conf.code,
         :closed => !!conference_json['closed'],

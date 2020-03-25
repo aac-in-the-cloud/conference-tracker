@@ -8,6 +8,12 @@ h1 {
   margin-bottom: 5px;
   font-family: Arial;
 }
+h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-family: Arial;
+  color: #888;
+}
 table#conference {
   border-collapse: collapse;
   width: 100%;
@@ -169,6 +175,9 @@ form.search button {
 </style>
 <div id='content'>
   <h1><%= @conference[:name] %></h1>
+  <% if @conference[:theme] %>
+    <h2><%= @conference[:theme] %></h2>
+  <% end %>
   <div style='text-align: center; color: #888;'>
     <b>Looking for CEUs?</b> When you watch the sessions in our conference
     player you'll see a link at the end to fill out participation surveys
@@ -255,6 +264,9 @@ form.search button {
         <tr>
           <td><label for="conference_name">Name:</label></td>
           <td><input type="text" id="conference_name" value="<%= @conference[:name] %>" /></td>
+        </tr><tr>
+          <td><label for="conference_theme">Theme:</label></td>
+          <td><input type="text" id="conference_theme" value="<%= @conference[:theme] %>" /></td>
         </tr><tr>
           <td><label for="conference_pre_note">Pre-Conf Note:</label></td>
           <td><input type="text" id="conference_pre_note" value="<%= @conference[:pre_note] %>" placeholder="Watch Anytime After Jan 1" /></td>
@@ -403,6 +415,7 @@ if (document.getElementById('update_conference')) {
     var opts = {
       code: "<%= @conference[:code] %>",
       name: document.getElementById('conference_name').value,
+      theme: document.getElementById('conference_theme').value,
       pre_note: document.getElementById('conference_pre_note').value,
       closed: document.getElementById('conference_closed').checked,
       filled: document.getElementById('conference_filled').checked,
