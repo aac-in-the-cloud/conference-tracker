@@ -226,7 +226,7 @@ class ConferencesController < ApplicationController
     end
     if !session.code
       existing = ConferenceSession.where(conference_code: conference.code).select{|s| s.resources && s.resources['timestamp'] == data['timestamp'] }
-      max = ConferenceSession.where(conference_code: conference.code).map{|c| c.code.match(/^\w(\d+)/)[1].to_i}.max
+      max = ConferenceSession.where(conference_code: conference.code).map{|c| c.code.match(/^\w(\d+)/)[1].to_i}.max || 0
       total = ConferenceSession.where(conference_code: conference.code).count
       session.code = ('A'.ord + existing.length).chr + ([max, total].max + 1).to_s + conference.code
       session.conference_code = conference.code
