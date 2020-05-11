@@ -185,8 +185,8 @@ form.search button {
     that will be used to <a href="/surveys/certificate" target="_blank">generate a certificate</a> 
     you can report for credits.
   </div>
-  <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
-  <img style='float: right; max-height: 100px; max-width: 150px; padding-bottom: 5px; padding-left: 5px;' src='/sponsored.png' />
+  <img style='float: left; max-height: 100px; max-width: 150px; margin-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
+  <img style='float: right; max-height: 100px; max-width: 150px; margin-bottom: 5px; padding-left: 5px;' src='/sponsored.png' />
   <form class='search' action='/search' method='GET' style='text-align: right; margin-top: 10px;'>
     <% if params['no_blank'] == '1' %>
       <input type='hidden' name='no_blank' value='1'/>

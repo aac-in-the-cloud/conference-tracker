@@ -27,11 +27,41 @@ class ConferencesController < ApplicationController
 
   def search
     response.headers.except! 'X-Frame-Options'
-    sessions = ConferenceSession.search_by_data(params['q'])
+
+    sessions = ConferenceSession.all
+    if params['q']
+      sessions = ConferenceSession.search_by_data(params['q'])
+    end
     if params['conference_code']
       sessions = sessions.where(conference_code: params['conference_code']) 
     end
-    sessions = sessions.limit(25)
+    if params['sort']
+      list = sessions.all.map do |s|
+        json = JSON.parse(s.data)
+        {
+          id: s.id,
+          score: json['average_score'] || 0,
+          ratings: json['total_ratings'] || 0,
+          live: (json['resources'] || {})['live_attendees'] || 0,
+          ref: s
+        }
+      end
+      sort_by = params['sort']
+      if sort_by == 'rating'
+        @sort = "Highest-Rated"
+        list = list.select{|s| s[:ratings] > 25 }
+        sessions = list.sort_by{|s| s[:score] }.reverse.map{|s| s[:ref] }
+      elsif sort_by == 'most_rated'
+        @sort = "Most-Reviewed"
+        sessions = list.sort_by{|s| s[:total_ratings] }.reverse.map{|s| s[:ref] }
+      elsif sort_by == 'attendees'
+        @sort = "Most-Attended"
+        sessions = list.sort_by{|s| s[:live] }.reverse.map{|s| s[:ref] }
+      end
+      sessions = sessions[0, 50]
+    else
+      sessions = sessions.limit(25)
+    end
     @conferences = {}
     Conference.all.each do |conf|
       conference_json = JSON.parse(conf.data) rescue nil
@@ -42,6 +72,9 @@ class ConferencesController < ApplicationController
         :pre_note => conference_json['pre_note'],
         :code => conf.code,
         :closed => !!conference_json['closed'],
+        :score => conference_json['average_score'],
+        :live_attendees => (conference_json['resources'] || {})['live_attendees'],
+        :ratings => conference_json['total_ratings'],
         :year => conf.year
       }
     end
@@ -151,7 +184,7 @@ class ConferencesController < ApplicationController
       conference
     end
     # <!-- expects @meta_record.(title, summary, large_image, image, link, created, updated) -->
-    # <img style='float: left; max-height: 100px; max-width: 150px; padding-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
+    # <img style='float: left; max-height: 100px; max-width: 150px; margin-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
     @conference = @conference.with_indifferent_access
     @meta_record = OpenStruct.new({
       title: @conference[:name],

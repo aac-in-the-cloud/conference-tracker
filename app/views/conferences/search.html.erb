@@ -29,7 +29,13 @@ form button {
 
 </style>
 <div id='content'>
-  <h1 style='margin-bottom: 10px;'>Sessions Matching "<%= params['q'] %>"</h1>
+  <h1 style='margin-bottom: 10px;'>
+    <%= @sort if @sort %>
+    Sessions
+    <% if params['q'] %>
+      Matching "<%= params['q'] %>"
+    <% end %>
+  </h1>
   <form action='/search' method='GET' style='text-align: center; margin-bottom: 20px;'>
     <% if params['no_blank'] == '1' %>
       <input type='hidden' name='no_blank' value='1'/>
@@ -45,7 +51,7 @@ form button {
       <div style='margin-bottom: 10px;'>
         <% conf = @conferences[session.conference_code] %>
         <a href="<%= session.video_link %><%= "?from_search=1" if params['no_blank'] == '1' %>" style='text-decoration: none;' <% if params['no_blank'] != '1'%>target='_blank'<% end %>>
-          <img style='float: left; height: 100px; width: 100px; object-fit: contain; object-position: center; padding-bottom: 5px; padding-right: 10px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
+          <img style='float: left; height: 100px; width: 100px; object-fit: contain; object-position: center; margin-bottom: 5px; padding-right: 10px; border-radius: 5px;' src='/logo-<%= conf[:year] %>.png' onerror="this.src='/logo.png';"/>
           <span style='font-size: 20px;'><%= session.resources['session_name'] %></span>
         </a>
         <div style='white-space: nowrap; overflow: hidden; color: #444;'>
