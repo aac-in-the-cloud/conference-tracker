@@ -38,13 +38,15 @@ class ConferencesController < ApplicationController
     if params['sort']
       list = sessions.all.map do |s|
         json = JSON.parse(s.data)
-        {
+        hash = {
           id: s.id,
           score: json['average_score'] || 0,
           ratings: json['total_ratings'] || 0,
           live: (json['resources'] || {})['live_attendees'] || 0,
           ref: s
         }
+        s.instance_variable_set('@ratings', hash)
+        hash
       end
       sort_by = params['sort']
       if sort_by == 'rating'
@@ -53,7 +55,7 @@ class ConferencesController < ApplicationController
         sessions = list.sort_by{|s| s[:score] }.reverse.map{|s| s[:ref] }
       elsif sort_by == 'most_rated'
         @sort = "Most-Reviewed"
-        sessions = list.sort_by{|s| s[:total_ratings] }.reverse.map{|s| s[:ref] }
+        sessions = list.sort_by{|s| s[:ratings] }.reverse.map{|s| s[:ref] }
       elsif sort_by == 'attendees'
         @sort = "Most-Attended"
         sessions = list.sort_by{|s| s[:live] }.reverse.map{|s| s[:ref] }
@@ -72,9 +74,6 @@ class ConferencesController < ApplicationController
         :pre_note => conference_json['pre_note'],
         :code => conf.code,
         :closed => !!conference_json['closed'],
-        :score => conference_json['average_score'],
-        :live_attendees => (conference_json['resources'] || {})['live_attendees'],
-        :ratings => conference_json['total_ratings'],
         :year => conf.year
       }
     end
