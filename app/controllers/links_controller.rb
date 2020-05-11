@@ -45,7 +45,7 @@ class LinksController < ApplicationController
         end
         video_id = ((json['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
         if video_id
-          hash = video_data_for(video_id)
+          hash = video_data_for(video_id, session)
           json['video_id'] = video_id
           json['cached_video_data'] = !!hash['cached']
           json['views'] = hash && hash['statistics'] && hash['statistics']['viewCount'].to_i
@@ -89,7 +89,7 @@ class LinksController < ApplicationController
       if session.resources['youtube_link']
         video_id = ((session.resources['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
         if video_id
-          data = video_data_for(video_id)
+          data = video_data_for(video_id, session)
           if data['statistics'] && data['statistics']['viewCount'].to_i > 0
             image = "https://img.youtube.com/vi/#{video_id}/0.jpg"
           end
@@ -107,16 +107,24 @@ class LinksController < ApplicationController
     response.headers.delete('X-Frame-Options')
   end
 
-  def video_data_for(video_id)
+  def video_data_for(video_id, session)
     key = ENV['API_KEY']
     hash = Rails.cache.fetch("video/#{video_id}")
     hash['cached'] = true if hash
     if !hash
-      url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%20&key=#{key}"
-      req = Typhoeus.get(url)
-      json = JSON.parse(req.body)
-      res = json['items'][0]
-      hash = Rails.cache.fetch("video/#{video_id}", expires_in: 12.hours) { res }
+      hash = Rails.cache.fetch("video/stats/#{video_id}", expires_in: 12.hours) do
+        url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%20&key=#{key}"
+        req = Typhoeus.get(url)
+        json = JSON.parse(req.body)
+        res = json['items'][0]
+        if session && res
+          json = JSON.parse(session.data)
+          json['views'] = res['statistics'] && res['statistics']['viewCount'].to_i
+          session.data = json.to_json
+          session.save
+        end
+        res 
+      end
     end
     hash
   end
