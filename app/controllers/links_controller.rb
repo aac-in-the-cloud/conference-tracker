@@ -130,7 +130,7 @@ class LinksController < ApplicationController
   end
   
   def video_data
-    hash = video_data_for(params['id'])
+    hash = video_data_for(params['id'], nil)
     render text: hash.to_json
   end
 end

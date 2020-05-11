@@ -46,7 +46,8 @@ form button {
   </form>
   <div style='text-align: center; margin-top: -15px; margin-bottom: 20px; color: #aaa;'>
     <a href="?sort=rating" style='color: #666; text-decoration: none;'>highest-rated</a> | 
-    <a href="?sort=most_rated" style='color: #666; text-decoration: none;'>most-watched</a> | 
+    <a href="?sort=views" style='color: #666; text-decoration: none;'>most-watched</a> | 
+    <a href="?sort=most_rated" style='color: #666; text-decoration: none;'>most-rated</a> | 
     <a href="?sort=attendees" style='color: #666; text-decoration: none;'>most-attended</a>
   </div>
   <% if @sessions.count == 0 %>
@@ -77,7 +78,9 @@ form button {
               <% if ratings[:ratings] > 25 %>
                 <b><%= ratings[:score] %></b> out of <%= ratings[:ratings] %> ratings
               <% end %>
-              <% if ratings[:live] %>
+              <%if ratings[:views] && params['sort'] != 'attendees' %>
+              <em>(<%= ratings[:views] %> total views)</em>
+              <% elsif ratings[:live] %>
                 <em>(<%= ratings[:live] %> live attendees)</em>
               <% end %>
             </div>

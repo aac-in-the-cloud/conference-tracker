@@ -42,6 +42,7 @@ class ConferencesController < ApplicationController
           id: s.id,
           score: json['average_score'] || 0,
           ratings: json['total_ratings'] || 0,
+          views: json['views'],
           live: (json['resources'] || {})['live_attendees'] || 0,
           ref: s
         }
@@ -54,8 +55,11 @@ class ConferencesController < ApplicationController
         list = list.select{|s| s[:ratings] > 25 }
         sessions = list.sort_by{|s| s[:score] }.reverse.map{|s| s[:ref] }
       elsif sort_by == 'most_rated'
-        @sort = "Most-Reviewed"
+        @sort = "Most-Rated"
         sessions = list.sort_by{|s| s[:ratings] }.reverse.map{|s| s[:ref] }
+      elsif sort_by == 'views'
+        @sort = "Most-Watched"
+        sessions = list.sort_by{|s| s[:views] || s[:ratings] }.reverse.map{|s| s[:ref] }
       elsif sort_by == 'attendees'
         @sort = "Most-Attended"
         sessions = list.sort_by{|s| s[:live] }.reverse.map{|s| s[:ref] }
