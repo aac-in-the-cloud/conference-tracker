@@ -90,7 +90,7 @@ class LinksController < ApplicationController
         video_id = ((session.resources['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
         if video_id
           data = video_data_for(video_id, session)
-          if data['statistics'] && data['statistics']['viewCount'].to_i > 0
+          if data && data['statistics'] && data['statistics']['viewCount'].to_i > 0
             image = "https://img.youtube.com/vi/#{video_id}/0.jpg"
           end
         end
