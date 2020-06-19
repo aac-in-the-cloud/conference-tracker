@@ -96,6 +96,8 @@ p.bullet {
   background-position: left center;
   background-repeat: no-repeat;
   background-size: 50px;
+  margin-bottom: 40px;
+  min-height: 50px;
 }
 </style>
 <div id='header'>
@@ -118,11 +120,12 @@ p.bullet {
       the conference! Below are the simple steps you can follow
       to moderate a sesion. Thanks for your help!
     </p>
+    <h2>Session Prep</h2>
     <% if @session_type == :zoom %>
       <p class='bullet'>
         About fifteen minutes before this session
-        is supposed to start (check time zones!) 
-        <a id='hangouts_link' href="#" target='_blank'><b>Hit This Link</b></a> to start the Zoom session. 
+        is supposed to start (check time zones!)<br/>
+        <a id='hangouts_link' href="#" target='_blank' style='font-size: 25px;'><b>Hit This Link to start the Zoom call</b></a>. 
       </p>
       <p class='bullet'>
         Make sure to <em>log in using the credentials
@@ -138,11 +141,11 @@ p.bullet {
       </p>
     <% end %>
     <p class='bullet'>If
-    there isn't a link in the text box
-    below, copy and paste the join link that the conference
-    tool gives you to add people to the session, and hit
-    "Update Session" so they can join the room.
-  </p>
+      there isn't a link in the text box
+      below, copy and paste the join link that the conference
+      tool gives you to add people to the session, and hit
+      "Update Session" so they can join the room.
+    </p>
 <% end %>
   <table id='session'>
     <tbody>
@@ -203,17 +206,18 @@ p.bullet {
     </tbody>
   </table>
   <% if params['simple'] %>
+    <p class='bullet'>
+      Once the presenter(s) are in the room, make sure 
+      they feel comfortable, ask if they need anything from
+      you during the conference.
+    </p>
+    <h2>Live Session Moderation</h2>
     <% if @session_type == :zoom %>
-      <p class='bullet'>
-        Once the presenter(s) are in the room, make sure 
-        they feel comfortable, ask if they need anything from
-        you during the conference.
-      </p>
       <p class='bullet'>
         About two minutes before it's time to start,
         in the Zoom window hit "More" and then
         "Live on Custom Live Streaming Service" to
-        conncet the conference room to YouTube for the
+        connect the conference room to YouTube for the
         attendees.
       </p>
       <p class='bullet'>
@@ -227,14 +231,6 @@ p.bullet {
         interrupt their presentation with any noises.
         You should unmute and give a warning if it looks
         like the presenter might go over.
-      </p>
-      <p class='bullet'>
-        Once the presenter is done, thank them publicly 
-        and hit
-        "More" then "Stop Live Stream" to disconnect
-        from YouTube. The Zoom call will now be private
-        with you and the presenter. Thank them and 
-        end the call.
       </p>
     <% else %>
       <p class='bullet'>
@@ -256,11 +252,6 @@ p.bullet {
         interrupt their presentation with any noises.
         You should unmute and give a warning if it looks
         like the presenter might go over.
-      </p>
-      <p class='bullet'>
-        Once the presenter is done, thank them publicly and end
-        the live stream. Then you can thank them
-        privately and end the call.
       </p>
     <% end %>
     <% if ENV['SLACK_ENABLED'] %>
@@ -287,6 +278,28 @@ p.bullet {
         Slack and we'll help figure it out!
       </p>
     <% end %>
+    <% if params['simple'] %>
+      <h2>Wrapping Up</h2>
+      <% if @session_type == :zoom %>
+        <p class='bullet'>
+          Once the presenter is done, thank them publicly 
+          and hit
+          "More" then "Stop Live Stream" to disconnect
+          from YouTube. The Zoom call will now be private
+          between you and the presenter(s). Thank them and 
+          end the call.
+        </p>
+      <% else %>
+        <p class='bullet'>
+          Once the presenter is done, thank them publicly and end
+          the live stream. Then you can thank them
+          privately and end the call.
+        </p>
+      <% end %>
+    <% end %>
+    <p class='bullet'>
+      Thanks again! We really appreciate your help making this happen!
+    </p>
   <% end %>
   <% if @authenticated %>
     <div style='margin-top: 30px; text-align: right;'>
