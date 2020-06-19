@@ -111,11 +111,11 @@ var check = function() {
     dom.link_holder.style.display = 'block';
     if(opts.link) {
       dom.link.href = opts.link;
-      dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Click here to join the Presentation on Google Hangouts";
+      dom.link.innerHTML = "<b>Your Session is Ready!</b><br/>Click here to join the Presentation or Waiting Room via the Web Conferencing App";
       dom.link_button.classList.add('ready');
       dom.link.target = '_blank';
     } else {
-      dom.link.innerText = "Welcome to the Waiting Room! Your Session isn't ready yet. A link to the session's Google Hangout will load about 10 minutes before the session starts..";
+      dom.link.innerText = "Welcome to the Waiting Room! Your Session isn't ready yet. A link to the session's Web Conference Session will load about 10 minutes before the session starts..";
     }
     setTimeout(check, 15000);
   }, function() {
