@@ -87,6 +87,16 @@ p.helper {
   line-height: 24px;
   font-family: Arial;
 }
+p.bullet {
+  font-size: 18px;
+  line-height: 24px;
+  font-family: Arial;
+  padding-left: 60px;
+  background-image: url(/checkmark.png);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: 50px;
+}
 </style>
 <div id='header'>
   <img class='logo' src="/logo-<%= @session.year %>.png" onerror="this.src='/logo.png';"/>
@@ -103,29 +113,34 @@ p.helper {
   <div id='time'><%= date %></div>
   <div style='clear: left;'></div>
   <% if params['simple'] %>
+    <p class='helper'>
+      Thanks for being willing to help moderate sessions for
+      the conference! Below are the simple steps you can follow
+      to moderate a sesion. Thanks for your help!
+    </p>
     <% if @session_type == :zoom %>
-      <p class='helper'>
-        Thanks for being willing to help moderate sessions for
-        the conference! About fifteen minutes before this session
+      <p class='bullet'>
+        About fifteen minutes before this session
         is supposed to start (check time zones!) 
-        <a id='hangouts_link' href="#"><b>Hit This Link</b></a> to start the Zoom session. 
+        <a id='hangouts_link' href="#" target='_blank'><b>Hit This Link</b></a> to start the Zoom session. 
+      </p>
+      <p class='bullet'>
         Make sure to <em>log in using the credentials
         you were provided</em>, you may need to log out if 
         you're already logged in with a different account. 
       </p>
     <% else %>
-      <p class='helper'>
-        Thanks for being willing to help moderate sessions for
-        the conference! About fifteen minutes before this session
+      <p class='bullet'>
+        About fifteen minutes before this session
         is supposed to start (check time zones!) 
         follow the instructions you were given to start the 
         conference.
       </p>
     <% end %>
-    <p class='helper'>If
-    there isn't a conference link provided in the form
+    <p class='bullet'>If
+    there isn't a link in the text box
     below, copy and paste the join link that the conference
-    tool gives you to add people to the session and hit
+    tool gives you to add people to the session, and hit
     "Update Session" so they can join the room.
   </p>
 <% end %>
@@ -189,31 +204,67 @@ p.helper {
   </table>
   <% if params['simple'] %>
     <% if @session_type == :zoom %>
-      <p class='helper'>
-        Once they're in, make sure they feel comfortable, and give them
-        a heads-up before you start the broadcast and go live. 
-        To Go Live, in the Zoom window hit "More" and then 
-        "Live on Custom Live Streaming Service" to connect the
-        conference room to the YouTube video for the attendees to see.
-        It may take a minute for the connection to complete.
-        Once
-        you're live, do a quick intro and let them take it away (you should
-        mute your audio and video feeds so you don't have to sit there
-        smiling blankly the whole time).
+      <p class='bullet'>
+        Once the presenter(s) are in the room, make sure 
+        they feel comfortable, ask if they need anything from
+        you during the conference.
+      </p>
+      <p class='bullet'>
+        About two minutes before it's time to start,
+        in the Zoom window hit "More" and then
+        "Live on Custom Live Streaming Service" to
+        conncet the conference room to YouTube for the
+        attendees.
+      </p>
+      <p class='bullet'>
+        Once you get confirmation from the conference
+        admins that the session is live, do a quick intro 
+        and let the presenter do their thing.
+      </p>
+      <p class='bullet'>
+        Make sure to 
+        mute your audio and video feeds so you don't 
+        interrupt their presentation with any noises.
+        You should unmute and give a warning if it looks
+        like the presenter might go over.
+      </p>
+      <p class='bullet'>
+        Once the presenter is done, thank them publicly 
+        and hit
+        "More" then "Stop Live Stream" to disconnect
+        from YouTube. The Zoom call will now be private
+        with you and the presenter. Thank them and 
+        end the call.
       </p>
     <% else %>
-      <p class='helper'>
-        Once they're in, make sure they feel comfortable, and give them
-        a heads-up before you start the broadcast and go live. 
-        It may take a minute for the connection to complete.
-        Once
-        you're live, do a quick intro and let them take it away (you should
-        mute your audio and video feeds so you don't have to sit there
-        smiling blankly the whole time).
+      <p class='bullet'>
+        Once the presenter(s) are in the room, make sure 
+        they feel comfortable, ask if they need anything from
+        you during the conference.
+      </p>
+      <p class='bullet'>
+        Warn the presenter before you go live for
+        attendees to be able to see.
+      </p>
+      <p class='bullet'>
+        Once you are live, do a quick intro 
+        and let the presenter do their thing.
+      </p>
+      <p class='bullet'>
+        Make sure to 
+        mute your audio and video feeds so you don't 
+        interrupt their presentation with any noises.
+        You should unmute and give a warning if it looks
+        like the presenter might go over.
+      </p>
+      <p class='bullet'>
+        Once the presenter is done, thank them publicly and end
+        the live stream. Then you can thank them
+        privately and end the call.
       </p>
     <% end %>
     <% if ENV['SLACK_ENABLED'] %>
-      <p class='helper'>
+      <p class='bullet'>
           <% track = @session.resources['track'] 
             if @session.code.match(/A17$/)
               track ||= '2' if @session.code.match(/^C/)
@@ -225,12 +276,15 @@ p.helper {
             track ||= '1'
             track = "Track #{track}" if track.length <= 2
           %>
-          Be sure to keep an eye on <a href="/chat" target="_blank">the Slack channel</a> for this session 
+          Keep an eye on <a href="/chat" target="_blank">the Slack channel</a> for this session 
           (<b><%= track %></b>)
-          as well, just to make sure there aren't any technical issues
-          or nobody can actually hear or see the feed. If you run into
-          any problems, just message <%= ENV['SLACK_CONTACTS'] || "the conference admins" %> on
-          Slack and we'll help figure it out!
+          to make sure there aren't sound or video issues for
+          attendees. 
+      </p>
+      <p class='bullet'>
+        If you run into
+        any problems, just message <%= ENV['SLACK_CONTACTS'] || "the conference admins" %> on
+        Slack and we'll help figure it out!
       </p>
     <% end %>
   <% end %>
