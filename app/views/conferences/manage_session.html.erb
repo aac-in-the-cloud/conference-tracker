@@ -103,18 +103,32 @@ p.helper {
   <div id='time'><%= date %></div>
   <div style='clear: left;'></div>
   <% if params['simple'] %>
-    <p class='helper'>
-      Thanks for being willing to help moderate sessions for
-      the conference! About fifteen minutes before this session
-      is supposed to start (check time zones!) go to 
-      <a href="https://www.youtube.com/my_live_events?filter=scheduled" target="_blank">the conference's YouTube listings</a>
-      and find the event matching this session (you may need to switch profiles
-      using the picture in the top right corner). Click "Start Hangout on Air".
-      Inside the Hangout, click the "Add People" icon and copy the Hangouts
-      link. Paste it below and click update to share it with the
-      presenter automagically.
-    </p>
-  <% end %>
+    <% if @session_type == :zoom %>
+      <p class='helper'>
+        Thanks for being willing to help moderate sessions for
+        the conference! About fifteen minutes before this session
+        is supposed to start (check time zones!) 
+        <a id='hangouts_link' href="#"><b>Hit This Link</b></a> to start the Zoom session. 
+        Make sure to <em>log in using the credentials
+        you were provided</em>, you may need to log out if 
+        you're already logged in with a different account. 
+      </p>
+    <% else %>
+      <p class='helper'>
+        Thanks for being willing to help moderate sessions for
+        the conference! About fifteen minutes before this session
+        is supposed to start (check time zones!) 
+        follow the instructions you were given to start the 
+        conference.
+      </p>
+    <% end %>
+    <p class='helper'>If
+    there isn't a conference link provided in the form
+    below, copy and paste the join link that the conference
+    tool gives you to add people to the session and hit
+    "Update Session" so they can join the room.
+  </p>
+<% end %>
   <table id='session'>
     <tbody>
       <tr>
@@ -174,32 +188,51 @@ p.helper {
     </tbody>
   </table>
   <% if params['simple'] %>
-    <p class='helper'>
-      Once they're in, make sure they feel comfortable, and give them
-      a heads-up before you click "Start Broadcast" and go live. Once
-      you're live, do a quick intro and let them take it away (you can
-      mute your audio and video feeds so you don't have to sit there
-      smiling blankly the whole time).
-    </p>
-    <p class='helper'>
-        <% track = @session.resources['track'] 
-          if @session.code.match(/A17$/)
-            track ||= '2' if @session.code.match(/^C/)
-            track ||= '3' if @session.code.match(/^D/)
-          else
-            track ||= '2' if @session.code.match(/^B/)
-            track ||= '3' if @session.code.match(/^C/)
-          end
-          track ||= '1'
-          track = "Track #{track}" if track.length <= 2
-        %>
-        Be sure to keep an eye on <a href="/chat" target="_blank">the Slack channel</a> for this session 
-        (<b><%= track %></b>)
-        as well, just to make sure there aren't any technical issues
-        or nobody can actually hear or see the feed. If you run into
-        any problems, just message @brian, @melissa_d or @scot on
-        Slack and we'll help figure it out!
-    </p>
+    <% if @session_type == :zoom %>
+      <p class='helper'>
+        Once they're in, make sure they feel comfortable, and give them
+        a heads-up before you start the broadcast and go live. 
+        To Go Live, in the Zoom window hit "More" and then 
+        "Live on Custom Live Streaming Service" to connect the
+        conference room to the YouTube video for the attendees to see.
+        It may take a minute for the connection to complete.
+        Once
+        you're live, do a quick intro and let them take it away (you should
+        mute your audio and video feeds so you don't have to sit there
+        smiling blankly the whole time).
+      </p>
+    <% else %>
+      <p class='helper'>
+        Once they're in, make sure they feel comfortable, and give them
+        a heads-up before you start the broadcast and go live. 
+        It may take a minute for the connection to complete.
+        Once
+        you're live, do a quick intro and let them take it away (you should
+        mute your audio and video feeds so you don't have to sit there
+        smiling blankly the whole time).
+      </p>
+    <% end %>
+    <% if ENV['SLACK_ENABLED'] %>
+      <p class='helper'>
+          <% track = @session.resources['track'] 
+            if @session.code.match(/A17$/)
+              track ||= '2' if @session.code.match(/^C/)
+              track ||= '3' if @session.code.match(/^D/)
+            else
+              track ||= '2' if @session.code.match(/^B/)
+              track ||= '3' if @session.code.match(/^C/)
+            end
+            track ||= '1'
+            track = "Track #{track}" if track.length <= 2
+          %>
+          Be sure to keep an eye on <a href="/chat" target="_blank">the Slack channel</a> for this session 
+          (<b><%= track %></b>)
+          as well, just to make sure there aren't any technical issues
+          or nobody can actually hear or see the feed. If you run into
+          any problems, just message <%= ENV['SLACK_CONTACTS'] || "the conference admins" %> on
+          Slack and we'll help figure it out!
+      </p>
+    <% end %>
   <% end %>
   <% if @authenticated %>
     <div style='margin-top: 30px; text-align: right;'>
@@ -234,6 +267,9 @@ if(document.getElementById('name')) {
   }
   document.getElementById('slides').value = resources.slides_link || '';
   document.getElementById('attendees').value = resources.live_attendees || '';
+}
+if(document.getElementById('hangouts_link')) {
+  document.getElementById('hangouts_link').href = resources.hangouts_link || '';
 }
 document.getElementById('hangout').value = resources.hangouts_link || '';
 document.getElementById('update_session').addEventListener('click', function(event) {

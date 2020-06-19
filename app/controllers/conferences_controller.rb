@@ -201,6 +201,7 @@ class ConferencesController < ApplicationController
 
   def manage_session
     code, token = params['id'].split(/:/)
+    @session_type = :zoom
     @session = ConferenceSession.find_by(code: code)
     if @session.token != token
       render text: "Invalid Session"

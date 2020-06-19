@@ -37,25 +37,26 @@ class Conference < ApplicationRecord
     Digest::MD5.hexdigest(string + "::" + ENV['AUTH_SECRET'])
   end
   
-  def self.date_string(time, length='default', time_zone=nil)
+  def self.date_string(time, length='default')
     cutoff = (Date.today << 3).to_time
     prior = time < cutoff || time.year < cutoff.year
+    tz = ENV['TIME_ZONE'] || 'ET'
     # TODO: time zones
     if time.min == 0
       if length == 'short'
-        time.strftime('%l %P ET')
+        time.strftime('%l %P ') + tz
       elsif prior || length == 'long'
-        time.strftime('%B %e %Y, %l%P ET')
+        time.strftime('%B %e %Y, %l%P ') + tz
       else
-        time.strftime('%B %e, %l%P ET')
+        time.strftime('%B %e, %l%P ') + tz
       end
     else
       if length == 'short'
-        time.strftime('%l:%M %P ET')
+        time.strftime('%l:%M %P ') + tz
       elsif prior || length == 'long'
-        time.strftime('%B %e %Y, %l:%M%P ET')
+        time.strftime('%B %e %Y, %l:%M%P ') + tz
       else
-        time.strftime('%B %e %Y, %l:%M%P ET')
+        time.strftime('%B %e %Y, %l:%M%P ') + tz
       end
     end
   end

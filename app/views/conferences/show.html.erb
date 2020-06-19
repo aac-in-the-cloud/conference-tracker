@@ -236,10 +236,12 @@ form.search button {
                         (<a href="<%= track[:manage] %>">manage</a>)
                       <% end %>
                     <% end %>
-                    <% if track[:slack] %>
-                      <a class='slack' href="/chat">
-                        <%= track[:slack] %>
-                      </a>
+                    <% if ENV['SLACK_ENABLED'] %>                    
+                      <% if track[:slack] %>
+                        <a class='slack' href="/chat">
+                          <%= track[:slack] %>
+                        </a>
+                      <% end %>
                     <% end %>
                   </span>
                   <div class='stats'>
@@ -321,60 +323,62 @@ form.search button {
   <% end %>
   <% if @authenticated && !@conference[:closed] %>
     <h3 style='margin-top: 50px;'>Build a Moderator Session List</h3>
-    <table id='session'>
-      <tr>
-        <td>Moderator's Name:</td>
-        <td><input type="text" id="moderator"/></td>
-      </tr>
-      <tr>
-        <td style='vertical-align: top; padding-top: 10px;'>Sessions</td>
-        <td>
-          <p>Add a checkbox next to the sessions you'd like this moderator
-          to be in charge of, then click to generate the link.</p>
+    <div style='background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #ccc;'>
+      <table id='session'>
+        <tr>
+          <td>Moderator's Name:</td>
+          <td><input type="text" id="moderator"/></td>
+        </tr>
+        <tr>
+          <td style='vertical-align: top; padding-top: 10px;'>Sessions</td>
+          <td>
+            <p>Add a checkbox next to the sessions you'd like this moderator
+            to be in charge of, then click to generate the link.</p>
 
-          <table id='conference'>
-          <tbody>
-              <% day_number = 0 %>
-              <% @conference[:days].each_with_index do |day, idx| %>
-                <% day_number += 1 unless day[:day_id] == '_pre' %>
-                <tr class='day'>
-                  <td></td>
-                  <td class='day' colspan="<%= @conference[:tracks].length %>">
-                    <% if day[:day_id] == '_pre' %>
-                      <%= day[:name] %><% if day[:pre_note] %><%= day[:pre_note] %><% end %>
-                    <% else %>
-                      Day <%= day_number %> - <%= day[:name] %>
-                    <% end %>
-                  </td>
-                </tr>
-                <tr class='tracks'>
-                  <td>Time</td>
-                  <% @conference[:tracks].each do |track| %>
-                    <td><%= track %></td>
-                  <% end %>
-                </tr>
-                  <% day[:time_slots].each do |slot| %>
-                  <tr>
-                    <td style='white-space: nowrap;'><%= slot[:name] %></td>
-                    <% slot[:tracks].each_with_index do |track, idx| %>
-                      <td class='<%= slot[:special] ? 'column special' : "column column_#{idx}" %>' colspan='<%= slot[:special] ? @conference[:tracks].length : 1 %>'>
-                        <label>
-                          <input class='track' type='checkbox' name='<%= track[:code] %>'>
-                          <%= track[:name] %>
-                        </label>
-                      </td>
+            <table id='conference'>
+            <tbody>
+                <% day_number = 0 %>
+                <% @conference[:days].each_with_index do |day, idx| %>
+                  <% day_number += 1 unless day[:day_id] == '_pre' %>
+                  <tr class='day'>
+                    <td></td>
+                    <td class='day' colspan="<%= @conference[:tracks].length %>">
+                      <% if day[:day_id] == '_pre' %>
+                        <%= day[:name] %><% if day[:pre_note] %><%= day[:pre_note] %><% end %>
+                      <% else %>
+                        Day <%= day_number %> - <%= day[:name] %>
+                      <% end %>
+                    </td>
+                  </tr>
+                  <tr class='tracks'>
+                    <td>Time</td>
+                    <% @conference[:tracks].each do |track| %>
+                      <td><%= track %></td>
                     <% end %>
                   </tr>
+                    <% day[:time_slots].each do |slot| %>
+                    <tr>
+                      <td style='white-space: nowrap;'><%= slot[:name] %></td>
+                      <% slot[:tracks].each_with_index do |track, idx| %>
+                        <td style='background: #fff;' class='<%= slot[:special] ? 'column special' : "column column_#{idx}" %>' colspan='<%= slot[:special] ? @conference[:tracks].length : 1 %>'>
+                          <label>
+                            <input class='track' type='checkbox' name='<%= track[:code] %>'>
+                            <%= track[:name] %>
+                          </label>
+                        </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
                 <% end %>
-              <% end %>
-          </tbody>
-        </table>
-        </td>
-      </tr><tr>
-        <td></td>
-        <td><button id='build_moderator'>Generate Link</button></td>
-      </tr>
-    </table>
+            </tbody>
+          </table>
+          </td>
+        </tr><tr>
+          <td></td>
+          <td><button id='build_moderator'>Generate Link</button></td>
+        </tr>
+      </table>
+    </div>
   <% end %>
   </div>
 </div>

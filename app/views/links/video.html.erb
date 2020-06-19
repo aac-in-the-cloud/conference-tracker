@@ -119,15 +119,19 @@ body {
     <a id='video_app' href="#" target='_blank'>Open in the YouTube App or a New Browser Tab</a>
     <br/><span>NOTE: Participation surveys will only be available after you watch the full video <b>on this site, not YouTube</b>.</span>
   </div>
-  <div id='chat' style='display: none;'>
-    <img src="/slack.png" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
-    <a href="/chat" target="_blank" style='font-size: 22px; text-decoration: none;'>
-      Join the Chat Room for this session
-    </a><br/>to ask questions and get access to additional resources.<br/>
-    this session will be in the <b id='track'>Track 1</b> chat channel.<br/>
-    Hit "channels" in Slack to see a list of all available channels.
-    <div style='clear: left;'></div>
-  </div>
+  <% if ENV['SLACK_ENABLED'] %>
+    <div id='chat' style='display: none;'>
+      <img src="/slack.png" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
+      <a href="/chat" target="_blank" style='font-size: 22px; text-decoration: none;'>
+        Join the Chat Room for this session
+      </a><br/>to ask questions and get access to additional resources.<br/>
+      this session will be in the <b id='track'>Track 1</b> chat channel.<br/>
+      Hit "channels" in Slack to see a list of all available channels.
+      <div style='clear: left;'></div>
+    </div>
+  <% else %>
+    <div id='chat' style='display: none;'></div>
+  <% end %>
   <div id='survey_link' style='display: none;'>
     <img src="/survey.jpg" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
     <a id='survey_anchor' href="/surveys/<%= @session_id %>" style='font-size: 22px; text-decoration: none;'>Fill Out the Attendance Survey</a><br/>
