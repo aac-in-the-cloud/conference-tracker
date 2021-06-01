@@ -112,7 +112,9 @@ class ConferencesController < ApplicationController
       sessions = sessions.select{|s| s.resources }
       sessions.each do |session|
         if session.resources['track'] && !all_tracks.include?(session.resources['track'])
-          all_tracks.push(session.resources['track'])
+          if session.resources['timestamp'] != 'pre'
+            all_tracks.push(session.resources['track'])
+          end
         end
       end
       days = sessions.group_by{|s| s.resources['timestamp'] == 'pre' ? '_pre' : s.resources['timestamp'][0, 10] }.to_a.sort_by(&:first)
@@ -134,13 +136,23 @@ class ConferencesController < ApplicationController
         }
         time_slots = list.group_by{|s| s.resources['timestamp']}.to_a.sort_by(&:first)
         if day_id == '_pre'
+          track_chunks = list.group_by{|s| s['track'] }
+          tracks_left = track_chunks.map{|t, l| l.length }.max
           day[:pre_note] = conference_json['pre_note']
           time_slots = {}
-          cnt = 0
-          list.each_slice(max_tracks) do |slice|
-            time_slots["pre_#{cnt}"] = slice
-            cnt += 1
+          slot_num = 0
+          while tracks_left > 0
+            chunk = []
+            track_chunks.each{|t, l| chunk.push(l.shift) }
+            tracks_left = track_chunks.map{|t, l| l.length }.max
+            time_slots["pre_#{slot_num}"] = chunk
+            slot_num += 1
           end
+          # cnt = 0
+          # list.each_slice(max_tracks) do |slice|
+          #   time_slots["pre_#{cnt}"] = slice
+          #   cnt += 1
+          # end
         end
         time_slots.each do |timestamp, list|
           time = 'pre'

@@ -180,6 +180,9 @@ var check = function() {
         if(res.live_attendees != null) {
           player.live_attendees = res.live_attendees;
         }
+        if(res.survey_link) {
+          player.survey = true;
+        }
         // as a fallback, if the video link changes, just reload the page
         if(player.youtube_url && res.youtube_link && player.youtube_url != res.youtube_link) {
           location.reload();
