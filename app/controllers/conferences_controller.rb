@@ -153,9 +153,10 @@ class ConferencesController < ApplicationController
           any_chunk = (track_chunks.detect{|t, l| t == 'any' } || [])[1] || []
           while tracks_left > 0
             chunk = []
-            track_chunks.select{|t, l| t != 'any' }.each{|t, l| 
-              chunk.push(l.shift || any_chunk.shift) 
-            }
+            all_tracks.each do |id|
+              track_chunk = (track_chunks.detect{|t, l| t == id } || [])[1] || []
+              chunk.push(track_chunk.shift || any_chunk.shift) 
+            end
             tracks_left = track_chunks.map{|t, l| l.length }.max
             time_slots["pre_#{slot_num}"] = chunk.compact
             slot_num += 1
