@@ -30,6 +30,10 @@ table#conference tr.tracks td {
   color: #004;
   font-family: Arial;
 }
+table#conference tr.tracks td .track_subtitle {
+  font-weight: normal;
+  font-size: 14px;
+}
 table#conference tbody tr.day { 
   background: #ffc;
 }
@@ -98,6 +102,13 @@ table#conference tbody td a.slack {
   color: #rgb(80, 80, 0);
 }
 input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 20px;
+  width: 350px;
+}
+textarea {
   border: 1px solid #888;
   border-radius: 3px;
   height: 50px;
@@ -214,7 +225,12 @@ form.search button {
           <tr class='tracks'>
             <td>Time</td>
             <% @conference[:tracks].each do |track| %>
-              <td><%= track %></td>
+              <td style="width: <%= (100.0 / @conference[:tracks].length.to_f).round(1) %>%;">
+                <%= track[:name] %>
+                <% if track[:subtitle] %>
+                  <div class='track_subtitle'><%= track[:subtitle] %></div>
+                <% end %>
+              </td>
             <% end %>
           </tr>
             <% day[:time_slots].each do |slot| %>
@@ -273,6 +289,9 @@ form.search button {
         </tr><tr>
           <td><label for="conference_pre_note">Pre-Conf Note:</label></td>
           <td><input type="text" id="conference_pre_note" value="<%= @conference[:pre_note] %>" placeholder="Watch Anytime After Jan 1" /></td>
+        </tr><tr>
+          <td><label for="conference_track_map">Track Sub-Names:</label></td>
+          <td><textarea id="conference_track_map" placeholder="1=Cool Tracks&#10;2=Boring Tracks" ><%= h @conference[:track_map] %></textarea></td>
         </tr><tr>
           <td>Filled:</td>
           <td style='padding: 15px 0;'>
@@ -353,7 +372,12 @@ form.search button {
                   <tr class='tracks'>
                     <td>Time</td>
                     <% @conference[:tracks].each do |track| %>
-                      <td><%= track %></td>
+                      <td>
+                        <%= track[:name] %>
+                        <% if track[:subtitle] %>
+                          <div class='track_subtitle'><%= track[:subtitle] %></div>
+                        <% end %>
+                      </td>
                     <% end %>
                   </tr>
                     <% day[:time_slots].each do |slot| %>
@@ -422,6 +446,7 @@ if (document.getElementById('update_conference')) {
       name: document.getElementById('conference_name').value,
       theme: document.getElementById('conference_theme').value,
       pre_note: document.getElementById('conference_pre_note').value,
+      track_map: document.getElementById('conference_track_map').value,
       closed: document.getElementById('conference_closed').checked,
       filled: document.getElementById('conference_filled').checked,
       authenticity_token: "<%= form_authenticity_token %>"

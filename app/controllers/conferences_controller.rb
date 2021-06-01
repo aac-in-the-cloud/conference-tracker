@@ -19,6 +19,14 @@ class ConferencesController < ApplicationController
     data['pre_note'] = params['pre_note'] if !params['pre_note'].blank?
     data['closed'] = params['closed'] if params['closed'] != nil
     data['filled'] = params['filled'] if !params['filled'] != nil
+    if params['track_map']
+      hash = {}
+      params['track_map'].split(/\n/).each do |line|
+        track, str = line.strip.split(/\=/, 2)
+        hash[track] = str
+      end
+      data['track_subtitles'] = hash
+    end
     conference.data = data.to_json
     conference.save
     Rails.cache.delete("conference/#{conference.code}")
@@ -108,6 +116,7 @@ class ConferencesController < ApplicationController
         tracks: [],
         days: []
       }
+      conference[:track_map] = (conference_json['track_subtitles'] || {}).map{|t, str| "#{t}=#{str}"}.join("\n")
       all_tracks = []
       sessions = sessions.select{|s| s.resources }
       sessions.each do |session|
@@ -197,7 +206,8 @@ class ConferencesController < ApplicationController
       all_tracks.each do |track|
         name = track
         name = "Track #{track}" if track.to_s.length <= 2
-        conference[:tracks] << name
+        subname = (conference_json['track_subtitles'] || {})[track]
+        conference[:tracks] << {name: name, subtitle: subname}
       end
       conference
     end
