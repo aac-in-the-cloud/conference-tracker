@@ -136,16 +136,19 @@ class ConferencesController < ApplicationController
         }
         time_slots = list.group_by{|s| s.resources['timestamp']}.to_a.sort_by(&:first)
         if day_id == '_pre'
-          track_chunks = list.group_by{|s| s['track'] }
+          track_chunks = list.group_by{|s| s.resources['track'] || 'any' }
           tracks_left = track_chunks.map{|t, l| l.length }.max
           day[:pre_note] = conference_json['pre_note']
           time_slots = {}
           slot_num = 0
+          any_chunk = (track_chunks.detect{|t, l| t == 'any' } || [])[1] || []
           while tracks_left > 0
             chunk = []
-            track_chunks.each{|t, l| chunk.push(l.shift) }
+            track_chunks.select{|t, l| t != 'any' }.each{|t, l| 
+              chunk.push(l.shift || any_chunk.shift) 
+            }
             tracks_left = track_chunks.map{|t, l| l.length }.max
-            time_slots["pre_#{slot_num}"] = chunk
+            time_slots["pre_#{slot_num}"] = chunk.compact
             slot_num += 1
           end
           # cnt = 0
