@@ -318,6 +318,9 @@ form.search button {
   <% end %>
   <% if @authenticated && !@conference[:filled] %>
     <h3>Add a Session</h3>
+    <b>Somebody make sure to remind Brian: You can't create same-time or back-to-back sessions
+    in the same Zoom login, even if you allow other hosts, because it will kick others
+    out unless the co-live sessions are all created from different accounts.</b>
     <table id='session'>
       <tbody>
         <tr>
