@@ -13,7 +13,7 @@ class Conference < ApplicationRecord
     end
   end
 
-  def assert_year
+  def assert_year 
     sessions = ConferenceSession.where(conference_code: self.code)
     if code.match(/\d+$/)
       year = '20' + self.code.match(/\d+$/)[0]
