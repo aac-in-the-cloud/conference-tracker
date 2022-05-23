@@ -135,7 +135,9 @@ class ConferencesController < ApplicationController
         end
         all_tracks.push(i.to_s)
       end
-      all_tracks.sort!
+      other_tracks = sessions.map{|s| s.resources['track'] }.compact.uniq
+      all_tracks += other_tracks
+      all_tracks = all_tracks.uniq.sort
       days = days.sort_by{|arr| arr[0] == '_pre' ? '0000-00-00' : arr[0] }
       days.each do |day_id, list|
         day = {
