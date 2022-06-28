@@ -40,7 +40,7 @@ class ConferencesController < ApplicationController
     if params['q']
       sessions = ConferenceSession.search_by_data(params['q'])
     end
-    if params['conference_code']
+    if params['conference_code'] && params['conference_code'] != 'all' && !params['conference_code'].blank?
       sessions = sessions.where(conference_code: params['conference_code']) 
     end
     if params['sort']
@@ -77,9 +77,14 @@ class ConferencesController < ApplicationController
       sessions = sessions.limit(25)
     end
     @conferences = {}
-    Conference.all.each do |conf|
+    @conference_list = []
+    Conference.all.order('id').each do |conf|
       conference_json = JSON.parse(conf.data) rescue nil
       conference_json ||= {}
+      @conference_list << {
+        :name => conf.name,
+        :code => conf.code
+      }
       @conferences[conf.code] = {
         :name => conf.name,
         :theme => conference_json['theme'],

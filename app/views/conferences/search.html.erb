@@ -18,6 +18,13 @@ input[type='text'] {
   width: 200px;
   padding-left: 10px;
 }
+select {
+  height: 35px;
+  display: block;
+  margin: 0 auto;
+  width: 300px;
+  margin-bottom: 5px;
+}
 form button {
   border: 1px solid #888;
   color: #444;
@@ -37,6 +44,14 @@ form button {
     <% end %>
   </h1>
   <form action='/search' method='GET' style='text-align: center; margin-bottom: 20px;'>
+    <% if @conference_list && conference_list.length > 0 %>
+      <select name='conference_code'>
+        <option value='all'>All Conferences</options>
+        <% @conference_list.each do |conf| %>
+          <option value='<%= conf[:code] %>'><%= conf[:name] %></option>
+        <% end %>
+      </select>
+    <% end %>
     <% if params['no_blank'] == '1' %>
       <input type='hidden' name='no_blank' value='1'/>
     <% end %>
