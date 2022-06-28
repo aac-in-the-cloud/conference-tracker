@@ -45,7 +45,7 @@ class LinksController < ApplicationController
         end
         video_id = ((json['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
         if video_id
-          hash = video_data_for(video_id, session)
+          hash = video_data_for(video_id, session, true)
           json['video_id'] = video_id
           json['cached_video_data'] = !!hash['cached']
           json['views'] = hash && hash['statistics'] && hash['statistics']['viewCount'].to_i
@@ -121,6 +121,7 @@ class LinksController < ApplicationController
     fetch_key = "video/stats/#{video_id}"
     exp = 12.hours
     if include_live
+      fetch_key = "video/stats/fast/#{video_id}"
       exp = 3.minutes
     else
       ts = session && session.zoned_timestamp
