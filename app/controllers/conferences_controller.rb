@@ -301,6 +301,11 @@ class ConferencesController < ApplicationController
       session.conference_code = conference.code
     end
     session.resources = data
+    if data['live_attendees']
+      json = JSON.parse(session.data)
+      json.delete('max_live')
+      session.data = json.to_json
+    end
     if params['link_disabled'] != nil
       json = JSON.parse(session.data)
       json['link_disabled'] = !!params['link_disabled']

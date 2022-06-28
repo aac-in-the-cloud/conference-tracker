@@ -148,11 +148,18 @@ class LinksController < ApplicationController
           end
           session_mostly_done = false
           ts = session.zoned_timestamp
-          if ts && ts != 'pre' && ts < 40.minutes.ago
-            session_mostly_done = true
-          end
-          if json['max_live'] && (res['liveStreamingDetails']['actualEndTime'] || session_mostly_done)
-            json['resources']['live_attendees'] = [json['max_live'], json['resources']['live_attendees'] || 0, 1].max
+          hours = json['resources']['hours'].to_f
+          hours = 1.0 if hours == 0.0
+          if hours > 0.1
+            # 0.1-hour sessions should never get survey links,
+            # so don't ever bother marking a live attendees number
+            mostly_watched_cutoff = (hours * 40).minutes.ago
+            if ts && ts != 'pre' && ts < mostly_watched_cutoff
+              session_mostly_done = true
+            end
+            if json['max_live'] && (res['liveStreamingDetails']['actualEndTime'] || session_mostly_done)
+              json['resources']['live_attendees'] = [json['max_live'], json['resources']['live_attendees'] || 0, 1].max
+            end
           end
           session.data = json.to_json
           session.save
