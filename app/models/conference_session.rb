@@ -82,6 +82,11 @@ class ConferenceSession < ApplicationRecord
     self.save
   end
 
+  def zoned_timestamp
+    session = self
+    Time.find_zone('Eastern Time (US & Canada)').parse(session.resources['timestamp'].sub(/\+00:00/, '')).utc rescue nil
+  end
+  
   def resources
     return @resources if @resources
     res = JSON.parse(self.data)['resources'] rescue nil

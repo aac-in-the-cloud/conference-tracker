@@ -52,6 +52,13 @@ class LinksController < ApplicationController
           json['likes'] = hash && hash['statistics'] && hash['statistics']['likeCount'].to_i
         end
       end
+    else
+      session = ConferenceSession.find_by(code: json['code'])
+      ts = session && session.zoned_timestamp
+      video_id = ((json['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
+      if ts && ts != 'pre' && ts > 120.minutes.ago && video_id
+        video_data_for(video_id, session, true)
+      end
     end
     render text: json.to_json
   end
@@ -107,19 +114,45 @@ class LinksController < ApplicationController
     response.headers.delete('X-Frame-Options')
   end
 
-  def video_data_for(video_id, session)
+
+  def video_data_for(video_id, session, include_live=false)
+    # liveStreamingDetails.concurrentViewers, liveStreamingDetails.actualEndTime
     key = ENV['API_KEY']
-    hash = Rails.cache.fetch("video/#{video_id}")
+    fetch_key = "video/stats/#{video_id}"
+    exp = 12.hours
+    if include_live
+      exp = 3.minutes
+    else
+      ts = session && session.zoned_timestamp
+      if ts && ts > 3.hours.ago
+        exp = 10.minutes
+      elsif ts && ts > 12.hours.ago
+        exp = 30.minutes
+      end
+    end
+    hash = Rails.cache.fetch(fetch_key)
     hash['cached'] = true if hash
+    hash = nil if include_live
     if !hash
-      hash = Rails.cache.fetch("video/stats/#{video_id}", expires_in: 12.hours) do
-        url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%20&key=#{key}"
+      hash = Rails.cache.fetch(fetch_key, expires_in: exp) do
+        url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails%20&key=#{key}"
         req = Typhoeus.get(url)
         json = JSON.parse(req.body)
         res = json['items'][0]
         if session && res
           json = JSON.parse(session.data)
           json['views'] = res['statistics'] && res['statistics']['viewCount'].to_i
+          if res['liveStreamingDetails'] && !res['liveStreamingDetails']['actualEndTime']
+            json['max_live'] = [json['max_live'] || 0, res['liveStreamingDetails']['concurrentViewers'].to_i].max
+          end
+          session_mostly_done = false
+          ts = session.zoned_timestamp
+          if ts && ts != 'pre' && ts < 40.minutes.ago
+            session_mostly_done = true
+          end
+          if json['max_live'] && (res['liveStreamingDetails']['actualEndTime'] || session_mostly_done)
+            json['resources']['live_attendees'] = [json['max_live'], json['resources']['live_attendees'] || 0, 1].max
+          end
           session.data = json.to_json
           session.save
         end
@@ -128,7 +161,7 @@ class LinksController < ApplicationController
     end
     hash
   end
-  
+
   def video_data
     hash = video_data_for(params['id'], nil)
     render text: hash.to_json
