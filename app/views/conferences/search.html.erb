@@ -45,10 +45,10 @@ form button {
   </h1>
   <form action='/search' method='GET' style='text-align: center; margin-bottom: 20px;'>
     <% if @conference_list && @conference_list.length > 0 %>
-      <select name='conference_code'>
+      <select id='conf_code' name='conference_code'>
         <option value='all'>All Conferences</options>
         <% @conference_list.each do |conf| %>
-          <option value='<%= conf[:code] %>'><%= conf[:name] %></option>
+          <option <%= 'selected' if params['conference_code'] == conf[:code] %> value='<%= conf[:code] %>'><%= conf[:name] %></option>
         <% end %>
       </select>
     <% end %>
@@ -60,10 +60,10 @@ form button {
     <button type='submit'>Go</button>
   </form>
   <div style='text-align: center; margin-top: -15px; margin-bottom: 20px; color: #aaa;'>
-    <a href="?sort=rating" style='color: #666; text-decoration: none;'>highest-rated</a> | 
-    <a href="?sort=views" style='color: #666; text-decoration: none;'>most-watched</a> | 
-    <a href="?sort=most_rated" style='color: #666; text-decoration: none;'>most-rated</a> | 
-    <a href="?sort=attendees" style='color: #666; text-decoration: none;'>most-attended</a>
+    <a class='sort_link' href="?sort=rating" style='color: #666; text-decoration: none;'>highest-rated</a> | 
+    <a class='sort_link' href="?sort=views" style='color: #666; text-decoration: none;'>most-watched</a> | 
+    <a class='sort_link' href="?sort=most_rated" style='color: #666; text-decoration: none;'>most-rated</a> | 
+    <a class='sort_link' href="?sort=attendees" style='color: #666; text-decoration: none;'>most-attended</a>
   </div>
   <% if @sessions.count == 0 %>
     <p>No results found</p>
@@ -107,3 +107,21 @@ form button {
     <% end %>
   <% end %>
 </div>
+<script>
+  var conf_code = document.querySelector('#conf_code');
+  if(conf_code) {
+    var refresh_sort_links = function() {
+      var val = conf_code.value;
+      document.querySelectorAll('.sort_link').forEach(function(link) {
+        link.setAttribute('href', link.getAttribute('href').replace(/&conference_code=\w+/, ''))
+        if(val && val != 'all') {
+          link.setAttribute('href', link.getAttribute('href') + '&conference_code=' + val);
+        }
+      }); 
+    };
+    conf_code.addEventListener('change', function(e) {
+      refresh_sort_links();
+    });
+    refresh_sort_links();
+  }
+</script>
