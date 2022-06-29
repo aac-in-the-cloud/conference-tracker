@@ -8,7 +8,7 @@ class LinksController < ApplicationController
   end
 
   def chat
-    redirect_to 'http://aacconference.com/chat'
+    redirect_to 'http://aacconference.com/chat.html'
   end
 
   def show
@@ -122,7 +122,7 @@ class LinksController < ApplicationController
     exp = 12.hours
     if include_live
       fetch_key = "video/stats/fast/#{video_id}"
-      exp = 3.minutes
+      exp = 1.5.minutes
     else
       ts = session && session.zoned_timestamp
       if ts && ts > 3.hours.ago
