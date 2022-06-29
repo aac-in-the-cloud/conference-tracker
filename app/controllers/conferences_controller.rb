@@ -72,7 +72,7 @@ class ConferencesController < ApplicationController
         @sort = "Most-Attended"
         sessions = list.sort_by{|s| s[:live] }.reverse.map{|s| s[:ref] }
       end
-      sessions = sessions[0, 50]
+      sessions = sessions[0, 50].select{|s| s.resources }
     else
       sessions = sessions.limit(25)
     end
