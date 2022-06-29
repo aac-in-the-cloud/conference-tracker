@@ -8,7 +8,7 @@ class LinksController < ApplicationController
   end
 
   def chat
-    redirect_to 'http://aacconference.com/chat.html'
+    redirect_to 'http://www.aacconference.com/chat.html'
   end
 
   def show
