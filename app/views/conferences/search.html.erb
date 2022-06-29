@@ -44,7 +44,7 @@ form button {
     <% end %>
   </h1>
   <form action='/search' method='GET' style='text-align: center; margin-bottom: 20px;'>
-    <% if @conference_list && conference_list.length > 0 %>
+    <% if @conference_list && @conference_list.length > 0 %>
       <select name='conference_code'>
         <option value='all'>All Conferences</options>
         <% @conference_list.each do |conf| %>
