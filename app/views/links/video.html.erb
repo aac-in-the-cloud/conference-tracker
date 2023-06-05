@@ -239,6 +239,10 @@ var check = function() {
       document.getElementById('slides').style.display = 'none';
       document.getElementById('no_slides').style.display = 'inline';
     }
+    if(opts.video) {
+      opts.video = opts.video.replace(/\?feature=share/, '');
+      opts.video = opts.video.replace(/\/live\//, '/watch?v=');
+    }
     player.youtube_url = opts.video;
     var match = opts.video && opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
     if(match && match[1]) {
