@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get '/surveys/:id' => 'surveys#show'
   post '/surveys/' => 'surveys#create'
   get '/surveys/results/:id/:code' => 'surveys#results'
+  get '/surveys/emails/:id' => 'surveys#emails'
   post '/conferences' => 'conferences#create'
   get '/conferences/:id' => 'conferences#show'
   get '/search' => 'conferences#search'

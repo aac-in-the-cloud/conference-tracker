@@ -15,6 +15,19 @@ class SurveysController < ApplicationController
     req = SurveyResult.process(params)
     render json: req.data || {}.to_json
   end
+
+  def emails
+    if @authenticated
+      id = params['id']
+      @results = SurveyResult.where(code: id).order('id DESC').select{|r| r.json['answer_1'].to_i > 0 }
+      data = @results.map do |sr|
+        sr.json['email']
+      end.uniq.join("\n")
+      send_data data, :type => 'text/csv', :disposition => 'attachment; filename=emails.csv'            
+    else
+      render text: "Not authorized"
+    end
+  end
   
   def results
     if params['id'] && params['code'] == 'admincough' && @authenticated

@@ -92,7 +92,6 @@ a {
 </style>
 <div id='survey_holder'>
   <img src='/logo-<%= @year %>.png' onerror="this.src='/logo.png';" />
-  <%= @id %> <%= @digest %>
   <h1>AAC in the Cloud<br/>Survey Results</h1>
   <div style='clear: left;'></div>
   
@@ -107,7 +106,11 @@ a {
       <span id='session_name'><%= @data['session_name'] %></span>
       <span id='session_time'><%= @data['date'] %></span>
     <% end %>
-    <span id='total'>Total Reviews: <%= @results.length %></span>
+    <span id='total'>Total Reviews: <%= @results.length %>
+      <% if @authenticated %>
+        <a href="/surveys/emails/<%= @doc_id %>">download emails</a>
+      <% end %>
+    </span>
     <% if @data && @data['live_attendees'] %>
       <div id='live'>Live Attendees: <%= @data['live_attendees'] %></div>
     <% end %>
