@@ -38,22 +38,10 @@ table#session button {
 </div>
 <div style='margin: 50px auto; max-width: 600px;'>
   <h1>Available Conferences</h1>
-  <% @conferences.each do |conf| %>
-    <div style='font-size: 20px; margin-bottom: 10px;'>
-      <a href="/conferences/<%= conf.code %>?no_blank=1" style='font-size: 30px; text-decoration: none;'>
-        <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';" style='border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
-        <%= conf.name %>
-      </a>
-      <% if @authenticated %>
-        <div style='text-align: right; margin-top: -20px; font-size: 16px;'>
-          <a href="/surveys/results/all:<%= conf.code %>/admincough">Survey Results</a>
-        </div>
-      <% end %>
-      </div>
-  <% end %>
   <% if @authenticated %>
     <div id='admin_content' style='display: none;'>
       <h3>Add a Conference</h3>
+      <a href="https://docs.google.com/document/d/1KtkpKmaEhdT4MwxDvXi5093O2eD20t9dupBxq1VpXe0/edit?usp=sharing" target='_blank'>Conference Creation Instructions</a>
       <table id='session'>
         <tbody>
           <tr>
@@ -68,6 +56,19 @@ table#session button {
       </table>
     </div>
   <% end %>
+  <% @conferences.each do |conf| %>
+    <div style='font-size: 20px; margin-bottom: 10px;'>
+      <a href="/conferences/<%= conf.code %>?no_blank=1" style='font-size: 30px; text-decoration: none;'>
+        <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';" style='border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
+        <%= conf.name %>
+      </a>
+      <% if @authenticated %>
+        <div style='text-align: right; margin-top: -20px; font-size: 16px;'>
+          <a href="/surveys/results/all:<%= conf.code %>/admincough">Survey Results</a>
+        </div>
+      <% end %>
+      </div>
+  <% end %>
 </div>
 <script>
 if(document.getElementById('add_conference')) {
@@ -77,7 +78,7 @@ if(document.getElementById('add_conference')) {
       name: document.getElementById('name').value,
       authenticity_token: "<%= form_authenticity_token %>"
       };
-
+    if(!opts.name) { return; }
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 200) {

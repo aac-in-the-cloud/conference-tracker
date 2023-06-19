@@ -198,6 +198,9 @@ form.search button {
   </div>
   <img style='float: left; max-height: 100px; max-width: 150px; margin-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
   <img style='float: right; max-height: 100px; max-width: 150px; margin-bottom: 5px; padding-left: 5px;' src='/sponsored.png' />
+  <a href="https://www.forbesaac.com/aac-now" target='_blank' style='float: right; clear: right;'>
+    <img style='max-height: 65px; max-width: 150px; margin-bottom: 5px; padding-left: 5px;' src='/aac_now.png' alt='AAC Now'/>
+  </a>
   <form class='search' action='/search' method='GET' style='text-align: right; margin-top: 10px;'>
     <% if params['no_blank'] == '1' %>
       <input type='hidden' name='no_blank' value='1'/>
