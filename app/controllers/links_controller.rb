@@ -55,7 +55,10 @@ class LinksController < ApplicationController
     else
       session = ConferenceSession.find_by(code: json['code'])
       ts = session && session.zoned_timestamp
-      video_id = ((json['youtube_link'] || '').match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
+      video_url = json['youtube_link'] || ''
+      video_url.sub!(/\?feature=share/, '');
+      video_url.sub!(/\/live\//, '/watch?v=');
+      video_id = (video_url.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
       if ts && ts != 'pre' && ts > 120.minutes.ago && video_id
         video_data_for(video_id, session, true)
       end
