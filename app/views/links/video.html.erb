@@ -184,7 +184,8 @@ var check = function() {
           player.survey = true;
         }
         // as a fallback, if the video link changes, just reload the page
-        if(player.youtube_url && res.youtube_link && player.youtube_url != res.youtube_link) {
+        var player_url = player.original_youtube_url || player.youtube_url;
+        if(player_url && res.youtube_link && player_url != res.youtube_link) {
           location.reload();
         }
         // auto-update if the slides get added later
@@ -239,6 +240,7 @@ var check = function() {
       document.getElementById('slides').style.display = 'none';
       document.getElementById('no_slides').style.display = 'inline';
     }
+    player.original_youtube_url = opts.video;
     if(opts.video) {
       opts.video = opts.video.replace(/\?feature=share/, '');
       opts.video = opts.video.replace(/\/live\//, '/watch?v=');
