@@ -157,15 +157,6 @@ var err = function(str) {
   dom.label.innerHTML = str;
 };
 var player = {playing_seconds: 0};
-function onYouTubeIframeAPIReady() {
-  console.debug("youtube ready");
-  player.obj = null;
-  player.ready = true;
-  check();
-};
-if(window.YT && window.YT.loaded) {
-  onYouTubeIframeAPIReady();
-}
 var check = function() {
   check.checked = true;
   dom.spinner.style.display = 'inline';
@@ -384,6 +375,15 @@ var check = function() {
     }
   }, 300);
 };
+function onYouTubeIframeAPIReady() {
+  console.debug("youtube ready");
+  player.obj = null;
+  player.ready = true;
+  check();
+};
+if(window.YT && window.YT.loaded) {
+  onYouTubeIframeAPIReady();
+}
 setTimeout(function() {
   if(!check.checked) { check(); }
 }, 5000);
