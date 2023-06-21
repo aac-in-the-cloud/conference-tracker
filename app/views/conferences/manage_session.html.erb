@@ -211,33 +211,40 @@ p.bullet {
       they feel comfortable, ask if they need anything from
       you during the conference.
     </p>
+    <p class='bullet'>
+      Remind the presenter when their session starts
+      and ends. They can follow the Slack channel if 
+      they'd like, or some presenters will ask the
+      moderator to watch the chats for them.
+    </p>
     <h2>Live Session Moderation</h2>
     <% if @session_type == :zoom %>
       <p class='bullet'>
-        About two minutes before it's time to start,
+        About one minute before it's time to start,
         in the Zoom window hit "More" and then
         "Live on Custom Live Streaming Service" to
         connect the conference room to YouTube for the
-        attendees.
+        attendees. As soon as Zoom confirms the connection
+        you will be live on YouTube.
       </p>
       <p class='bullet'>
-        Once you get confirmation from the conference
-        admins that the session is live, do a quick intro 
-        and let the presenter do their thing.
+        Once the session has started, the feed will be
+        streaming to YouTube. Do a quick intro 
+        and let the presenter do their thing. Remember
+        everything gets pushed to YouTube on a 
+        5-15 second delay, so if you're
+        watching the YouTube video it will be behind.
       </p>
       <p class='bullet'>
         Make sure to 
         mute your audio and video feeds so you don't 
         interrupt their presentation with any noises.
         You should unmute and give a warning if it looks
-        like the presenter might go over.
+        like the presenter might go over. They can go long
+        if they like, but people will drop off the feed
+        for their next session.
       </p>
     <% else %>
-      <p class='bullet'>
-        Once the presenter(s) are in the room, make sure 
-        they feel comfortable, ask if they need anything from
-        you during the conference.
-      </p>
       <p class='bullet'>
         Warn the presenter before you go live for
         attendees to be able to see.
@@ -274,7 +281,7 @@ p.bullet {
       </p>
       <p class='bullet'>
         If you run into
-        any problems, just message <%= ENV['SLACK_CONTACTS'] || "the conference admins" %> on
+        any problems, just message the conference moderator group on
         Slack and we'll help figure it out!
       </p>
     <% end %>
