@@ -103,4 +103,66 @@ class ConferenceSession < ApplicationRecord
     self.data = data.to_json
     val
   end
+
+  def self.video_id(video_url)
+    return nil unless video_url
+    video_url = video_url.sub(/\?feature=share/, '');
+    video_url = video_url.sub(/\/live\//, '/watch?v=');
+    video_id = (video_url.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/) || [])[1];
+  end
+
+  def self.video_data_for(video_id, session, include_live=false)
+    # liveStreamingDetails.concurrentViewers, liveStreamingDetails.actualEndTime
+    key = ENV['API_KEY']
+    fetch_key = "video/stats/#{video_id}"
+    exp = 6.hours
+    if include_live
+      fetch_key = "video/stats/fast/#{video_id}"
+      exp = 1.5.minutes
+    else
+      ts = session && session.zoned_timestamp
+      if ts && ts > 3.hours.ago
+        exp = 10.minutes
+      elsif ts && ts > 12.hours.ago
+        exp = 30.minutes
+      end
+    end
+    hash = Rails.cache.fetch(fetch_key)
+    hash['cached'] = true if hash
+    hash = nil if include_live
+    if !hash
+      hash = Rails.cache.fetch(fetch_key, expires_in: exp) do
+        url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails%20&key=#{key}"
+        req = Typhoeus.get(url)
+        json = JSON.parse(req.body)
+        res = json['items'][0]
+        if session && res
+          json = JSON.parse(session.data)
+          hours = json['resources']['hours'].to_f
+          hours = 1.0 if hours == 0.0
+          json['views'] = res['statistics'] && res['statistics']['viewCount'].to_i
+          if res['liveStreamingDetails'] && !res['liveStreamingDetails']['actualEndTime']
+            json['max_live'] = [json['max_live'] || 0, res['liveStreamingDetails']['concurrentViewers'].to_i].max
+          end
+          session_mostly_done = false
+          ts = session.zoned_timestamp
+          if hours > 0.1
+            # 0.1-hour sessions should never get survey links,
+            # so don't ever bother marking a live attendees number
+            mostly_watched_cutoff = (hours * 40).minutes.ago
+            if ts && ts != 'pre' && ts < mostly_watched_cutoff
+              session_mostly_done = true
+            end
+            if json['max_live'] && (res['liveStreamingDetails']['actualEndTime'] || session_mostly_done)
+              json['resources']['live_attendees'] = [json['max_live'], json['resources']['live_attendees'] || 0, 1].max
+            end
+          end
+          session.data = json.to_json
+          session.save
+        end
+        res 
+      end
+    end
+    hash
+  end  
 end

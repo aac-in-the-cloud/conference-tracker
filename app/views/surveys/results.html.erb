@@ -162,11 +162,8 @@ a {
   var cell = "<%= @doc_id %>";
 
   var video = "<%= @data['youtube_link'] %>";
-  var match = video && video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
-  var video_id = null;
-  if(match && match[1]) {
-    video_id = match[1];
-  }
+  var match = video_id_from_url(video);
+  var video_id = match || "<%= ConferenceSession.video_id(@data['youtube_link'] || '') %>";
   if(video_id) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {

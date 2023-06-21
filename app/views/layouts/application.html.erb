@@ -45,6 +45,21 @@
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <script>
+      function video_id_from_url(youtube_url) {
+        if(youtube_url) {
+          youtube_url = youtube_url.replace(/\?feature=share/, '');
+          youtube_url = youtube_url.replace(/\/live\//, '/watch?v=');
+        }
+
+        var video_id = null;
+        var match = youtube_url && youtube_url.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
+        if(match && match[1]) {
+          var video_id = match[1];
+        }
+        return video_id;
+      };
+    </script>
   </head>
 
   <body>

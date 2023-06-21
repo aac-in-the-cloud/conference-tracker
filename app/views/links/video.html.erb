@@ -232,15 +232,12 @@ var check = function() {
       document.getElementById('no_slides').style.display = 'inline';
     }
     player.original_youtube_url = opts.video;
+    opts.video_id = video_id_from_url(opts.video);
     if(opts.video) {
       opts.video = opts.video.replace(/\?feature=share/, '');
       opts.video = opts.video.replace(/\/live\//, '/watch?v=');
     }
     player.youtube_url = opts.video;
-    var match = opts.video && opts.video.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
-    if(match && match[1]) {
-      opts.video_id = match[1];
-    }
 
     if(res.values && res.values[2] && res.values[2].length) {
       if(res.values[2][res.values[0].length - 1]) {

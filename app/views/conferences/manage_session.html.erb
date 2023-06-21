@@ -323,9 +323,14 @@ if(document.getElementById('name')) {
   document.getElementById('disabled').checked = link_disabled || false;
   document.getElementById('url').value = resources.youtube_link || '';
   var analytics = null;
-  var match = resources.youtube_link && resources.youtube_link.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?(?:.*?&(?:amp;)?)?v=|\.be\/)([\w \-]+)(?:&(?:amp;)?[\w\?=]*)?/);
-  if(match && match[1]) {
-    var video_id = match[1];
+  var youtube_url = resources.youtube_link;
+  if(youtube_url) {
+    youtube_url = youtube_url.replace(/\?feature=share/, '');
+    youtube_url = youtube_url.replace(/\/live\//, '/watch?v=');
+  }
+
+  var video_id = video_id_from_url(youtube_url);
+  if(video_id) {
     analytics = "https://www.youtube.com/live_event_analytics?v=" + video_id;
   }
   if(analytics) {
