@@ -106,6 +106,10 @@ a {
       <span id='session_name'><%= @data['session_name'] %></span>
       <span id='session_time'><%= @data['date'] %></span>
     <% end %>
+    <% if @doc_id && @doc_id.match(/^all/) %>
+      <span id='total'>Total Unique Reviewers: <%= @results.map{|r| (r.json['email'] || '').downcase }.uniq.length %>
+      </span>
+    <% end %>
     <span id='total'>Total Reviews: <%= @results.length %>
       <% if @authenticated %>
         <a href="/surveys/emails/<%= @doc_id %>">download emails</a>
