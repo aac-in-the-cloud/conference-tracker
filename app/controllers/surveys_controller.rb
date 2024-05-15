@@ -168,7 +168,7 @@ class SurveysController < ApplicationController
       pdf.draw_text dates, :at => [25, 25], :size => 12
       pdf.line [300, 40], [520, 40]
       pdf.stroke
-      pdf.draw_text "Melissa DeMoux, conference coordinator", :at => [300, 25], :size => 12
+      pdf.draw_text "Katie Thelkeld, conference coordinator", :at => [300, 25], :size => 12
       pdf.line_width 4
       pdf.rectangle [0, 720], 540, 720
       pdf.stroke_color "2caad3"

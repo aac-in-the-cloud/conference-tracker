@@ -4,7 +4,9 @@ require 'json'
 
 class LinksController < ApplicationController
   def root
-    @conferences = Conference.all.order('code')
+    @conferences = Conference.all.order('code').reverse
+    @week = FeedWeek.current_for('all')
+    @session_records = (@week && @week.session_records) || []
   end
 
   def chat
@@ -24,6 +26,11 @@ class LinksController < ApplicationController
     @session_id += "A17" unless @session_id.match(/^\w+\d+\w+\d+$/)
     @conf_id = @session_id.match(/\w+\d+(\w+\d+)/)[1]
     @year = "20#{@conf_id.match(/\d+/)[0]}"
+  end
+
+  def feed
+    week = FeedWeek.current_for(params['category'])
+    sessions = week.session_records
   end
   
   def data

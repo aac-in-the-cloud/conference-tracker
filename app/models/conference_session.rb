@@ -15,6 +15,16 @@ class ConferenceSession < ApplicationRecord
     true
   end
 
+  def active?
+    json = JSON.parse(self.data) rescue nil
+    return false unless json
+    !!(!json['link_disabled'] && json['resources'] && json['resources']['youtube_link'])
+  end
+
+  def for_category?(cat)
+    return cat == 'all'
+  end
+
   def video_link
     return nil unless self.code
     data = JSON.parse(self.data) rescue nil
@@ -79,6 +89,7 @@ class ConferenceSession < ApplicationRecord
     data['average_score'] = avg
     data['total_ratings'] = cnt
     self.data = data.to_json
+    @resources = nil
     self.save
   end
 
@@ -89,10 +100,27 @@ class ConferenceSession < ApplicationRecord
   
   def resources
     return @resources if @resources
-    res = JSON.parse(self.data)['resources'] rescue nil
+    data = JSON.parse(self.data) rescue nil 
+    if data && !data['average_score']
+      self.update_stats
+      data = JSON.parse(self.data) rescue nil 
+    end
+    res = data && data['resources']
     res = nil if res && !res['session_name']
+    if res['values']
+      res['values'].each do |key, val|
+        res[key] = val
+      end
+    end
     @resources = res if res
     res
+  end
+
+  def thumbnail_url
+    return nil unless self.resources
+    id = ConferenceSession.video_id(self.resources['youtube_link'])
+    return nil unless id
+    "https://img.youtube.com/vi/#{id}/0.jpg"
   end
 
   def resources=(val)

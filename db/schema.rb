@@ -10,10 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170620163230) do
+ActiveRecord::Schema.define(version: 20240514144034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "conference_sessions", force: :cascade do |t|
+    t.text     "data"
+    t.string   "code"
+    t.string   "conference_code"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["code"], name: "index_conference_sessions_on_code", unique: true, using: :btree
+  end
+
+  create_table "conferences", force: :cascade do |t|
+    t.string   "name"
+    t.text     "data"
+    t.string   "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_conferences_on_code", unique: true, using: :btree
+  end
+
+  create_table "feed_weeks", force: :cascade do |t|
+    t.integer "week"
+    t.integer "year"
+    t.string  "category"
+    t.string  "sessions"
+    t.index ["week", "year"], name: "index_feed_weeks_on_week_and_year", using: :btree
+  end
 
   create_table "survey_results", force: :cascade do |t|
     t.text     "data"

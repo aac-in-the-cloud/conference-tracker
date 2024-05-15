@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get '/links/:cell' => 'links#show'
   get '/chat' => 'links#chat'
   get '/videos/:id' => 'links#video'
+  get '/feeds/:category' => 'links#feed'
   get '/data/videos/:id' => 'links#video_data'
   get '/data/:doc_id/:cell' => 'links#data'
   get '/surveys' => 'surveys#index'

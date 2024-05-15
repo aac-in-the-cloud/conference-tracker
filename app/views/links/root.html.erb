@@ -27,8 +27,33 @@ table#session button {
   cursor: pointer;
   width: 355px;  
 }
+form.search input[type='text'] {
+  border: 1px solid #aaa;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 30px;
+  font-size: 17px;
+  width: 150px;
+  padding-left: 10px;
+}
+form.search button {
+  border: 1px solid #aaa;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 34px;
+  font-size: 17px;
+  color: #aaa;
+}
 </style>
-<div style='position: absolute; top: 0; right: 0; padding: 5px;'>
+<div style='position: absolute; top: 0; right: 0; padding: 5px 20px;'>
+  <form action='/search' method='GET' class='search' style='vertical-align: middle; display: inline-block; text-align: center; margin-right: 20px;'>
+    <% if params['no_blank'] == '1' %>
+      <input type='hidden' name='no_blank' value='1'/>
+    <% end %>
+    <input type='text' name='q' value='<%= params['q'] %>' placeholder="search"/>
+    <button type='submit'>Go</button>
+  </form>
+
   <% if @authenticated %>
     <%= @user %> | <a href="#" id='admin'>Admin</a> | 
     <a href="/logout">Logout</a>
@@ -36,8 +61,46 @@ table#session button {
     <a href="/login">Login</a>
   <% end %>
 </div>
-<div style='margin: 50px auto; max-width: 600px;'>
-  <h1>Available Conferences</h1>
+<div style='margin: 50px auto; max-width: 900px;'>
+  <h1 style='font-family: Arial;'>AAC in the Cloud</h1>
+  <p>Welcome! AAC in the Cloud is an annual, free, fully-online
+  conference focused on all things AAC! Here you can review 
+  sessions from past conferences, search for a specific session,
+  or subscribe to our session feeds. All past sessions are kept
+  online for as long as we can help it, and fill out the participation
+  survey after watching current or past sessions to get
+  CEU credits! You can also 
+  <a href="https://www.aacconference.com/">go here to see
+  details on the most recent conference</a>.</p>
+  <% if @session_records.length > 0 %>
+    <div style='margin: 0;'>
+      <h2>Highlighted Sessions</h2>
+      <% @session_records.each do |session| %>
+        <!-- TODO: adaptive width -->
+        <div style='float: left; width: calc(33% - 20px); padding: 5px 10px;'>
+          <% thumb = session.thumbnail_url %>
+          <a href="<%= session.video_link %>" style='text-decoration: none;'>
+            <% parts = (session.resources['session_name'] || '').split(/:/, 2) %>
+            <div style='font-size: 18px; height: 42px; overflow: hidden; font-weight: bold; padding: 0 5px;'>
+              <%= parts[1] %>
+            </div>
+            <div style='text-align: right; height: 19px; overflow: hidden; padding: 0 5px; margin-bottom: 5px; '>
+              <%= parts[0] %>
+            </div>
+            <img src="<%= thumb || '/logo-2017.png' %>" style='max-width: 100%; border-radius: 10px;' />
+          </a>
+          <a href="/conferences/<%= session.conference_code %>?no_blank=1">
+            <img src="/logo-<%= session.year %>.png" style="width: 40px; position: relative; top: -50px; left: 5px; margin-bottom: -50px; border-radius: 5px;"/>
+          </a>
+          <div style='height: 95px; overflow: hidden; color: #888;'>
+            <%= session.resources['description'] %>
+          </div>
+        </div>
+      <% end %>
+      <div style='clear: left;'></div>
+    </div>
+  <% end %>
+  <h2>Annual Conferences</h2>
   <% if @authenticated %>
     <div id='admin_content' style='display: none;'>
       <h3>Add a Conference</h3>
@@ -56,20 +119,33 @@ table#session button {
       </table>
     </div>
   <% end %>
-  <% @conferences.each do |conf| %>
-    <div style='font-size: 20px; margin-bottom: 10px;'>
-      <a href="/conferences/<%= conf.code %>?no_blank=1" style='font-size: 30px; text-decoration: none;'>
-        <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';" style='border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
-        <%= conf.name %>
-      </a>
-      <% if @authenticated %>
-        <div style='text-align: right; margin-top: -20px; font-size: 16px;'>
-          <a href="/surveys/results/all:<%= conf.code %>/admincough">Survey Results</a>
+  <div style='margin: 0 auto; max-width: 600px;'>
+    <% @conferences.each do |conf| %>
+      <% json = JSON.parse(conf.data) rescue {} %>
+      <div style='font-size: 20px; margin-bottom: 20px;'>
+        <a href="/conferences/<%= conf.code %>?no_blank=1" style='font-size: 30px; text-decoration: none;'>
+          <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';" style='float: left; margin-right: 10px; border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
+          <% if json['theme'] %>
+            <%= json['theme'] %>
+            <div style='font-size: 20px;'><%= conf.name %></div>
+          <% else %>
+            <%= conf.name %>
+          <% end %>
+          <div style='clear: left;'></div>
+        </a>
+        <% if @authenticated %>
+          <div style='text-align: right; margin-top: -20px; font-size: 16px;'>
+            <a href="/surveys/results/all:<%= conf.code %>/admincough">Survey Results</a>
+          </div>
+        <% end %>
         </div>
-      <% end %>
-      </div>
-  <% end %>
+    <% end %>
+  </div>
 </div>
+<div style="color: #eee; text-align: center; font-family: Arial; margin-top: 20px;">
+  sponsored by <a href="https://www.forbesaac.com/aac-now" target="_blank" style='color: #63b3dd;'>Forbes AAC</a>, and <a href="https://www.openaac.org/" target="_blank" style='color: #63b3dd;'>OpenAAC</a>
+</div>
+
 <script>
 if(document.getElementById('add_conference')) {
   document.getElementById('add_conference').addEventListener('click', function(event) {
