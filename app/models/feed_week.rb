@@ -57,7 +57,7 @@ class FeedWeek < ApplicationRecord
       score += [10, year - (id_years[s.id] || 0)].min * 3
       puts "    #{score}" if allow_new_category 
       score
-    end.reverse
+    end
     week.sessions = results[0, 3].map(&:id).join(',')
     week.save
     week

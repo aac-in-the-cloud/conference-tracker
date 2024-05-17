@@ -1,0 +1,81 @@
+<style>
+input[type='text'] {
+  border: 1px solid #888;
+  border-radius: 3px;
+  height: 50px;
+  font-size: 20px;
+  width: 350px;
+}
+table#session {
+  border-collapse: collapse;
+}
+table#session td:first-child {
+  text-align: right;
+  padding-right: 10px;
+}
+table#session td:last-child {
+  text-align: left;
+}
+table#session button {
+  height: 50px;
+  font-size: 30px;
+  background: #eee;
+  border: 1px solid #888;
+  border-radius: 3px;
+  margin: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  width: 355px;  
+}
+form.search input[type='text'] {
+  border: 1px solid #aaa;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 30px;
+  font-size: 17px;
+  width: 150px;
+  padding-left: 10px;
+}
+form.search button {
+  border: 1px solid #aaa;
+  vertical-align: top;
+  border-radius: 3px;
+  height: 34px;
+  font-size: 17px;
+  color: #aaa;
+}
+</style>
+<div style='margin: 50px auto; max-width: 900px;'>
+  <h1 style='font-family: Arial;'>AAC in the Cloud - Highlighted Sessions</h1>
+  <div style='margin: 0;'>
+    <% @weeks.each do |week| %>
+      <h4>Highlights For the Week of <%= Date.parse("#{week.year}W#{week.week.to_s.rjust(2, '0')}").strftime('%b %-d, %Y') %></h4>
+      <% week.session_records.each do |session| %>
+        <!-- TODO: adaptive width -->
+        <div style='float: left; width: calc(33% - 20px); padding: 5px 10px;'>
+          <% thumb = session.thumbnail_url %>
+          <a href="<%= session.video_link %>" style='text-decoration: none;'>
+            <% parts = (session.resources['session_name'] || '').split(/:/, 2) %>
+            <div style='font-size: 18px; height: 42px; overflow: hidden; font-weight: bold; padding: 0 5px;'>
+              <%= parts[1] %>
+            </div>
+            <div style='text-align: right; height: 19px; overflow: hidden; padding: 0 5px; margin-bottom: 5px; '>
+              <%= parts[0] %>
+            </div>
+            <img src="<%= thumb || '/logo-2017.png' %>" style='max-width: 100%; border-radius: 10px;' />
+          </a>
+          <a href="/conferences/<%= session.conference_code %>?no_blank=1">
+            <img src="/logo-<%= session.year %>.png" style="width: 40px; position: relative; top: -50px; left: 5px; margin-bottom: -50px; border-radius: 5px;"/>
+          </a>
+          <div style='height: 95px; overflow: hidden; color: #888;'>
+            <%= session.resources['description'] %>
+          </div>
+        </div>
+      <% end %>
+      <div style='clear: left;'></div>
+    <% end %>
+  </div>
+</div>
+<div style="color: #444; text-align: center; font-family: Arial; margin-top: 20px;">
+  sponsored by <a href="https://www.forbesaac.com/aac-now" target="_blank" style='color: #63b3dd;'>Forbes AAC</a>, and <a href="https://www.openaac.org/" target="_blank" style='color: #63b3dd;'>OpenAAC</a>
+</div>

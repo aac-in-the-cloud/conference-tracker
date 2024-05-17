@@ -29,8 +29,7 @@ class LinksController < ApplicationController
   end
 
   def feed
-    week = FeedWeek.current_for(params['category'])
-    sessions = week.session_records
+    @weeks = FeedWeek.where(['year >= ?', Time.now.year]).order('CONCAT(year, RIGHT(CONCAT(\'00\',week), 2)) DESC').limit(15)
   end
   
   def data
