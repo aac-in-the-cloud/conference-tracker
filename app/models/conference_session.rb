@@ -15,10 +15,14 @@ class ConferenceSession < ApplicationRecord
     true
   end
 
-  def active?
+  def active?(avoid_fluff=false)
     json = JSON.parse(self.data) rescue nil
     return false unless json
-    !!(!json['link_disabled'] && json['resources'] && json['resources']['youtube_link'])
+    if avoid_fluff
+      sn = json && json['resources'] && json['resources']['session_name']
+      return false if sn && (sn.match(/^welcome/i) || sn.match(/^lightning/i))
+    end
+    !!(!json['link_disabled'] && json['resources'] && json['resources']['session_name'] && json['resources']['youtube_link'])
   end
 
   def for_category?(cat)
@@ -107,7 +111,7 @@ class ConferenceSession < ApplicationRecord
     end
     res = data && data['resources']
     res = nil if res && !res['session_name']
-    if res['values']
+    if res && res['values']
       res['values'].each do |key, val|
         res[key] = val
       end

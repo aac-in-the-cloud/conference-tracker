@@ -41,7 +41,7 @@ class FeedWeek < ApplicationRecord
       mod = mod / 2
     end
     results = mod_results[0, 100]
-    results = results.select{|s| s.active? && s.for_category?(cat) }
+    results = results.select{|s| s.active?(true) && s.for_category?(cat) }
     results = results.sort_by do |s|
       score = 0
       data = JSON.parse(s.data) rescue nil
@@ -51,8 +51,8 @@ class FeedWeek < ApplicationRecord
       score += (data['average_score'] || 0.0) * 2.0
       # total views: 10 pts
       score += [(data['views'] || 0), 1000].min / 100
-      # year they were released: 10 pts
-      score += 10 - [year - Time.at(s.zoned_timestamp || 0).year, 10].min
+      # year they were released: 20 pts
+      score += (10 - [year - Time.at(s.zoned_timestamp || 0).year, 10].min) * 2
       # years since they were included in the week's feed: 30 pts
       score += [10, year - (id_years[s.id] || 0)].min * 3
       puts "    #{score}" if allow_new_category 

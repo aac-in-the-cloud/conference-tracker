@@ -90,7 +90,10 @@ form.search button {
             <img src="<%= thumb || '/logo-2017.png' %>" style='max-width: 100%; border-radius: 10px;' />
           </a>
           <a href="/conferences/<%= session.conference_code %>?no_blank=1">
-            <img src="/logo-<%= session.year %>.png" style="width: 40px; position: relative; top: -50px; left: 5px; margin-bottom: -50px; border-radius: 5px;"/>
+            <img src="/logo-<%= session.year %>.png" style="background: #fff; width: 40px; position: relative; top: -50px; left: 5px; margin-bottom: -50px; border-radius: 5px;"/>
+            <div style='position: relative; top: -45px; color: #eee; font-family: Arial; margin-left: 53px; text-shadow: 0 0 5px #000; margin-bottom: -15px;'>
+              <%= session.year %>
+            </div>        
           </a>
           <div style='height: 95px; overflow: hidden; color: #888;'>
             <%= session.resources['description'] %>
@@ -99,7 +102,7 @@ form.search button {
       <% end %>
       <div style='clear: left;'></div>
     </div>
-    <div style='margin-left: 50px; margin-bottom: 30px;'>
+    <div style='margin-left: 50px; margin-bottom: 30px; margin-top: 15px;'>
       <a href="/feeds/all">see more recently-highlighted sessions</a>
     </div>
   <% end %>
