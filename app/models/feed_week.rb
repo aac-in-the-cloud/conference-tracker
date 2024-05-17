@@ -19,15 +19,13 @@ class FeedWeek < ApplicationRecord
     res
   end
 
-  def self.current_for(cat, allow_new_category=false)
-    currweek = Time.now.to_date.cweek
-    curryear = Time.now.year
-    weeks = FeedWeek.where(week: currweek, category: cat).order('year DESC')
+  def self.process_for(weeknum, year, cat, allow_new_category=false)
+    weeks = FeedWeek.where(week: weeknum, category: cat).order('year DESC')
     week = weeks[0]
-    return week if week && week.year == curryear
+    return week if week && week.year == year
     return nil if !allow_new_category && cat != 'all' && FeedWeek.where(category: cat).count == 0
 
-    week = FeedWeek.new(week: currweek, year: curryear, category: cat)
+    week = FeedWeek.new(week: weeknum, year: year, category: cat)
     id_years = {}
     weeks.each do |w|
       ss = w.sessions.split(/,/)
@@ -35,11 +33,11 @@ class FeedWeek < ApplicationRecord
         id_years[s] ||= w.year
       end
     end
-    results = ConferenceSession.order("ABS(MOD(id, 52) - #{currweek - 1}) ASC, id DESC")
+    results = ConferenceSession.order("ABS(MOD(id, 52) - #{weeknum - 1}) ASC, id DESC")
     mod = 52
     mod_results = []
     while mod_results.length == 0 && mod > 10
-      mod_results = results.select{|s| (s.id % mod) == ((currweek - 1) % mod)}
+      mod_results = results.select{|s| (s.id % mod) == ((weeknum - 1) % mod)}
       mod = mod / 2
     end
     results = mod_results[0, 100]
@@ -48,18 +46,26 @@ class FeedWeek < ApplicationRecord
       score = 0
       data = JSON.parse(s.data) rescue nil
       data ||= {}
+      puts "#{s.resources['session_name']} #{s.id} #{data['average_score']} #{data['views']} #{year - Time.at(s.zoned_timestamp || 0).year} #{year - (id_years[s.id] || 0)}" if allow_new_category
       # overall rating: 10 pts
       score += (data['average_score'] || 0.0) * 2.0
       # total views: 10 pts
       score += [(data['views'] || 0), 1000].min / 100
       # year they were released: 10 pts
-      score += 10 - [curryear - Time.at(s.zoned_timestamp || 0).year, 10].min
+      score += 10 - [year - Time.at(s.zoned_timestamp || 0).year, 10].min
       # years since they were included in the week's feed: 30 pts
-      score += [10, curryear - (id_years[s.id] || 0)].min * 3
+      score += [10, year - (id_years[s.id] || 0)].min * 3
+      puts "    #{score}" if allow_new_category 
       score
     end.reverse
     week.sessions = results[0, 3].map(&:id).join(',')
     week.save
     week
+  end
+
+  def self.current_for(cat, allow_new_category=false)
+    currweek = Time.now.to_date.cweek
+    curryear = Time.now.year
+    process_for(currweek, curryear, cat, allow_new_category)
   end
 end
