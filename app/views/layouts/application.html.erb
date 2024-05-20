@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <% if @meta_record %>
-      <!-- expects @meta_record.(title, summary, large_image, image, link, created, updated) -->
+
+    <!-- expects @meta_record.(title, summary, large_image, image, link, created, updated) -->
       <title><%= @meta_record.title %></title>
       <meta name="description" content="<%= @meta_record.summary %>" />
 

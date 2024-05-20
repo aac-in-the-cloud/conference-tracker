@@ -47,30 +47,30 @@ form.search button {
 </style>
 <div style='margin: 50px auto; max-width: 900px;'>
   <h1 style='font-family: Arial;'>AAC in the Cloud - Highlighted Sessions</h1>
-  <div style='margin: 0;'>
+  <div class='podcasts'>
     <% @weeks.each do |week| %>
       <h4>Highlights For the Week of <%= Date.parse("#{week.year}W#{week.week.to_s.rjust(2, '0')}").strftime('%b %-d, %Y') %></h4>
       <% week.session_records.each do |session| %>
         <!-- TODO: adaptive width -->
-        <div style='float: left; width: calc(33% - 20px); padding: 5px 10px;'>
+        <div class='podcast'>
           <% thumb = session.thumbnail_url %>
-          <a href="<%= session.video_link %>" style='text-decoration: none;'>
+          <a href="<%= session.video_link %>">
             <% parts = (session.resources['session_name'] || '').split(/:/, 2) %>
-            <div style='font-size: 18px; height: 42px; overflow: hidden; font-weight: bold; padding: 0 5px;'>
+            <div class='title'>
               <%= parts[1] %>
             </div>
-            <div style='text-align: right; height: 19px; overflow: hidden; padding: 0 5px; margin-bottom: 5px; '>
+            <div class='author'>
               <%= parts[0] %>
             </div>
-            <img src="<%= thumb || '/logo-2017.png' %>" style='max-width: 100%; border-radius: 10px;' />
+            <img src="<%= thumb || '/logo-2017.png' %>" class='preview' />
           </a>
-          <a href="/conferences/<%= session.conference_code %>?no_blank=1" style='text-decoration: none;'>
-            <img src="/logo-<%= session.year %>.png" style="background: #fff; width: 40px; border: 1px solid rgba(0, 0, 0, 0.5); position: relative; top: -50px; left: 5px; margin-bottom: -50px; border-radius: 5px;"/>
-            <div style='position: relative; top: -45px; color: #eee; font-family: Arial; margin-left: 53px; text-shadow: 0 0 5px #000; margin-bottom: -15px;'>
+          <a href="/conferences/<%= session.conference_code %>?no_blank=1">
+            <img src="/logo-<%= session.year %>.png" class='conf'/>
+            <div class='year'>
               <%= session.year %>
             </div>        
           </a>
-          <div style='height: 95px; overflow: hidden; color: #888;'>
+          <div class='desc'>
             <%= session.resources['description'] %>
           </div>
         </div>

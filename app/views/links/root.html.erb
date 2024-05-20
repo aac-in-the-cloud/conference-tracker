@@ -73,29 +73,29 @@ form.search button {
   <a href="https://www.aacconference.com/">go here to see
   details on the most recent conference</a>.</p>
   <% if @session_records.length > 0 %>
-    <div style='margin: 0;'>
+    <div class='podcasts'>
       <h2>Highlighted Sessions</h2>
       <% @session_records.each do |session| %>
         <!-- TODO: adaptive width -->
-        <div style='float: left; width: calc(33% - 20px); padding: 5px 10px;'>
+        <div class='podcast'>
           <% thumb = session.thumbnail_url %>
-          <a href="<%= session.video_link %>" style='text-decoration: none;'>
+          <a href="<%= session.video_link %>">
             <% parts = (session.resources['session_name'] || '').split(/:/, 2) %>
-            <div style='font-size: 18px; height: 42px; overflow: hidden; font-weight: bold; padding: 0 5px;'>
+            <div class='title'>
               <%= parts[1] %>
             </div>
-            <div style='text-align: right; height: 19px; overflow: hidden; padding: 0 5px; margin-bottom: 5px; '>
+            <div class='author'>
               <%= parts[0] %>
             </div>
-            <img src="<%= thumb || '/logo-2017.png' %>" style='max-width: 100%; border-radius: 10px;' />
+            <img src="<%= thumb || '/logo-2017.png' %>" class='preview' />
           </a>
           <a href="/conferences/<%= session.conference_code %>?no_blank=1">
-            <img src="/logo-<%= session.year %>.png" style="background: #fff; width: 40px; position: relative; top: -50px; left: 5px; margin-bottom: -50px; border-radius: 5px;"/>
-            <div style='position: relative; top: -45px; color: #eee; font-family: Arial; margin-left: 53px; text-shadow: 0 0 5px #000; margin-bottom: -15px;'>
+            <img src="/logo-<%= session.year %>.png" class='conf'/>
+            <div class='year'>
               <%= session.year %>
             </div>        
           </a>
-          <div style='height: 95px; overflow: hidden; color: #888;'>
+          <div class='desc'>
             <%= session.resources['description'] %>
           </div>
         </div>
@@ -125,25 +125,25 @@ form.search button {
       </table>
     </div>
   <% end %>
-  <div style='margin: 0 auto; max-width: 600px;'>
+  <div class='conferences'>
     <% @conferences.each do |conf| %>
       <% json = JSON.parse(conf.data) rescue {} %>
-      <div style='font-size: 20px; margin-bottom: 20px;'>
-        <a href="/conferences/<%= conf.code %>?no_blank=1" style='font-size: 30px; text-decoration: none;'>
-          <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';" style='float: left; margin-right: 10px; border-radius: 5px; width: 100px; height: 100px; object-fit: contain; object-position: center; vertical-align: middle;'/>
+      <div class='conference'>
+        <a href="/conferences/<%= conf.code %>?no_blank=1">
+          <img src="/logo-<%= conf.year %>.png" onerror="this.src='/logo.png';"/>
           <% if json['theme'] %>
             <%= json['theme'] %>
             <div style='font-size: 20px;'><%= conf.name %></div>
           <% else %>
             <%= conf.name %>
           <% end %>
-          <div style='clear: left;'></div>
         </a>
         <% if @authenticated %>
-          <div style='text-align: right; margin-top: -20px; font-size: 16px;'>
+          <div class='link'>
             <a href="/surveys/results/all:<%= conf.code %>/admincough">Survey Results</a>
           </div>
         <% end %>
+        <div style='clear: left;'></div>
         </div>
     <% end %>
   </div>

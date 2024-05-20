@@ -1,3 +1,97 @@
 // Place all the styles related to the links controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.podcasts {
+  margin: 0;
+  
+  .podcast {
+    float: left; 
+    width: calc(33% - 20px); 
+    padding: 5px 10px;
+    a {
+      text-decoration: none;
+    }
+    .title {
+      font-size: 18px; 
+      height: 42px; 
+      overflow: hidden; 
+      font-weight: bold; 
+      padding: 0 5px;
+    }
+    .author {
+      text-align: right; 
+      height: 19px; 
+      overflow: hidden; 
+      padding: 0 5px; 
+      margin-bottom: 5px; 
+      font-family: sans-serif; 
+      font-weight: 100;
+    }
+    img.preview {
+      max-width: 100%; 
+      border-radius: 10px; 
+      border: 2px solid #000;
+    }
+    img.conf {
+      background: #fff; 
+      width: 40px; 
+      border: 1px solid rgba(0, 0, 0, 0.5); 
+      position: relative; 
+      top: -50px; 
+      left: 5px; 
+      margin-bottom: -50px; 
+      border-radius: 5px;
+    }
+    .year {
+      position: relative; 
+      top: -45px; 
+      color: #eee; 
+      font-family: Arial; 
+      margin-left: 53px; 
+      text-shadow: 0 0 5px #000; 
+      margin-bottom: -15px;
+    }
+    .desc {
+      height: 95px; 
+      overflow: hidden; 
+      color: #888;
+    }
+  }
+}
+.conferences {
+  margin: 0 auto; max-width: 600px;
+  .conference {
+    font-size: 20px; 
+    margin-bottom: 20px;
+    a {
+      font-size: 30px; 
+      text-decoration: none;
+    }
+    img {
+      float: left;
+      margin-right: 10px; 
+      border-radius: 5px; 
+      width: 100px; 
+      height: 100px; 
+      object-fit: contain; 
+      object-position: center; 
+      vertical-align: middle;
+    }
+    .link {
+      text-align: right; font-size: 16px;
+      a {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .podcasts .podcast {
+    float: none;
+    width: 95%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
