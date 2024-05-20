@@ -42,9 +42,33 @@ form.search button {
   border-radius: 3px;
   height: 34px;
   font-size: 17px;
-  color: #aaa;
+  color: #888;
+}
+h4 {
+  background: #337ab7;
+  display: block;
+  color: #fff;
+  font-family: sans-serif;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 22px;
 }
 </style>
+<div style='position: absolute; top: 0; right: 0; padding: 5px 20px;'>
+  <span style='color: #aaa; margin-right: 30px;'>
+    <a class='sort_link' href="/search?sort=rating" style='color: #666; text-decoration: none;'>highest-rated</a> | 
+    <a class='sort_link' href="/search?sort=views" style='color: #666; text-decoration: none;'>most-watched</a> | 
+    <a class='sort_link' href="/search?sort=most_rated" style='color: #666; text-decoration: none;'>most-rated</a> | 
+    <a class='sort_link' href="/search?sort=attendees" style='color: #666; text-decoration: none;'>most-attended</a>
+  </span>
+  <form action='/search' method='GET' class='search' style='vertical-align: middle; display: inline-block; text-align: center; margin-right: 20px;'>
+    <% if params['no_blank'] == '1' %>
+      <input type='hidden' name='no_blank' value='1'/>
+    <% end %>
+    <input type='text' name='q' value='<%= params['q'] %>' placeholder="search"/>
+    <button type='submit'>Go</button>
+  </form>
+</div>
 <div style='margin: 50px auto; max-width: 900px;'>
   <h1 style='font-family: Arial;'>AAC in the Cloud - Highlighted Sessions</h1>
   <div class='podcasts'>
