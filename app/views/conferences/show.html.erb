@@ -333,7 +333,7 @@ form.search button {
       </tbody>
     </table>
   <% end %>
-  <% if @authenticated && !@conference[:filled] %>
+  <% if @authenticated && !@conference[:filled]%>
     <h3>Add a Session</h3>
     <b>REMEMBER: You can't create same-time or back-to-back sessions
     inside of the same Zoom account, even if you allow other hosts, because it will kick others
@@ -360,7 +360,7 @@ form.search button {
       </tbody>
     </table>
   <% end %>
-  <% if @authenticated && !@conference[:closed] %>
+  <% if @authenticated && !@conference[:closed] && @conference[:filled] && (@conference[:days] || []).length > 0 %>
     <h3 style='margin-top: 50px;'>Build a Moderator Session List</h3>
     <div style='background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #ccc;'>
       <table id='session'>
