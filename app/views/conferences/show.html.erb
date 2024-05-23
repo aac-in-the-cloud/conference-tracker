@@ -216,6 +216,12 @@ form.search button {
   </form>
 
   <div style='clear: left;'></div>
+
+  <% if (@conference[:days] || []).length == 0 %>
+    <div style='text-align: center; font-size: 25px; margin-top: 100px; margin-bottom: 100px;'>
+      No sessions have been published yet for this conference
+    </div>
+  <% end %>
   <table id='conference'>
     <tbody>
         <% day_number = 0 %>
