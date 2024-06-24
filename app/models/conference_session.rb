@@ -185,6 +185,7 @@ class ConferenceSession < ApplicationRecord
             if ts && ts != 'pre' && ts < mostly_watched_cutoff
               session_mostly_done = true
             end
+            res['liveStreamingDetails'] ||= {}
             if json['max_live'] && (res['liveStreamingDetails']['actualEndTime'] || session_mostly_done)
               json['resources']['live_attendees'] = [json['max_live'], json['resources']['live_attendees'] || 0, 1].max
             end
