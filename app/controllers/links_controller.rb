@@ -39,10 +39,13 @@ class LinksController < ApplicationController
       json['timestamp'] = time.to_i
       json['date'] = Conference.date_string(time)
     end
+    session = ConferenceSession.find_by(code: json['code'])
+    json['disabled'] = JSON.parse(session.data)['link_disabled'] || false
     if @authenticated
-      session = ConferenceSession.find_by(code: json['code'])
       conference = Conference.find_by(code: session.conference_code)
       json['manage_link'] = session.manage_link
+
+
       if params['stats']
         json['average_score'] = session.resources['average_score']
         if !json['average_score']
@@ -59,7 +62,6 @@ class LinksController < ApplicationController
         end
       end
     else
-      session = ConferenceSession.find_by(code: json['code'])
       ts = session && session.zoned_timestamp
       video_id = ConferenceSession.video_id(json['youtube_link'])
       if ts && ts != 'pre' && ts > 120.minutes.ago && video_id

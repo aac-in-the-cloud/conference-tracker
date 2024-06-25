@@ -108,6 +108,9 @@ body {
     <a href="#" id="slides" style='display: none;' target="_blank">Slides or Resources for this Session</a>
     <span id='no_slides' style='color: #888;'>No Slides Have Been Provided for this Session</span>
   </div>
+  <div id='disabled_holder' style='display: none; margin-bottom: 70px; margin-top: 50px; font-size: 20px; font-weigh: bold;'>
+    This session has been canceled or disabled
+  </div>
   <div style='margin-bottom: 30px;'>
     <b>Looking for CEUs?</b> If you watch this video on this site then
     towards the end you will see a survey link show up. Fill out the
@@ -154,7 +157,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder'].forEach(function(key) {
+['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'disabled_holder'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -263,8 +266,12 @@ var check = function() {
       dom.time.innerText = opts.time + ", " + (res.hours || 1.0) + " participation credit" + ((res.hours && res.hours != 1.0) ? "s" : "");
     }
 
-    if(opts.video_id) {
+    if(res.disabled) {
+      dom.disabled_holder.style.display = 'block';
+      dom.video_holder.style.display = 'none';
+    } else if(opts.video_id) {
       if(player.ready) {
+        dom.disabled_holder.style.display = 'none';
         dom.video_holder.style.display = 'inline';
         var bounds = dom.video_holder.getBoundingClientRect();
         var width = bounds.width - 14;
