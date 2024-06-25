@@ -321,6 +321,12 @@ form.search button {
             <label>
               <input type="checkbox" id="conference_filled" <%= 'checked' if @conference[:filled] %> />
               All sessions have been added for this conference
+              <% if !@conference[:filled] && !@conference[:closed] %>
+                <br/>
+                <span style='font-size: 12px;'>
+                  (check this box and update when you're ready to start assigning moderators)
+                </span>
+              <% end %>
             </label>
           </td>
         </tr><tr>
@@ -329,6 +335,12 @@ form.search button {
             <label>
               <input type="checkbox" id="conference_closed" <%= 'checked' if @conference[:closed] %> />
               All sessions have been recorded for this conference
+              <% if @conference[:filled] && !@conference[:closed] %>
+                <br/>
+                <span style='font-size: 12px;'>
+                  (check this box and update when the conference has ended)
+                </span>
+              <% end %>
             </label>
           </td>
         </tr><tr>
