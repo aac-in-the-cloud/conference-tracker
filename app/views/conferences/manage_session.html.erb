@@ -337,7 +337,7 @@ if(document.getElementById('name')) {
   }
 
   var video_id = video_id_from_url(youtube_url);
-  if(video_id) {
+  if(video_id && resources.youtube_link && resources.youtube_link.match(/\/live\//)) {
     analytics = "https://www.youtube.com/live_event_analytics?v=" + video_id;
   }
   if(analytics) {
