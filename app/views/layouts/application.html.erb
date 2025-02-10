@@ -28,7 +28,12 @@
       <!-- Open Graph data -->
       <meta property="og:title" content="<%= @meta_record.title %>" />
       <meta property="og:type" content="article" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:logo" content="https://presenters.aacconference.com/logo-2017.png" />
       <meta property="og:url" content="<%= @meta_record.link %>" />
+      <% if @meta_record.video_url %>
+        <meta property="og:video" content="<%= @meta_record.video_url %>" />
+      <% end %>
       <meta property="og:image" content="<%= @meta_record.large_image || @meta_record.image %>" />
       <meta property="og:description" content="<%= @meta_record.summary %>" />
       <meta property="og:site_name" content="AAC in the Cloud" />
@@ -48,6 +53,7 @@
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <script src="/qrcode.min.js"></script>
+    <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=67aa5a8c3093bd0013c183d0&product=inline-share-buttons&source=platform" async="async"></script>
     <script>
       function video_id_from_url(youtube_url) {
         if(youtube_url) {

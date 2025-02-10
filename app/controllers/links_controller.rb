@@ -98,12 +98,16 @@ class LinksController < ApplicationController
     if session && session.resources
       conf = Conference.find_by(code: session.conference_code)
       name = session.resources['session_name']
-      name = "#{conf.name} - #{name}" if conf
+      name = "#{name} - #{conf.name}" if conf
+      desc = session.resources['description']
+      desc = "#{desc}.  Part of the conference, #{conf.name}."
       image = "https://presenters.aacconference.com/logo-2017.png"
       image = "#{request.protocol}#{request.host_with_port}/logo-#{conf.year}.png" if conf
+      video_url = nil
       if session.resources['youtube_link']
         video_id = ConferenceSession.video_id(session.resources['youtube_link'])
         if video_id
+          video_url = "https://www.youtube.com/v/#{video_id}"
           data = ConferenceSession.video_data_for(video_id, session)
           if data && data['statistics'] && data['statistics']['viewCount'].to_i > 0
             image = "https://img.youtube.com/vi/#{video_id}/0.jpg"
@@ -111,10 +115,11 @@ class LinksController < ApplicationController
         end
       end
       @meta_record = OpenStruct.new({
-        title: session.resources['session_name'],
-        summary: session.resources['description'],
+        title: name,
+        summary: desc,
         image: image,
         link: request.original_url,
+        video_url: video_url,
         created: session.created_at.iso8601,
         updated: session.updated_at.iso8601
       })
