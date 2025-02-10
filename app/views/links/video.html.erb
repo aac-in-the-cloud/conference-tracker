@@ -91,7 +91,7 @@ body {
 <div id='header'>
   <img class='logo' src="/logo-<%= @year %>.png" onerror="this.src='/logo.png';" />
   <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
-  AAC in the Cloud Presentation Session
+  <div id='conf_name'><%= @conf_name %> Session</div>
   <div style='margin-bottom: 10px;'>
     <% if params['from_search'] %>
       <a href='#' onclick='window.history.back();'>Back to the Search Results</a>
@@ -147,7 +147,7 @@ body {
   <div id='manage_holder' style='display: none; margin-top: 20px;'>
     <a href='#' id='manage_link'>Management Link</a>
   </div>
-  <div style='margin-top: 20px;' class="sharethis-inline-share-buttons"></div>
+  <div style='margin-top: 40px;' class="sharethis-inline-share-buttons"></div>
 </div>
 
 <div style="color: #eee; text-align: center; font-family: Arial; margin-bottom: 20px;">
@@ -159,7 +159,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'disabled_holder'].forEach(function(key) {
+['label', 'conf_name', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'disabled_holder'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -221,6 +221,7 @@ var check = function() {
     var opts = {};
     opts.time = res.date;
     opts.session = res.session_name;
+    opts.conf = res.conference_name;
     opts.link = res.hangouts_link;
     opts.track = res.track;
     player.hours = res.hours;
@@ -274,6 +275,7 @@ var check = function() {
     console.log(opts);
     dom.label.classList.remove('error');
     dom.label.innerText = opts.session;
+    if(opts.conf) { dom.conf_name.innerText = opts.conf + " Session"; }
     dom.time.innerText = opts.time;
     if(res.hours !== 0) {
       dom.time.innerText = opts.time + ", " + (res.hours || 1.0) + " participation credit" + ((res.hours && res.hours != 1.0) ? "s" : "");

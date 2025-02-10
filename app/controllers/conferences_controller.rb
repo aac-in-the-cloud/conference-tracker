@@ -278,6 +278,7 @@ class ConferencesController < ApplicationController
     if @authenticated
       data['date'] = params['time'] if !params['time'].blank?
       data['session_name'] = params['name'] if !params['name'].blank?
+      data['conference_name'] = conference.name
       data['description'] = params['description'] if !params['description'].blank?
       data['hours'] = params['hours'].to_f if !params['hours'].blank?
       data['track'] = params['track'] if !params['track'].blank?

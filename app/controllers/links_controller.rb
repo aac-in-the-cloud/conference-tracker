@@ -97,6 +97,7 @@ class LinksController < ApplicationController
     session = ConferenceSession.find_by(code: @session_id)
     if session && session.resources
       conf = Conference.find_by(code: session.conference_code)
+      @conf_name = conf.name if conf
       name = session.resources['session_name']
       name = "#{name} - #{conf.name}" if conf
       desc = session.resources['description']
