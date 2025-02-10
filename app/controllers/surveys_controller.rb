@@ -9,6 +9,8 @@ class SurveysController < ApplicationController
     @year = "20#{@doc_id.match(/\d+$/)[0]}" rescue nil
     @year ||= '2017'
     @conf_id = @doc_id.match(/\w+\d+(\w+\d+)/)[1]
+    @noindex = true
+    response.set_header("X-Robots-Tag", "noindex")
   end
   
   def create

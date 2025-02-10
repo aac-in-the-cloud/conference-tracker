@@ -2,6 +2,9 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <% if @noindex %>
+      <meta name="robots" content="noindex, nofollow" />
+    <% end %>
     <% if @meta_record %>
 
     <!-- expects @meta_record.(title, summary, large_image, image, link, created, updated) -->
