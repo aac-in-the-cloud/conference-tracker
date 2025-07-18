@@ -1,3 +1,4 @@
+require 'ostruct'
 class ConferencesController < ApplicationController
   def create
     if !@authenticated
@@ -101,7 +102,7 @@ class ConferencesController < ApplicationController
     response.headers.except! 'X-Frame-Options'
     conference = Conference.find_by(code: params['id'])
     if !conference
-      render text: "Invalid Conference"
+      render plain: "Invalid Conference"
       return
     end
     @conference = Rails.cache.fetch("conference/#{params['id']}", expires_in: 15.minutes) do
@@ -237,7 +238,7 @@ class ConferencesController < ApplicationController
     @session_type = :zoom
     @session = ConferenceSession.find_by(code: code)
     if @session.token != token
-      render text: "Invalid Session"
+      render plain: "Invalid Session"
       return
     end
     @token = token;
@@ -327,7 +328,7 @@ class ConferencesController < ApplicationController
   def links
     @conference = Conference.find_by(code: params['id'])
     if !@conference
-      render text: "Invalid Conference"
+      render plain: "Invalid Conference"
       return
     end
     verifier = Digest::MD5.hexdigest(Conference.user_token(params['codes']))[0, 10]
@@ -339,7 +340,7 @@ class ConferencesController < ApplicationController
       redirect_to action: 'links', id: params['id'], codes: codes, verifier: verifier
       return
     elsif params['verifier'] != verifier
-      render text: "Invalid Verifier"
+      render plain: "Invalid Verifier"
       return
     end
     codes, moderator = params['codes'].split(/:/)

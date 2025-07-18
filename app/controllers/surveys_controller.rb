@@ -27,7 +27,7 @@ class SurveysController < ApplicationController
       end.uniq.join("\n")
       send_data data, :type => 'text/csv', :disposition => 'attachment; filename=emails.csv'            
     else
-      render text: "Not authorized"
+      render plain: "Not authorized"
     end
   end
   
@@ -48,7 +48,7 @@ class SurveysController < ApplicationController
       all, code = id.split(/:/)
       @conference = Conference.find_by(code: code)
       if !@conference
-        render text: "Conference not found"
+        render plain: "Conference not found"
         return
       end
       @data = {}

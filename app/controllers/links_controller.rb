@@ -1,6 +1,7 @@
 require 'typhoeus'
 require 'nokogiri'
 require 'json'
+require 'ostruct'
 
 class LinksController < ApplicationController
   def root
@@ -17,7 +18,7 @@ class LinksController < ApplicationController
     cell, token = params['cell'].split(/:/)
     session = ConferenceSession.find_by_code(cell)
     if session.token[0, 5] != token
-      render text: "Invalid Session"
+      render plain: "Invalid Session"
       return
     end
     params['cell'] = cell
@@ -69,7 +70,7 @@ class LinksController < ApplicationController
         ConferenceSession.video_data_for(video_id, session, true)
       end
     end
-    render text: json.to_json
+    render plain: json.to_json
   end
 
   def proxy_doc
@@ -87,7 +88,7 @@ class LinksController < ApplicationController
       end
       doc.to_s
     end
-    render text: text
+    render plain: text
   end
   
   def video
@@ -131,6 +132,6 @@ class LinksController < ApplicationController
 
   def video_data
     hash = ConferenceSession.video_data_for(params['id'], nil)
-    render text: hash.to_json
+    render plain: hash.to_json
   end
 end
