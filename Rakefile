@@ -4,3 +4,5 @@
 require_relative 'config/application'
 
 Rails.application.load_tasks
+# Skip auto-running `yarn install` when running `rails assets:precompile`
+Rake::Task["yarn:install"].clear

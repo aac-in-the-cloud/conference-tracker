@@ -29,7 +29,7 @@ class LinksController < ApplicationController
   end
 
   def feed
-    @weeks = FeedWeek.where(['year >= ?', Time.now.year]).order('CONCAT(year, RIGHT(CONCAT(\'00\',week), 2)) DESC').limit(15)
+    @weeks = FeedWeek.where(['year >= ?', Time.now.year]).order(Arel.sql('CONCAT(year, RIGHT(CONCAT(\'00\',week), 2)) DESC')).limit(15)
   end
   
   def data
