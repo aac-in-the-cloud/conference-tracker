@@ -33,7 +33,7 @@ class FeedWeek < ApplicationRecord
         id_years[s] ||= w.year
       end
     end
-    results = ConferenceSession.order("ABS(MOD(id, 52) - #{weeknum - 1}) ASC, id DESC")
+    results = ConferenceSession.order(Arel.sql("ABS(MOD(id, 52) - #{weeknum - 1}) ASC, id DESC"))
     mod = 52
     mod_results = []
     while mod_results.length == 0 && mod > 10
