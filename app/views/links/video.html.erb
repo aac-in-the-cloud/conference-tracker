@@ -281,9 +281,14 @@ var check = function() {
       dom.time.innerText = opts.time + ", " + (res.hours || 1.0) + " participation credit" + ((res.hours && res.hours != 1.0) ? "s" : "");
     }
 
+    var pre_live_cutoff = new Date();
+    pre_live_cutoff.setMinutes(pre_live_cutoff.getMinutes() + 5);
+    pre_live_cutoff = pre_live_cutoff.getTime() / 1000;
     if(res.disabled) {
       dom.disabled_holder.style.display = 'block';
       dom.video_holder.style.display = 'none';
+    } else if(res.pre_live && res.timestamp && res.timestamp > pre_live_cutoff) {
+      dom.status.innerText = "Video is not yet available";
     } else if(opts.video_id) {
       if(player.ready) {
         dom.disabled_holder.style.display = 'none';
