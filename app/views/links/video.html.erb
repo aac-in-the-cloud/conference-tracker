@@ -207,6 +207,21 @@ var check = function() {
           document.getElementById('slides').setAttribute('href', res.slides_link);
         }
       });
+    } else if(player && player.pre_live && player.pending) {
+      dom.spinner.style.display = 'inline';
+      doc_lookup(id, cell, function(res) {
+        setTimeout(function() {
+          dom.spinner.style.display = 'none';
+        }, 800);
+
+        var pre_live_cutoff = new Date();
+        pre_live_cutoff.setMinutes(pre_live_cutoff.getMinutes() + 5);
+        pre_live_cutoff = pre_live_cutoff.getTime() / 1000;
+        if(res.pre_live && res.timestamp && res.timestamp < pre_live_cutoff) {
+          // if the video was pre_live, just reload once it is ready
+          location.reload();
+        }
+      });
     }
   }, 30000);
   doc_lookup(id, cell, function(res) {
@@ -227,6 +242,7 @@ var check = function() {
     player.hours = res.hours;
     opts.video = res.youtube_link;
     opts.slides = res.slides_link;
+    player.pre_live = res.pre_live;
     opts.description = res.description;
     if(res.manage_link && document.getElementById('manage_link')) {
       document.getElementById('manage_link').setAttribute('href', res.manage_link);
@@ -289,6 +305,8 @@ var check = function() {
       dom.video_holder.style.display = 'none';
     } else if(res.pre_live && res.timestamp && res.timestamp > pre_live_cutoff) {
       dom.status.innerText = "Video is not yet available";
+      player.pending = true;
+      // TODO: need to reload when this state changes
     } else if(opts.video_id) {
       if(player.ready) {
         dom.disabled_holder.style.display = 'none';
