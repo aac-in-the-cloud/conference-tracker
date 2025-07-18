@@ -312,9 +312,10 @@ class ConferencesController < ApplicationController
       json.delete('max_live')
       session.data = json.to_json
     end
-    if params['link_disabled'] != nil
+    if params['link_disabled'] != nil || params['link_pre_live'] != nil
       json = JSON.parse(session.data)
-      json['link_disabled'] = !!params['link_disabled']
+      json['link_disabled'] = !!params['link_disabled'] if params['link_disabled'] != nil
+      json['link_pre_live'] = !!params['link_pre_live'] if params['link_pre_live'] != nil
       session.data = json.to_json
     end
     session.save

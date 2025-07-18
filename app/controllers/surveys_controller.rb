@@ -191,7 +191,7 @@ class SurveysController < ApplicationController
       pdf.rounded_rectangle [30, 160], 110, 110, 10
       pdf.stroke
       pdf.fill_color 'aaaaaa'
-      pdf.text_box "sponsored by Forbes AAC, Inc. 181 Illinois Ave. South, Mansfield, OH 44905, info@mycoughdrop.com", :at => [0, -10], :width => 530, height: 20, :color => '888888', :align => :center, :overflow => :shrink_to_fit
+      pdf.text_box "sponsored by OpenAAC, 9733 Sharolyn Ln., South Jordan, UT 84009, info@openaac.org", :at => [0, -10], :width => 530, height: 20, :color => '888888', :align => :center, :overflow => :shrink_to_fit
       pdf.render_file "AACintheCloud-certificate.pdf"
       send_file 'AACintheCloud-certificate.pdf', :disposition => 'inline'
     else

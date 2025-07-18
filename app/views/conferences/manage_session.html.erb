@@ -175,6 +175,14 @@ p.bullet {
           <td>Track:</td>
           <td><input type='text' id='track' placeholder='1'/></td>
         </tr><tr>
+          <td>Pre-Live:</td>
+          <td style='padding: 15px 0;'>
+            <label>
+              <input type="checkbox" id="pre_live" />
+              This session is pre-recorded but should be released live
+            </label>
+          </td>
+        </tr><tr>
           <td>Disabled:</td>
           <td style='padding: 15px 0;'>
             <label>
@@ -322,12 +330,14 @@ p.bullet {
 <script>
 var resources = <%= @session.resources.to_json.html_safe %>;
 var link_disabled = <%= (JSON.parse(@session.data)['link_disabled'] || false).to_s %>;
+var link_pre_live = <%= (JSON.parse(@session.data)['link_pre_live'] || false).to_s %>;
 if(document.getElementById('name')) {
   document.getElementById('name').value = resources.session_name || '';
   document.getElementById('date').value = resources.date || '';
   document.getElementById('description').value = resources.description || '';
   document.getElementById('hours').value = resources.hours || '';
   document.getElementById('track').value = resources.track || '';
+  document.getElementById('pre_live').checked = link_pre_live || false;
   document.getElementById('disabled').checked = link_disabled || false;
   document.getElementById('url').value = resources.youtube_link || '';
   var analytics = null;
@@ -372,6 +382,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
     opts.slides = document.getElementById('slides').value;
     opts.live_attendees = document.getElementById('attendees').value;
     opts.link_disabled = document.getElementById('disabled').checked;
+    opts.link_pre_live = document.getElementById('pre_live').checked;
   }
 
   var xhr = new XMLHttpRequest();

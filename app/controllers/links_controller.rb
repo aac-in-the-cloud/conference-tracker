@@ -41,6 +41,7 @@ class LinksController < ApplicationController
     end
     session = ConferenceSession.find_by(code: json['code'])
     json['disabled'] = JSON.parse(session.data)['link_disabled'] || false
+    json['pre_live'] = JSON.parse(session.data)['link_pre_live'] || false
     if @authenticated
       conference = Conference.find_by(code: session.conference_code)
       json['manage_link'] = session.manage_link

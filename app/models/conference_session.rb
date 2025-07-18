@@ -166,18 +166,20 @@ class ConferenceSession < ApplicationRecord
       hash = Rails.cache.fetch(fetch_key, expires_in: exp) do
         url = "https://www.googleapis.com/youtube/v3/videos?id=#{video_id}&part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails%20&key=#{key}"
         req = Typhoeus.get(url)
-        json = JSON.parse(req.body)
-        res = json['items'][0]
+        req = JSON.parse(req.body)
+        res = req['items'][0]
         if session && res
           json = JSON.parse(session.data)
           hours = json['resources']['hours'].to_f
           hours = 1.0 if hours == 0.0
+          ts = session.zoned_timestamp
           json['views'] = res['statistics'] && res['statistics']['viewCount'].to_i
-          if res['liveStreamingDetails'] && !res['liveStreamingDetails']['actualEndTime']
+          if json['link_pre_live'] && ts != 'pre' && ts > 1.5.hours.ago
+            json['max_live'] = json['views']
+          elsif res['liveStreamingDetails'] && !res['liveStreamingDetails']['actualEndTime']
             json['max_live'] = [json['max_live'] || 0, res['liveStreamingDetails']['concurrentViewers'].to_i].max
           end
           session_mostly_done = false
-          ts = session.zoned_timestamp
           if hours > 0.1
             # 0.1-hour sessions should never get survey links,
             # so don't ever bother marking a live attendees number
