@@ -33,7 +33,7 @@ class ConferenceSession < ApplicationRecord
     return nil unless self.code
     data = JSON.parse(self.data) rescue nil
     return nil if data && data['link_disabled']
-    "/videos/#{URI.encode(Base64.urlsafe_encode64(Base64.urlsafe_encode64(self.code)))}"
+    "/videos/#{CGI.escapeURIComponent(Base64.urlsafe_encode64(Base64.urlsafe_encode64(self.code)))}"
   end
   
   def survey_link
