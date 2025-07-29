@@ -108,23 +108,23 @@ body {
   <div id='time'></div>
   <div style='clear: left;'></div>
   <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
-  <div id='description_holder' style='display: none; margin-bottom: 20px;'></div>
+  <div id='description_holder' style='display: none; margin-bottom: 20px; border-bottom: 1px solid #aaa; padding-bottom: 30px;'></div>
   <a style='float: right;' href='#' id='ceu_link' onclick="document.querySelector('#ceu_explainer').style.display = 'block';">
     <img src="/credits.png" style='width: 90px;'/>
   </a>
   <div id='slides_holder' style='margin-bottom: 20px;'>
-    <a href="#" id="slides" style='display: none; font-size: 22px;' target="_blank">
-      <img src="/handouts.png" style='width: 90px;' />
-      Slides or Resources for this Session
+    <a href="#" id="slides" style='display: none; font-size: 22px; text-decoration: none;' target="_blank">
+      <img src="/handouts.png" style='width: 90px; margin-right: 10px; vertical-align: middle; float: left;' />
+      <span>Slides/Handouts<br/>for this Session</span>
     </a>
     <span id='no_slides' style='color: #888; font-size: 22px;'>
-      <img src="/handouts.png" style='width: 90px; filter: grayscale(1);' />
-      No Slides Have Been Provided for this Session
+      <img src="/handouts.png" style='width: 90px; margin-right: 10px; filter: grayscale(1); vertical-align: middle; float: left;' />
+      <span>No Slides Provided<br/>for this Session</span>
     </span>
   </div>
   <div style='clear: both;'></div>
   <div id='disabled_holder' style='display: none; margin-bottom: 70px; margin-top: 50px; font-size: 20px; font-weigh: bold;'>
-    <img src="/cancelled.png" style='width: 90px; font-size: 22px;'/>
+    <img src="/cancelled.png" style='width: 90px; font-size: 22px; vertical-align: middle;'/>
     This session has been canceled or disabled
   </div>
   <div style='margin-bottom: 30px; display: none;' id='ceu_explainer'>
@@ -135,12 +135,14 @@ body {
   </div>
   <div id='video_holder' style='display: none;'>
     <div id='video'></div>
-    <a id='video_app' href="#" target='_blank'>Open in the YouTube App or a New Browser Tab</a>
-    <br/><span>NOTE: Participation surveys will only be available after you watch the full video <b>on this site, not YouTube</b>.</span>
+    <div style='text-align: right;'>
+      <a id='video_app' href="#" target='_blank'>Open in the YouTube App or a New Browser Tab</a>
+      <br/><span style='font-size: 15px;'>NOTE: Participation surveys will only be available after<br/>you watch the full video <b>on this site, not YouTube</b>.</span>
+    </div>
   </div>
   <% if ENV['SLACK_ENABLED'] %>
     <div id='chat' style='display: none;'>
-      <img src="/chat.png" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
+      <img src="/chat.png" style='width: 90px; vertical-align: middle; float: left; margin-right: 10px;'/>
       <a href="/chat" target="_blank" style='font-size: 22px; text-decoration: none;'>
         Join the Chat Room for this session
       </a><br/>to ask questions and get access to additional resources.<br/>
@@ -152,7 +154,7 @@ body {
     <div id='chat' style='display: none;'></div>
   <% end %>
   <div id='survey_link' style='display: none;'>
-    <img src="/survey.jpg" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
+    <img src="/survey.jpg" style='width: 90px; vertical-align: middle; float: left; margin-right: 10px;'/>
     <a id='survey_anchor' href="/surveys/<%= @session_id %>" style='font-size: 22px; text-decoration: none;'>Fill Out the Attendance Survey</a><br/>
     Once you're done, please fill out the form to track your attendance for completion hours.<br/>
     After you are done watching sessions you can <a href="/surveys/certificate" target="_blank">generate a certificate of attendance</a><br/>
@@ -161,6 +163,7 @@ body {
     <div style='clear: left;'></div>
   </div>
   <div id='manage_holder' style='display: none; margin-top: 20px;'>
+    <img src="/manage.png" style='width: 60px; vertical-align: middle;'/>
     <a href='#' id='manage_link'>Management Link</a>
   </div>
   <div style='margin-top: 40px;' class="sharethis-inline-share-buttons"></div>
@@ -347,7 +350,7 @@ var check = function() {
     } else if(res.pre_live && res.js_timestamp && res.js_timestamp > pre_live_cutoff) {
       var img = new Image();
       img.src = "/clapboard.jpg";
-      dom.status.innerText = "Video is not yet available";
+      dom.status.innerText = "Video is not yet released";
       dom.status.prepend(img);
       player.pending = true;
       // TODO: need to reload when this state changes
