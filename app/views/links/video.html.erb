@@ -419,15 +419,32 @@ var check = function() {
     err('Data not available,<br/>please try reloading');
     setTimeout(check, 30000);
   });
+  var playthrough_key = Math.round(Math.random() * 9999);
   setInterval(function() {
+    var playthrough = {};
+    try {
+      playthrough = JSON.parse(localStorage.getItem('playthrough_for_' + cell)) || {};
+      if(playthrough === true) {
+        playthrough = {complete: true};
+      }
+    } catch(e) { }
     if(player.playing && !player.live) {
       var now = (new Date()).getTime();
       player.playing_started = (player.playing_started || (new Date()).getTime());
       player.playing_seconds = (player.played_seconds || 0) + ((now - player.playing_started) / 1000);
-      
-      console.log("playing for", player.playing_seconds);
+      var resumed_playing_seconds = parseInt(localStorage.getItem('playthrough_seconds_for_' + cell), 10) || 0;
+      playthrough.ps = playthrough.ps || 0;
+      if(playthrough.key != playthrough_key) {
+        playthrough.key = playthrough_key;
+        playthrough.ps = playthrough.ps + playthrough.cs;
+      }
+      playthrough.cs = Math.round(player.playing_seconds);
+      player.total_playing_seconds = player.playing_seconds + playthrough.ps;
+      localStorage.setItem('playthrough_for_' + cell, JSON.stringify(playthrough));
+
+      console.log("playing for", player.total_playing_seconds, player.playing_seconds, playthrough.ps);
     }
-    if(localStorage.getItem('playthrough_for_' + cell) == 'true') {
+    if(playthrough) {
       show_survey(dom);
     } else if(player.obj && !player.live && player.survey) {
       // after the player has been playing for at least 33% of the 
@@ -436,19 +453,21 @@ var check = function() {
 
       // after 33% of playtime, go ahead and allow the survey link
       var seconds_cutoff = (player.hours || 1.0) * 60 * 60 * 0.33;
-      if(player.playing_seconds > seconds_cutoff) {
+      if(player.total_playing_seconds > seconds_cutoff) {
         var duration = player.duration || (player.obj && player.obj.getDuration && player.obj.getDuration()) || 0;
         var current = (player.obj && player.obj.getCurrentTime && player.obj.getCurrentTime()) || (player.playing_seconds + (duration * 0.25));
         // if play point is in the last 20% of the video, show the survey link
         if(duration && current && current > (duration * 0.8)) {
           show_survey(dom);
-          localStorage.setItem('playthrough_for_' + cell, 'true');
+          playthrough.complete = true;
+          localStorage.setItem('playthrough_for_' + cell, JSON.stringify(playthrough));
         }
       }
     } else if(player.obj && player.live && player.survey && player.live_attendees) {
       show_survey(dom);
       dom.survey_anchor.setAttribute('target', '_blank');
-      localStorage.setItem('playthrough_for_' + cell, 'true');
+      playthrough.complete = true;
+      localStorage.setItem('playthrough_for_' + cell, JSON.stringify(playthrough));
       if(!dom.survey_anchor.innerHTML.match(/new tab/)) {
         dom.survey_anchor.innerHTML = dom.survey_anchor.innerHTML + " (opens in a new tab)";
       }
