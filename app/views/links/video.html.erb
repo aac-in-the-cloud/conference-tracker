@@ -178,6 +178,20 @@ var show_survey = function(dom) {
   show_survey.qrcode.makeCode(full_url);
   document.querySelector('#survey_qrcode').style.display = 'block';
 };
+var show_chat = function(track) {
+  track = track || player.track_string;
+  if(cell.match(/A17$/)) {
+    if(cell.match(/^C/)) { track = track || 2; }
+    if(cell.match(/^D/)) { track = track || 3; }
+  } else {
+    if(cell.match(/^B/)) { track = track || 2; }
+    if(cell.match(/^C/)) { track = track || 3; }
+  }
+  track = (track || 1).toString();
+  if(track.length <= 2) { track = "Track " + track; }
+  dom.track.innerText = track;
+  dom.chat.style.display = 'block';
+};
 var check = function() {
   check.checked = true;
   dom.spinner.style.display = 'inline';
@@ -239,6 +253,7 @@ var check = function() {
     opts.conf = res.conference_name;
     opts.link = res.hangouts_link;
     opts.track = res.track;
+    player.track_string = opts.track;
     player.hours = res.hours;
     opts.video = res.youtube_link;
     opts.slides = res.slides_link;
@@ -269,6 +284,16 @@ var check = function() {
       document.getElementById('slides').style.display = 'none';
       document.getElementById('no_slides').style.display = 'inline';
     }
+    if(player && player.pre_live && res.timestamp) {
+      var still_live_cutoff = new Date();
+      still_live_cutoff.setMinutes(still_live_cutoff.getMinutes() - 90);
+      still_live_cutoff = still_live_cutoff.getTime() / 1000;
+      if(res.timestamp > still_live_cutoff) {
+        // if the video was pre_live, and is during the conference, show chat
+        show_chat(opts.track);
+      }
+    }
+
     player.original_youtube_url = opts.video;
     opts.video_id = video_id_from_url(opts.video);
     if(opts.video) {
@@ -349,18 +374,7 @@ var check = function() {
             res = JSON.parse(this.responseText);
             if(res && res.snippet && (res.snippet.liveBroadcastContent == 'upcoming' || res.snippet.liveBroadcastContent == 'live')) {
               player.live = true;
-              var track = opts.track;
-              if(cell.match(/A17$/)) {
-                if(cell.match(/^C/)) { track = track || 2; }
-                if(cell.match(/^D/)) { track = track || 3; }
-              } else {
-                if(cell.match(/^B/)) { track = track || 2; }
-                if(cell.match(/^C/)) { track = track || 3; }
-              }
-              track = (track || 1).toString();
-              if(track.length <= 2) { track = "Track " + track; }
-              dom.track.innerText = track;
-              dom.chat.style.display = 'block';
+              show_chat(opts.track);
             }
             console.log("video data", res);
           } else if(this.readyState == 4) {
