@@ -109,14 +109,25 @@ body {
   <div style='clear: left;'></div>
   <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
   <div id='description_holder' style='display: none; margin-bottom: 20px;'></div>
+  <a style='float: right;' href='#' id='ceu_link' onclick="document.querySelector('#ceu_explainer').style.display = 'block';">
+    <img src="/credits.png" style='width: 90px;'/>
+  </a>
   <div id='slides_holder' style='margin-bottom: 20px;'>
-    <a href="#" id="slides" style='display: none;' target="_blank">Slides or Resources for this Session</a>
-    <span id='no_slides' style='color: #888;'>No Slides Have Been Provided for this Session</span>
+    <a href="#" id="slides" style='display: none; font-size: 22px;' target="_blank">
+      <img src="/handouts.png" style='width: 90px;' />
+      Slides or Resources for this Session
+    </a>
+    <span id='no_slides' style='color: #888; font-size: 22px;'>
+      <img src="/handouts.png" style='width: 90px; filter: grayscale(1);' />
+      No Slides Have Been Provided for this Session
+    </span>
   </div>
+  <div style='clear: both;'></div>
   <div id='disabled_holder' style='display: none; margin-bottom: 70px; margin-top: 50px; font-size: 20px; font-weigh: bold;'>
+    <img src="/cancelled.png" style='width: 90px; font-size: 22px;'/>
     This session has been canceled or disabled
   </div>
-  <div style='margin-bottom: 30px;'>
+  <div style='margin-bottom: 30px; display: none;' id='ceu_explainer'>
     <b>Looking for CEUs?</b> If you watch this video on this site then
     towards the end you will see a survey link show up. Fill out the
     short survey to track your participation credit, and we'll generate
@@ -129,7 +140,7 @@ body {
   </div>
   <% if ENV['SLACK_ENABLED'] %>
     <div id='chat' style='display: none;'>
-      <img src="/slack.png" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
+      <img src="/chat.png" style='width: 90px; vertical-align: middle; float: left; padding-right: 10px;'/>
       <a href="/chat" target="_blank" style='font-size: 22px; text-decoration: none;'>
         Join the Chat Room for this session
       </a><br/>to ask questions and get access to additional resources.<br/>
