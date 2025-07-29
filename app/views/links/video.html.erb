@@ -231,7 +231,7 @@ var check = function() {
         var pre_live_cutoff = new Date();
         pre_live_cutoff.setMinutes(pre_live_cutoff.getMinutes() + 5);
         pre_live_cutoff = pre_live_cutoff.getTime() / 1000;
-        if(res.pre_live && res.timestamp && res.timestamp < pre_live_cutoff) {
+        if(res.pre_live && res.js_timestamp && res.js_timestamp < pre_live_cutoff) {
           // if the video was pre_live, just reload once it is ready
           location.reload();
         }
@@ -284,11 +284,11 @@ var check = function() {
       document.getElementById('slides').style.display = 'none';
       document.getElementById('no_slides').style.display = 'inline';
     }
-    if(player && player.pre_live && res.timestamp) {
+    if(player && player.pre_live && res.js_timestamp) {
       var still_live_cutoff = new Date();
       still_live_cutoff.setMinutes(still_live_cutoff.getMinutes() - 90);
       still_live_cutoff = still_live_cutoff.getTime() / 1000;
-      if(res.timestamp > still_live_cutoff) {
+      if(res.js_timestamp > still_live_cutoff) {
         // if the video was pre_live, and is during the conference, show chat
         show_chat(opts.track);
       }
@@ -328,7 +328,7 @@ var check = function() {
     if(res.disabled) {
       dom.disabled_holder.style.display = 'block';
       dom.video_holder.style.display = 'none';
-    } else if(res.pre_live && res.timestamp && res.timestamp > pre_live_cutoff) {
+    } else if(res.pre_live && res.js_timestamp && res.js_timestamp > pre_live_cutoff) {
       dom.status.innerText = "Video is not yet available";
       player.pending = true;
       // TODO: need to reload when this state changes

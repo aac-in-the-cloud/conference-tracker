@@ -38,8 +38,8 @@ class LinksController < ApplicationController
     time = Time.parse(json['date']) rescue nil
     if time
       json['date'] = Conference.date_string(time)
-      time = Time.parse(json['date'])
-      json['timestamp'] = time.to_i
+      time = json['date'].in_time_zone("Eastern Time (US & Canada)")
+      json['js_timestamp'] = time.to_i
     end
     session = ConferenceSession.find_by(code: json['code'])
     json['disabled'] = JSON.parse(session.data)['link_disabled'] || false
