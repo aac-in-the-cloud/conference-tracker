@@ -32,7 +32,7 @@
       <meta property="og:title" content="<%= @meta_record.title %>" />
       <meta property="og:type" content="article" />
       <meta property="og:locale" content="en_US" />
-      <meta property="og:logo" content="https://presenters.aacconference.com/logo-2017.png" />
+      <meta property="og:logo" content="<%= @meta_record.large_image || @meta_record.image %>" />
       <meta property="og:url" content="<%= @meta_record.link %>" />
       <% if @meta_record.video_url %>
         <meta property="og:video" content="<%= @meta_record.video_url %>" />
