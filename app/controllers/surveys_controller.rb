@@ -110,16 +110,19 @@ class SurveysController < ApplicationController
 
       sessions = []
       hours = 0.0
+      live_hours = 0.0
       results.each do |sr|
         json = SurveyResult.session_data(sr.code)
         name = json['session_name'] || "Session code: #{sr.code}"
+        session_hours = (json['hours'] || 1.0).round(2)
         session_time = ConferenceSession.start_time(json)
         # Surveys filled out in the first 24 hours can be marked as live
         if session_time && sr.created_at < session_time + 24.hours
           name += " (live)"
+          live_hours += session_hours
         end
         sessions.push(name)
-        hours += (json['hours'] || 1.0).round(2)
+        hours += session_hours
       end
       start_date = results.map(&:updated_at).min
       end_date = results.map(&:updated_at).max
@@ -178,7 +181,13 @@ class SurveysController < ApplicationController
       pdf.move_down 300
       pdf.text "for a total of", :align => :center, :size => 15, :color => '888888'
       pdf.move_down 10
-      pdf.text "#{hours.to_f.round(2)} maintenance hours", :align => :center, :size => 20
+      hours_string = "#{hours.to_f.round(2)} maintenance hours"
+      if(hours == live_hours)
+        hours_string = "#{hours.to_f.round(2)} live maintenance hours"
+      elsif hours > live_hours
+        hours_string = "#{hours.to_f.round(2)} maintenance hours (#{live_hours.to_f.round(2)} live)"
+      end
+      pdf.text hours_string, :align => :center, :size => 20
       pdf.draw_text dates, :at => [25, 25], :size => 12
       pdf.line [300, 40], [520, 40]
       pdf.stroke
