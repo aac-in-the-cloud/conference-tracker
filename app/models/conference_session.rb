@@ -161,11 +161,11 @@ class ConferenceSession < ApplicationRecord
     key = ENV['API_KEY']
     fetch_key = "video/stats/#{video_id}"
     exp = 6.hours
-    if include_live
+    ts = session && session.zoned_timestamp
+    if include_live || (ts && ts > 1.5.hours.ago)
       fetch_key = "video/stats/fast/#{video_id}"
       exp = 1.5.minutes
     else
-      ts = session && session.zoned_timestamp
       if ts && ts > 3.hours.ago
         exp = 10.minutes
       elsif ts && ts > 12.hours.ago
@@ -187,7 +187,7 @@ class ConferenceSession < ApplicationRecord
           hours = 1.0 if hours == 0.0
           ts = session.zoned_timestamp
           json['views'] = res['statistics'] && res['statistics']['viewCount'].to_i
-          if json['link_pre_live'] && ts != 'pre' && ts > 1.5.hours.ago
+          if json['link_pre_live'] && ts != 'pre' && (ts > 1.5.hours.ago || include_live == 'force')
             json['max_live'] = json['views']
           elsif res['liveStreamingDetails'] && !res['liveStreamingDetails']['actualEndTime']
             json['max_live'] = [json['max_live'] || 0, res['liveStreamingDetails']['concurrentViewers'].to_i].max
