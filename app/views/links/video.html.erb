@@ -94,6 +94,9 @@ body {
 }
 </style>
 <div id='header'>
+  <a style='float: right; display: none;' href='#' id='bio_link' onclick="document.querySelector('#bio_holder').style.display = 'block'; event.preventDefault();">
+    <img src="/profile.png" style='width: 90px;'/>
+  </a>
   <img class='logo' src="/logo-<%= @year %>.png" onerror="this.src='/logo.png';" />
   <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
   <div id='conf_name'><%= @conf_name %> Session</div>
@@ -108,8 +111,9 @@ body {
   <div id='time'></div>
   <div style='clear: left;'></div>
   <div id='status' style='font-size: 20px; margin-top: 30px; text-align: center; margin-bottom: 20px;'></div>
+  <div id='bio_holder' style='display: none; padding-bottom: 30px; font-style: italic;'></div>
   <div id='description_holder' style='display: none; margin-bottom: 20px; border-bottom: 1px solid #aaa; padding-bottom: 30px;'></div>
-  <a style='float: right;' href='#' id='ceu_link' onclick="document.querySelector('#ceu_explainer').style.display = 'block';">
+  <a style='float: right;' href='#' id='ceu_link' onclick="document.querySelector('#ceu_explainer').style.display = 'block'; event.preventDefault();">
     <img src="/credits.png" style='width: 90px;'/>
   </a>
   <div id='slides_holder' style='margin-bottom: 20px;'>
@@ -140,6 +144,7 @@ body {
       <br/><span style='font-size: 15px;'>NOTE: Participation surveys will only be available after<br/>you watch the full video <b>on this site, not YouTube</b>.</span>
     </div>
   </div>
+
   <% if ENV['SLACK_ENABLED'] %>
     <div id='chat' style='display: none;'>
       <img src="/chat.png" style='width: 90px; vertical-align: middle; float: left; margin-right: 10px;'/>
@@ -178,7 +183,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'conf_name', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'disabled_holder'].forEach(function(key) {
+['label', 'conf_name', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'bio_holder', 'bio_link', 'disabled_holder'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -272,6 +277,7 @@ var check = function() {
     opts.conf = res.conference_name;
     opts.link = res.hangouts_link;
     opts.track = res.track;
+    opts.bio = res.bio;
     player.track_string = opts.track;
     player.hours = res.hours;
     opts.video = res.youtube_link;
@@ -331,6 +337,10 @@ var check = function() {
     if(opts.description) {
       dom.description_holder.innerText = opts.description;
       dom.description_holder.style.display = 'block';
+    }
+    dom.bio_holder.innerText = opts.bio;
+    if(opts.bio) {
+      dom.bio_link.style.display = 'block'
     }
     console.log(opts);
     dom.label.classList.remove('error');

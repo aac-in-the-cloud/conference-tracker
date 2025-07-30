@@ -169,6 +169,9 @@ p.bullet {
           <td>Description:</td>
           <td><input type='text' id='description'/></td>
         </tr><tr>
+          <td>Bio:</td>
+          <td><input type='text' id='bio'/></td>
+        </tr><tr>
           <td>Credit Hours:</td>
           <td><input type='text' id='hours' placeholder='1 hour by default'/></td>
         </tr><tr>
@@ -335,6 +338,7 @@ if(document.getElementById('name')) {
   document.getElementById('name').value = resources.session_name || '';
   document.getElementById('date').value = resources.date || '';
   document.getElementById('description').value = resources.description || '';
+  document.getElementById('bio').value = resources.bio || '';
   document.getElementById('hours').value = resources.hours || '';
   document.getElementById('track').value = resources.track || '';
   document.getElementById('pre_live').checked = link_pre_live || false;
@@ -375,7 +379,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
   if(document.getElementById('name')) {
     opts.name = document.getElementById('name').value;
     opts.time = document.getElementById('date').value;
-    opts.description = document.getElementById('description').value;
+    opts.bio = document.getElementById('bio').value;
     opts.hours = parseFloat(document.getElementById('hours').value);
     opts.track = document.getElementById('track').value;
     opts.url = document.getElementById('url').value;

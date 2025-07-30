@@ -1,0 +1,57 @@
+<style>
+#content {
+  max-width: 850px;
+  margin: 30px auto;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-family: Arial;
+}
+h2 {
+  text-align: center;
+  margin-bottom: 5px;
+  margin-top: -5px;
+  font-family: Arial;
+  color: #888;
+}
+h4 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+</style>
+<div id='content'>
+  <h1><%= @conference[:name] %> Presenters</h1>
+  <% if @conference[:theme] %>
+    <h2><%= @conference[:theme] %></h2>
+  <% end %>
+  <div style='text-align: center; color: #888;'>
+    Thank you to all of our presenters for this conference! We
+    are so grateful to all these folks who put in the time
+    and energy to freely share of their insights and 
+    perspectives with the AAC community!
+  </div>
+  <img style='float: left; max-height: 100px; max-width: 150px; margin-bottom: 5px; border-radius: 5px;' src='/logo-<%= @conference[:year] %>.png' onerror="this.src='/logo.png';"/>
+  <div style="float: right; position: relative;">
+    <a href="https://www.openaac.org/" target="_blank">
+      <img style="max-height: 100px;max-width: 200px;margin-bottom: 5px;padding-left: 5px;" src="/sponsored.png">
+    </a>
+    <a href="https://www.forbesaac.com/aac-now" target="_blank" style="height: 35px; position: absolute; z-index: 2; bottom: 0; right: 0; width: 100%;"></a>
+  </div>
+  <div style='clear: left;'></div>
+
+  <% if (@presenters || []).length == 0 %>
+    <div style='text-align: center; font-size: 25px; margin-top: 100px; margin-bottom: 100px;'>
+      No sessions have presenter info yet for this conference
+    </div>
+  <% end %>
+  <% (@presenters || []).each do |hash| %>
+    <div style='margin-bottom: 20px;'>
+      <h4><%= hash['name'] %></h4>
+      <img src="/profile.png" style='float: left; width: 90px; margin-right: 10px;'/>
+      <em><%= hash['bio'] %></em>
+      <div style='clear: both;'></div>
+    </div>
+  <% end %>
+</div>

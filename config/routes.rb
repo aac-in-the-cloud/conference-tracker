@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get '/surveys/emails/:id' => 'surveys#emails'
   post '/conferences' => 'conferences#create'
   get '/conferences/:id' => 'conferences#show'
+  get '/conferences/:id/presenters' => 'conferences#presenters'
   get '/search' => 'conferences#search'
   get '/conferences/:id/links/:codes/:verifier' => 'conferences#links'
   get '/conferences/sessions/:id' => 'conferences#manage_session'

@@ -233,6 +233,41 @@ class ConferencesController < ApplicationController
     })
   end
 
+  def presenters
+    response.headers.except! 'X-Frame-Options'
+    conference = Conference.find_by(code: params['id'])
+    if !conference
+      render plain: "Invalid Conference"
+      return
+    end
+    conference_json = JSON.parse(conference.data) rescue nil
+    conference_json ||= {}
+    @conference = {
+      name: conference.name,
+      code: conference.code,
+      year: "20#{params['id'].match(/\d+/)[0]}",
+      theme: conference_json['theme'],
+    }
+    sessions = ConferenceSession.where(:conference_code => params['id'])
+    sessions = sessions.select{|s| s.resources }
+    @presenters = {}
+    sessions.each do |session|
+      res = session.resources
+      if res['bio']
+        name, title = res['session_name'].split(/:/, 2)
+        @presenters[name] ||= {}
+        @presenters[name]['name'] = name
+        if res['bio_image_url']
+          @presenters[name]['image_url'] = res['bio_image_url']
+        end
+        @presenters[name]['sessions'] ||= []
+        @presenters[name]['sessions'] << {'title' => title, 'code' => session.code}
+        @presenters[name]['bio'] = res['bio']
+      end
+    end
+    @presenters = @presenters.to_a.map(&:last).sort_by{|p| p['name'] }
+  end
+
   def manage_session
     code, token = params['id'].split(/:/)
     @session_type = :zoom
@@ -281,6 +316,7 @@ class ConferencesController < ApplicationController
       data['session_name'] = params['name'] if !params['name'].blank?
       data['conference_name'] = conference.name
       data['description'] = params['description'] if !params['description'].blank?
+      data['bio'] = params['bio'] if !params['bio'].blank?
       data['hours'] = params['hours'].to_f if !params['hours'].blank?
       data['track'] = params['track'] if !params['track'].blank?
       data['youtube_link'] = params['url'] if !params['url'].blank?
