@@ -171,7 +171,7 @@ class SurveysController < ApplicationController
       pdf.line [300, 40], [520, 40]
       pdf.stroke
       # TODO: If you change the signer, you also need to change the sig.png to match
-      pdf.draw_text "Melissa DeMoux, conference coordinator", :at => [300, 25], :size => 12
+      pdf.draw_text "Brian Whitmer, conference coordinator", :at => [300, 25], :size => 12
       pdf.line_width 4
       pdf.rectangle [0, 720], 540, 720
       pdf.stroke_color "2caad3"
@@ -185,7 +185,8 @@ class SurveysController < ApplicationController
                   [530, 680], 
                   [530, 10]
       pdf.stroke
-      pdf.image "./public/md-sig.png", :at => [310, 70], :width => 200, :height => (200 * 55 / 422)
+      # If you change the sig, make sure it stays the same dimensions, 422x52
+      pdf.image "./public/bw-sig.png", :at => [310, 70], :width => 200, :height => (200 * 55 / 422)
       pdf.image "./public/logo.png", :at => [35, 155], :width => 100, :height => 100
       pdf.stroke_color "2caad3"
       pdf.line_width 10
