@@ -35,12 +35,7 @@ class LinksController < ApplicationController
   
   def data
     json = SurveyResult.session_data(params['cell'])
-    time = Time.parse(json['date']) rescue nil
-    if time
-      json['date'] = Conference.date_string(time)
-      time = json['date'].in_time_zone("Eastern Time (US & Canada)")
-      json['js_timestamp'] = time.to_i
-    end
+    time = ConferenceSession.start_time(json)
     session = ConferenceSession.find_by(code: json['code'])
     json['disabled'] = JSON.parse(session.data)['link_disabled'] || false
     json['pre_live'] = JSON.parse(session.data)['link_pre_live'] || false

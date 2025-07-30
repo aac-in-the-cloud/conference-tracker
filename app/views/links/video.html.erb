@@ -444,7 +444,7 @@ var check = function() {
 
       console.log("playing for", player.total_playing_seconds, player.playing_seconds, playthrough.ps);
     }
-    if(playthrough) {
+    if(playthrough.complete) {
       show_survey(dom);
     } else if(player.obj && !player.live && player.survey) {
       // after the player has been playing for at least 33% of the 

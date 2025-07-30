@@ -135,6 +135,7 @@ document.getElementById('show').addEventListener('click', function(event) {
         elem.removeAttribute('id');
         var date = new Date(session.attended * 1000);
         var date_string = date.toDateString();
+        if(session.live) { date_string = "live " + date_string; }
 
         elem.getElementsByClassName('name')[0].innerText = session.session_name;
         elem.getElementsByClassName('name')[0].setAttribute('href', session.vide_link);

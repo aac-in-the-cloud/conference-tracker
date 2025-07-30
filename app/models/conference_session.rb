@@ -4,6 +4,8 @@ class ConferenceSession < ApplicationRecord
 
   pg_search_scope :search_by_data, :against => :data, :using => {:tsearch => {:dictionary => 'english', :normalization => 8, :any_word => true}}
 
+  TIMEZONE = "Eastern Time (US & Canada)"
+
   def generate_defaults
     self.conference_code ||= self.code.match(/^\w+\d+(\w+\d+)$/)[1] if self.code
     data = JSON.parse(self.data) rescue nil
@@ -23,6 +25,17 @@ class ConferenceSession < ApplicationRecord
       return false if sn && (sn.match(/^welcome/i) || sn.match(/^lightning/i))
     end
     !!(!json['link_disabled'] && json['resources'] && json['resources']['session_name'] && json['resources']['youtube_link'])
+  end
+
+  def self.start_time(json)
+    return nil if !json['date'] || json['date'] == "Pre-Conference Session"
+    time = Time.parse(json['date']) rescue nil
+    if time
+      json['date'] = Conference.date_string(time)
+      time = json['date'].in_time_zone(TIMEZONE)
+      json['js_timestamp'] = time.to_i
+    end
+    time
   end
 
   def for_category?(cat)
@@ -99,7 +112,7 @@ class ConferenceSession < ApplicationRecord
 
   def zoned_timestamp
     session = self
-    Time.find_zone('Eastern Time (US & Canada)').parse(session.resources['timestamp'].sub(/\+00:00/, '')).utc rescue nil
+    Time.find_zone(TIMEZONE).parse(session.resources['timestamp'].sub(/\+00:00/, '')).utc rescue nil
   end
   
   def resources

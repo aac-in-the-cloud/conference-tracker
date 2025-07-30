@@ -79,6 +79,13 @@ class SurveysController < ApplicationController
       results.each do |sr|
         hash = SurveyResult.session_data(sr.code)
         hash['attended'] = sr.updated_at.to_i;
+
+        session_time = ConferenceSession.start_time(hash)
+        # Surveys filled out in the first 24 hours can be marked as live
+        if session_time && sr.created_at < session_time + 24.hours
+          hash['live'] = true
+        end
+
         hash['score'] = sr.json['answer_1']
         hash['session_note'] = sr.json['answer_2']
         hash['conf_note'] = sr.json['answer_3']
@@ -106,6 +113,11 @@ class SurveysController < ApplicationController
       results.each do |sr|
         json = SurveyResult.session_data(sr.code)
         name = json['session_name'] || "Session code: #{sr.code}"
+        session_time = ConferenceSession.start_time(json)
+        # Surveys filled out in the first 24 hours can be marked as live
+        if session_time && sr.created_at < session_time + 24.hours
+          name += " (live)"
+        end
         sessions.push(name)
         hours += (json['hours'] || 1.0).round(2)
       end
