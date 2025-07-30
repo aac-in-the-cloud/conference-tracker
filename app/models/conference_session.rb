@@ -187,7 +187,7 @@ class ConferenceSession < ApplicationRecord
           hours = 1.0 if hours == 0.0
           ts = session.zoned_timestamp
           json['views'] = res['statistics'] && res['statistics']['viewCount'].to_i
-          if json['link_pre_live'] && ts != 'pre' && (ts > 1.5.hours.ago || include_live == 'force')
+          if json['link_pre_live'] && ts != 'pre' && (ts > 1.5.hours.ago || include_live == 'force' || ((json['resources'] || {})['live_attendees'] == 1 && json['views'] > 1))
             json['max_live'] = json['views']
           elsif res['liveStreamingDetails'] && !res['liveStreamingDetails']['actualEndTime']
             json['max_live'] = [json['max_live'] || 0, res['liveStreamingDetails']['concurrentViewers'].to_i].max
