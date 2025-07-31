@@ -178,7 +178,7 @@ class SurveysController < ApplicationController
         end
       end
  
-      pdf.move_down 300
+      pdf.move_down 260
       pdf.text "for a total of", :align => :center, :size => 15, :color => '888888'
       pdf.move_down 10
       hours_string = "#{hours.to_f.round(2)} maintenance hours"
@@ -208,10 +208,10 @@ class SurveysController < ApplicationController
       pdf.stroke
       # If you change the sig, make sure it stays the same dimensions, 422x52
       pdf.image "./public/bw-sig.png", :at => [310, 70], :width => 200, :height => (200 * 55 / 422)
-      pdf.image "./public/logo.png", :at => [35, 155], :width => 100, :height => 100
+      pdf.image "./public/logo.png", :at => [35, 145], :width => 90, :height => 90
       pdf.stroke_color "2caad3"
       pdf.line_width 10
-      pdf.rounded_rectangle [30, 160], 110, 110, 10
+      pdf.rounded_rectangle [30, 150], 100, 100, 10
       pdf.stroke
       pdf.fill_color 'aaaaaa'
       pdf.text_box "sponsored by OpenAAC, 9733 Sharolyn Ln., South Jordan, UT 84009, info@openaac.org", :at => [0, -10], :width => 530, height: 20, :color => '888888', :align => :center, :overflow => :shrink_to_fit

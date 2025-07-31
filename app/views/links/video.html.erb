@@ -175,7 +175,7 @@ body {
 </div>
 
 <div style="color: #eee; text-align: center; font-family: Arial; margin-bottom: 20px;">
-  <a href="/">AAC in the Cloud</a> sponsored by <a href="https://www.openaac.org/" target="_blank" style='color: #63b3dd;'>OpenAAC</a>, and <a href="https://www.forbesaac.com/aac-now" target="_blank" style='color: #63b3dd;'>Forbes AAC</a>
+  <a href="/">AAC in the Cloud</a> sponsored by <a href="https://www.openaac.org/" target="_blank" style='color: #63b3dd;'>OpenAAC</a>
 </div>
 
 <script src='https://www.youtube.com/iframe_api'></script>
@@ -278,6 +278,7 @@ var check = function() {
     opts.link = res.hangouts_link;
     opts.track = res.track;
     opts.bio = res.bio;
+    opts.hours = res.hours;
     player.track_string = opts.track;
     player.hours = res.hours;
     opts.video = res.youtube_link;
