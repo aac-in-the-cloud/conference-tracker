@@ -29,7 +29,8 @@ class ConferenceSession < ApplicationRecord
 
   def self.start_time(json)
     return nil if !json['date'] || json['date'] == "Pre-Conference Session"
-    time = Time.parse(json['date']) rescue nil
+    time = Time.parse(json['date'] + " " + json['year']) rescue nil
+    time ||= Time.parse(json['date']) rescue nil
     if time
       json['date'] = Conference.date_string(time)
       time = json['date'].in_time_zone(TIMEZONE)
