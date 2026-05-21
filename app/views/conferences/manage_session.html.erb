@@ -378,6 +378,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
   };
   if(document.getElementById('name')) {
     opts.name = document.getElementById('name').value;
+    opts.description = document.getElementById('description').value;
     opts.time = document.getElementById('date').value;
     opts.bio = document.getElementById('bio').value;
     opts.hours = parseFloat(document.getElementById('hours').value);
