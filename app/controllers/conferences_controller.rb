@@ -258,10 +258,10 @@ class ConferencesController < ApplicationController
         @presenters[name] ||= {}
         @presenters[name]['name'] = name
         if res['bio_image_url']
-          @presenters[name]['image_url'] = res['bio_image_url']
+          @presenters[name]['bio_image_url'] = res['bio_image_url']
         end
         @presenters[name]['sessions'] ||= []
-        @presenters[name]['sessions'] << {'title' => title, 'code' => session.code}
+        @presenters[name]['sessions'] << {'title' => title || res['session_name'], 'code' => session.code}
         @presenters[name]['bio'] = res['bio']
       end
     end
@@ -317,6 +317,7 @@ class ConferencesController < ApplicationController
       data['conference_name'] = conference.name
       data['description'] = params['description'] if !params['description'].blank?
       data['bio'] = params['bio'] if !params['bio'].blank?
+      data['bio_image_url'] = params['bio_image_url'] if !params['bio_image_url'].blank?
       data['hours'] = params['hours'].to_f if !params['hours'].blank?
       data['track'] = params['track'] if !params['track'].blank?
       data['youtube_link'] = params['url'] if !params['url'].blank?

@@ -172,6 +172,9 @@ p.bullet {
           <td>Bio:</td>
           <td><input type='text' id='bio'/></td>
         </tr><tr>
+          <td>Pic:</td>
+          <td><input type='text' id='bio_image_url'/></td>
+        </tr><tr>
           <td>Credit Hours:</td>
           <td><input type='text' id='hours' placeholder='1 hour by default'/></td>
         </tr><tr>
@@ -339,6 +342,7 @@ if(document.getElementById('name')) {
   document.getElementById('date').value = resources.date || '';
   document.getElementById('description').value = resources.description || '';
   document.getElementById('bio').value = resources.bio || '';
+  document.getElementById('bio_image_url').value = resources.bio_image_url || '';
   document.getElementById('hours').value = resources.hours || '';
   document.getElementById('track').value = resources.track || '';
   document.getElementById('pre_live').checked = link_pre_live || false;
@@ -381,6 +385,7 @@ document.getElementById('update_session').addEventListener('click', function(eve
     opts.description = document.getElementById('description').value;
     opts.time = document.getElementById('date').value;
     opts.bio = document.getElementById('bio').value;
+    opts.bio_image_url = document.getElementById('bio_image_url').value;
     opts.hours = parseFloat(document.getElementById('hours').value);
     opts.track = document.getElementById('track').value;
     opts.url = document.getElementById('url').value;

@@ -48,8 +48,18 @@ h4 {
   <% (@presenters || []).each do |hash| %>
     <div style='margin-bottom: 20px;'>
       <h4><%= hash['name'] %></h4>
-      <img src="/profile.png" style='float: left; width: 90px; margin-right: 10px;'/>
+      <% if hash['bio_image_url'] %>
+        <img src="<%= hash['bio_image_url'] %>" onerror="this.src='/profile.png';" style='float: left; width: 120px; height: 120px; object-fit: contain; object-position: center; margin-right: 10px; border-radius: 10px;'/>
+      <% else %>
+        <img src="/profile.png" style='float: left; width: 120px; height: 120px; object-fit: contain; object-position: center; margin-right: 10px;'/>
+      <% end %>
       <em><%= hash['bio'] %></em>
+      <div style='margin-top: 20px; font-weight: bold;'>Session(s)</div>
+      <% (hash['sessions'] || []).each do |sess| %>
+        <% id = Base64.urlsafe_encode64(Base64.urlsafe_encode64(sess['code'])) %>
+
+        <div><a href="/videos/<%= id %>"><%= sess['title'] || 'No Description' %></a></div>
+      <% end %>
       <div style='clear: both;'></div>
     </div>
   <% end %>

@@ -95,7 +95,7 @@ body {
 </style>
 <div id='header'>
   <a style='float: right; display: none;' href='#' id='bio_link' onclick="document.querySelector('#bio_holder').style.display = 'block'; event.preventDefault();">
-    <img src="/profile.png" style='width: 90px;'/>
+    <img id='profile_pic' src="/profile.png" onerror="this.src='/profile.png';" style='width: 90px; height: 90px; object-fit: contain; object-position: center; border-radius: 10px;'/>
   </a>
   <img class='logo' src="/logo-<%= @year %>.png" onerror="this.src='/logo.png';" />
   <img id='spinner' src="https://s3.amazonaws.com/coughdrop/icons/ripple.svg" />
@@ -183,7 +183,7 @@ body {
 var id = "<%= ENV['DOC_ID'] %>";
 var cell = atob(atob("<%= params['id'] %>"));
 var dom = {};
-['label', 'conf_name', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'bio_holder', 'bio_link', 'disabled_holder'].forEach(function(key) {
+['label', 'conf_name', 'link', 'link_button', 'link_holder', 'time', 'spinner', 'status', 'video_holder', 'survey_link', 'survey_anchor', 'chat', 'video_app', 'track', 'description_holder', 'bio_holder', 'bio_link', 'profile_pic', 'disabled_holder'].forEach(function(key) {
   dom[key] = document.getElementById(key);
 });
 var err = function(str) {
@@ -278,6 +278,7 @@ var check = function() {
     opts.link = res.hangouts_link;
     opts.track = res.track;
     opts.bio = res.bio;
+    opts.bio_image_url = res.bio_image_url;
     opts.hours = res.hours;
     player.track_string = opts.track;
     player.hours = res.hours;
@@ -300,6 +301,9 @@ var check = function() {
       if(res.values && res.values[3] && res.values[3].length) {
         opts.video = opts.video || res.values[3][res.values[0].length - 1];
       }
+    }
+    if(!opts.hours || opts.hours <= 0.1) {
+      document.getElementById('ceu_link').style.display = 'none';
     }
     if(opts.link) { dom.loaded = true; }
     if(opts.slides) {
@@ -342,6 +346,9 @@ var check = function() {
     dom.bio_holder.innerText = opts.bio;
     if(opts.bio) {
       dom.bio_link.style.display = 'block'
+      if(opts.bio_image_url) {
+        dom.profile_pic.src = opts.bio_image_url;
+      }
     }
     console.log(opts);
     dom.label.classList.remove('error');
