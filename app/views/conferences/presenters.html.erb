@@ -50,9 +50,9 @@ h4 {
     <div style='margin-bottom: 20px;'>
       <h4><%= hash['name'] %></h4>
       <% if hash['bio_image_url'] %>
-        <img src="<%= hash['bio_image_url'] %>" onerror="this.src='/profile.png';" style='float: left; width: 120px; height: 120px; object-fit: contain; object-position: center; margin-right: 10px; border-radius: 10px;'/>
+        <img src="<%= hash['bio_image_url'] %>" onerror="this.src='/profile.png';" style='float: left; width: 220px; height: 220px; object-fit: contain; object-position: center; margin-right: 10px; border-radius: 10px;'/>
       <% else %>
-        <img src="/profile.png" style='float: left; width: 120px; height: 120px; object-fit: contain; object-position: center; margin-right: 10px;'/>
+        <img src="/profile.png" style='float: left; width: 220px; height: 220px; object-fit: contain; object-position: center; margin-right: 10px;'/>
       <% end %>
       <em><%= hash['bio'] %></em>
       <div style='margin-top: 20px; font-weight: bold;'>Session(s)</div>
