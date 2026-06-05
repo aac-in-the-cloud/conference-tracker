@@ -428,7 +428,10 @@ var check = function() {
         dom.status.innerText = "Video player not initialized";
       }
     } else {
+      var img = new Image();
+      img.src = "/clapboard.jpg";
       dom.status.innerText = "This session is still being set up, stay tuned!";
+      dom.status.prepend(img);
     }
   }, function() {
     setTimeout(function() {
